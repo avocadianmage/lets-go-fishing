@@ -12,7 +12,7 @@ class CardInfoSvc {
     }
 
     loadImage(blob, elem) {
-        elem.setState({ imageUri: URL.createObjectURL(blob) });
+        elem.setState({ imageUrl: URL.createObjectURL(blob) });
     }
 
     setCardImage(name, elem) {

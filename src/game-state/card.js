@@ -8,7 +8,7 @@ export default class Card extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            imageUri: cardBack,
+            imageUrl: null,
             error: null,
         };
     }
@@ -18,13 +18,15 @@ export default class Card extends React.Component {
     }
 
     render() {
-        const { imageUri, error } = this.state;
-        const loading = imageUri === cardBack && error === null;
+        const { imageUrl, error } = this.state;
+        const loading = !imageUrl && !error && !this.props.faceDown;
+        const imageUrlToUse = (loading || this.props.faceDown) ? 
+            cardBack : imageUrl;
 
         return (
             <div
                 className={"card " + (loading ? "loading" : "")}
-                style={{ backgroundImage: `url(${imageUri})` }}
+                style={{ backgroundImage: `url(${imageUrlToUse})` }}
             >
                 { loading ? <div className="loader" /> : null}
             </div>

@@ -4,7 +4,7 @@ import Card from './card';
 export default function Library() {
     return (
         <div className="library gutter">
-            <Card name="Enlightened Tutor" />
+            <Card name="Enlightened Tutor" faceDown={true} />
         </div>
     );
 }

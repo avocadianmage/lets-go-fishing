@@ -7,7 +7,7 @@ body {
 
 .gutter {
     background-color: var(--nord1);
-    margin: 4px;
+    margin: 6px;
     padding: 12px;
     border-radius: 3px;
 }
