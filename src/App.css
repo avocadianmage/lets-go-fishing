@@ -7,13 +7,14 @@ body {
 
 .gutter {
     background-color: var(--nord1);
-    margin: 6px;
-    padding: 12px;
+    padding: 10px;
     border-radius: 3px;
 }
 
 .bottomPanel {
     display: flex;
+    column-gap: 6px;
+    margin: 6px;
 }
 
 .hand {
