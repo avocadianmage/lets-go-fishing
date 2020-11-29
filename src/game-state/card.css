@@ -1,6 +1,7 @@
 @import "../nord.css";
 
 .card {
+    display: inline-block;
     transition: background-color 0.5s ease;
     width: 244px; 
     height: 340px;

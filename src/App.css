@@ -4,3 +4,18 @@ body {
     background-color: var(--nord0);
     color: var(--nord6);
 }
+
+.gutter {
+    background-color: var(--nord1);
+    margin: 4px;
+    padding: 12px;
+    border-radius: 3px;
+}
+
+.bottomPanel {
+    display: flex;
+}
+
+.hand {
+    flex-grow: 1;
+}
