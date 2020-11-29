@@ -29,7 +29,7 @@ class CardInfoSvc {
                 .then(
                     // Store the fetched image to the database as a blob.
                     externalJson => {
-                        fetch(externalJson.image_uris.png)
+                        fetch(externalJson.image_uris.normal)
                             .then(response => response.blob())
                             .then(blob => {
                                 DatabaseService.putCardBlob(blob, name);
