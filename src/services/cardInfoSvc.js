@@ -1,27 +1,50 @@
-const msRateLimit = 100;
-let throttler = Promise.resolve();
+import { DatabaseService } from "./dbSvc";
 
-export default class CardInfoSvc {
+const MS_QUERY_RATE = 100;
+
+class CardInfoSvc {
+    constructor() {
+        this.outgoingThrottle = Promise.resolve();
+    }
+
     getQueryUrl(name) {
         return `https://api.scryfall.com/cards/named?exact=${name}`;
     }
 
+    loadImage(blob, elem) {
+        elem.setState({ imageUri: URL.createObjectURL(blob) });
+    }
+
     setCardImage(name, elem) {
-        throttler = throttler
-            // AJAX request to external site for card information.
-            .then(() => fetch(this.getQueryUrl(name)))
-            .then(result => result.json())
-            // Update state of the card element.
-            .then(
-                result => {
-                    elem.setState({ imageUri: result.image_uris.png });
-                },
-                error => {
-                    elem.setState({ error });
-                    console.log(`Query for '${name}' failed: ${error}`);
-                }
-            )
-            // Ensure future requests are throttled.
-            .then(() => new Promise(r => setTimeout(r, msRateLimit)));
+        DatabaseService.getCardBlob(name).then(blob => {
+            if (blob) {
+                this.loadImage(blob, elem);
+                return;
+            }
+
+            this.outgoingThrottle = this.outgoingThrottle
+                // Fetch card information from external site.
+                .then(() => fetch(this.getQueryUrl(name)))
+                .then(result => result.json())
+                .then(
+                    // Store the fetched image to the database as a blob.
+                    externalJson => {
+                        fetch(externalJson.image_uris.png)
+                            .then(response => response.blob())
+                            .then(blob => {
+                                DatabaseService.putCardBlob(blob, name);
+                                this.loadImage(blob, elem);
+                            });
+                    },
+                    error => {
+                        elem.setState({ error });
+                        console.log(error);
+                    }
+                )
+                // Ensure the next request is throttled.
+                .then(() => new Promise(r => setTimeout(r, MS_QUERY_RATE)));
+        });
     }
 }
+
+export const CardInfoService = new CardInfoSvc();

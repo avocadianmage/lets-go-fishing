@@ -1,5 +1,5 @@
 import React from 'react';
-import CardInfoSvc from '../services/cardInfoSvc';
+import { CardInfoService } from '../services/cardInfoSvc';
 
 import './card.css';
 import cardBack from '../assets/mtg-card-back.png';
@@ -14,7 +14,7 @@ export default class Card extends React.Component {
     }
 
     componentDidMount() {
-        new CardInfoSvc().setCardImage(this.props.name, this);
+        CardInfoService.setCardImage(this.props.name, this);
     }
 
     render() {
