@@ -18,5 +18,5 @@ body {
 }
 
 .hand {
-    flex-grow: 1;
+    flex: 1;
 }

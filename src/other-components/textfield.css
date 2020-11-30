@@ -1,0 +1,36 @@
+@import "../nord.css";
+
+::placeholder {
+    color: #9a9fad;
+}
+
+::selection {
+    background: var(--nord7);
+}
+
+.react-autosuggest__container {
+    display: flex;
+}
+
+.react-autosuggest__input {
+    font-family: Lato, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+    font-size: 16px;
+    flex: 1;
+    padding: 10px 12px;
+    border: transparent solid 1px;
+    border-radius: 0;
+    transition: border-color 0.2s ease;
+    background-color: var(--nord1);
+    color: var(--nord6);
+    caret-color: var(--nord4);
+    
+}
+
+.react-autosuggest__input--focused {
+    outline: none;
+    border-color: var(--nord8);
+}
+
+.react-autosuggest__input:not(.react-autosuggest__input--focused):hover {
+    border-color: #9a9fad;
+}
