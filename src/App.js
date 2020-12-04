@@ -6,7 +6,7 @@ import Library from './game-state/library';
 export default function App() {
     return (
         <div>
-            <div>
+            <div className="topPanel">
                 <DecklistLookup />
             </div>
             <div className="bottomPanel">

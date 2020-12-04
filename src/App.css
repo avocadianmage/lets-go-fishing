@@ -11,10 +11,17 @@ body {
     border-radius: 3px;
 }
 
+.topPanel {
+    box-shadow: 0 1px 8px 0 rgba(0,0,0,0.5);
+}
+
 .bottomPanel {
     display: flex;
     column-gap: 6px;
     margin: 6px;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
 }
 
 .hand {
