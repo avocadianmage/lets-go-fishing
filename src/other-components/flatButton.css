@@ -1,0 +1,27 @@
+@import "../nord.css";
+
+.flatButton {
+    position: absolute;
+    top: 3px;
+    right: 3px;
+    background-image: url('../assets/download.svg');
+    background-size: 24px 24px;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-color: inherit;
+    width: 48px;
+    height: 36px;
+    border: none;
+    outline: none;
+    border-radius: 3px;
+    padding: 0;
+    transition: opacity 0.25s ease, background-color 0.5s ease;
+}
+
+.flatButton:disabled {
+    opacity: 0.4;
+}
+
+.flatButton:not(:disabled):hover {
+    background-color: var(--nord3);
+}

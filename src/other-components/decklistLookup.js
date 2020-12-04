@@ -1,5 +1,6 @@
 import React from "react";
 import Autosuggest from "react-autosuggest";
+import DeckListImport from './decklistImport';
 import './textfield.css';
 
 const getSuggestionValue = _ => null;
@@ -16,7 +17,7 @@ export default class DecklistLookup extends React.Component {
         };
     }
 
-    onChange = (event, { newValue }) => { //ckgtest
+    onChange = (_, { newValue }) => {
         this.setState({ value: newValue });
     };
 
@@ -28,13 +29,16 @@ export default class DecklistLookup extends React.Component {
             onChange: this.onChange
         };
         return (
-            <Autosuggest 
-                inputProps={inputProps} 
-                suggestions={suggestions}
-                getSuggestionValue={getSuggestionValue}
-                renderSuggestion={renderSuggestion}
-                onSuggestionsFetchRequested={onSuggestionsFetchRequested}
-                onSuggestionsClearRequested={onSuggestionsClearRequested} />
+            <div style={{ position: "relative" }}>
+                <Autosuggest
+                    inputProps={inputProps}
+                    suggestions={suggestions}
+                    getSuggestionValue={getSuggestionValue}
+                    renderSuggestion={renderSuggestion}
+                    onSuggestionsFetchRequested={onSuggestionsFetchRequested}
+                    onSuggestionsClearRequested={onSuggestionsClearRequested} />
+                <DeckListImport disabled={!this.state.value} />
+            </div>
         );
     }
 }
