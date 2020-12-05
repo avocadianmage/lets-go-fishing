@@ -1,10 +1,14 @@
+import React from 'react';
 import '../App.css';
 import Card from './card';
 
-export default function Library() {
-    return (
-        <div className="library gutter">
-            <Card name="Enlightened Tutor" faceDown={true} />
-        </div>
-    );
+export default class Library extends React.Component {
+    render() {
+        const { topCard } = this.props;
+        return (
+            <div className="library gutter">
+                {topCard ? <Card {...topCard} /> : null}
+            </div>
+        );
+    }
 }

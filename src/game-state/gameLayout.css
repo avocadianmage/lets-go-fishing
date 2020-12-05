@@ -1,0 +1,16 @@
+.bottomPanel {
+    display: flex;
+    column-gap: 6px;
+    margin: 6px;
+    position: fixed;
+    bottom: 0;
+    width: calc(100% - 12px);
+}
+
+.hand {
+    flex: 1;
+}
+
+.library {
+    width: 244px;
+}

@@ -1,7 +1,6 @@
 import './App.css';
 import DecklistLookup from './other-components/decklistLookup';
-import Hand from './game-state/hand';
-import Library from './game-state/library';
+import GameLayout from './game-state/gameLayout';
 
 export default function App() {
     return (
@@ -9,10 +8,7 @@ export default function App() {
             <div className="topPanel">
                 <DecklistLookup />
             </div>
-            <div className="bottomPanel">
-                <Hand />
-                <Library />
-            </div>
+            <GameLayout />
         </div>
     );
 }
