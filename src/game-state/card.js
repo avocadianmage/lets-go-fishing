@@ -30,7 +30,7 @@ export default class Card extends React.Component {
 
         return (
             <div
-                className={"card " + (loading ? "loading" : "")}
+                className={"card cardDimensions " + (loading ? "loading" : "")}
                 style={{ backgroundImage: `url(${imageUrlToUse})` }}
             >
                 { loading ? <div className="loader" /> : null}

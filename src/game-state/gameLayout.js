@@ -1,4 +1,5 @@
 import React from 'react';
+import DecklistLookup from '../other-components/decklistLookup';
 import Hand from './hand';
 import Library from './library';
 
@@ -8,16 +9,29 @@ export default class GameLayout extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            topCard: null,
+            libraryTopCard: null,
         };
+    }
+
+    setLoadingState() {
+        this.setTopCard(null);
+    }
+
+    setTopCard(name) {
+        this.setState({ libraryTopCard: { name, faceDown: true } });
     }
 
     render() {
         return (
             <div className="gameLayout">
+                <div className="topPanel">
+                    <DecklistLookup
+                        onImportClick={() => this.setLoadingState()}
+                    />
+                </div>
                 <div className="bottomPanel">
                     <Hand />
-                    <Library topCard={this.state.topCard} />
+                    <Library topCard={this.state.libraryTopCard} />
                 </div>
             </div>
         );

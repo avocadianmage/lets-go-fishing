@@ -36,8 +36,12 @@ export default class DecklistLookup extends React.Component {
                     getSuggestionValue={getSuggestionValue}
                     renderSuggestion={renderSuggestion}
                     onSuggestionsFetchRequested={onSuggestionsFetchRequested}
-                    onSuggestionsClearRequested={onSuggestionsClearRequested} />
-                <DeckListImport disabled={!this.state.value} />
+                    onSuggestionsClearRequested={onSuggestionsClearRequested}
+                />
+                <DeckListImport
+                    disabled={!this.state.value}
+                    onClick={this.props.onImportClick}
+                />
             </div>
         );
     }
