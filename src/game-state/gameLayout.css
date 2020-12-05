@@ -10,3 +10,26 @@
 .hand {
     flex: 1;
 }
+
+.hand:empty::before {
+    content: "HAND";
+    color: var(--nord3);
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.library {
+    width: 244px; 
+    height: 340px;
+}
+
+.library:empty::before {
+    content: "LIBRARY";
+    color: var(--nord3);
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}

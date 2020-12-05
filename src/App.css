@@ -9,6 +9,9 @@ body {
     background-color: var(--nord1);
     padding: 10px;
     border-radius: 3px;
+    font-family: 'Bahnschrift Condensed', 'Arial Narrow Bold', sans-serif;
+    font-size: 60px;
+    text-align: center;
 }
 
 .topPanel {
