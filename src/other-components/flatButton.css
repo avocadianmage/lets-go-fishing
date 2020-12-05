@@ -2,8 +2,8 @@
 
 .flatButton {
     position: absolute;
-    top: 3px;
-    right: 3px;
+    top: 4px;
+    right: 4px;
     background-image: url('../assets/download.svg');
     background-size: 24px 24px;
     background-repeat: no-repeat;
