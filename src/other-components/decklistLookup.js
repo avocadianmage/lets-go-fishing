@@ -21,12 +21,17 @@ export default class DecklistLookup extends React.Component {
         this.setState({ value: newValue });
     };
 
+    onKeyDown = event => {
+        if (event.key === 'Enter') this.props.onImportClick();
+    }
+
     render() {
         const { value, suggestions } = this.state;
         const inputProps = {
             placeholder: "Enter Moxfield deck web address",
             value,
-            onChange: this.onChange
+            onChange: this.onChange,
+            onKeyDown: this.onKeyDown,
         };
         return (
             <div style={{ position: "relative" }}>
