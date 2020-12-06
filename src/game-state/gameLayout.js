@@ -8,31 +8,52 @@ import { shuffle } from '../utilities/shuffle';
 
 import './gameLayout.css';
 
+const STARTING_HAND_SIZE = 7;
+
 export default class GameLayout extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            libraryContents: null,
+            loading: false,
+            libraryContents: [],
+            handContents: [],
         };
     }
 
     async componentDidMount() {
-        const deck = await DatabaseService.getDeck();
-        if (deck) this.shuffleDeck(deck);
+        this.startGame(await DatabaseService.getDeck());
     }
 
     importDeck(deckUrl) {
         this.showLoadingState();
         DeckInfoService.getDecklist(deckUrl)
-            .then(decklist => this.shuffleDeck(decklist));
+            .then(decklist => this.startGame(decklist));
+    }
+
+    startGame(decklist) {
+        if (!decklist) return;
+        this.shuffleDeck(decklist);
+        this.draw(STARTING_HAND_SIZE);
     }
 
     shuffleDeck(decklist) {
-        this.setState({ libraryContents: shuffle(decklist) });
+        this.setState({ 
+            loading: false,
+            libraryContents: shuffle(decklist) 
+        });
+    }
+
+    draw(num = 1) {
+        const { loading, libraryContents, handContents } = this.state;
+        if (loading) return;
+        this.setState({
+            handContents: handContents.concat(libraryContents.slice(0, num)),
+            libraryContents: libraryContents.slice(num),
+        });
     }
 
     showLoadingState() {
-        this.setState({ libraryContents: [ null ] });
+        this.setState({ loading: true });
     }
 
     getTopCard() {
@@ -41,6 +62,7 @@ export default class GameLayout extends React.Component {
     }
 
     render() {
+        const { loading, handContents } = this.state;
         return (
             <div className="gameLayout">
                 <div className="topPanel">
@@ -49,8 +71,12 @@ export default class GameLayout extends React.Component {
                     />
                 </div>
                 <div className="bottomPanel">
-                    <Hand />
-                    <Library topCard={this.getTopCard()} />
+                    <Hand contents={handContents} />
+                    <Library 
+                        loading={loading}
+                        topCard={this.getTopCard()} 
+                        onClick={() => this.draw()} 
+                    />
                 </div>
             </div>
         );

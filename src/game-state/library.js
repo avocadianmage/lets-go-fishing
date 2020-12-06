@@ -3,11 +3,17 @@ import '../App.css';
 import Card from './card';
 
 export default class Library extends React.Component {
+    renderTopCard() {
+        const { loading, topCard, onClick } = this.props;
+        return loading || topCard ?
+            <Card name={topCard} faceDown={true} onClick={onClick} /> :
+            null;
+    }
+
     render() {
-        const { topCard } = this.props;
         return (
             <div className="library gutter">
-                {topCard ? <Card name={topCard} faceDown={true} /> : null}
+                {this.renderTopCard()}
             </div>
         );
     }
