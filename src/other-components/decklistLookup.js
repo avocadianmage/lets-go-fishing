@@ -22,7 +22,7 @@ export default class DecklistLookup extends React.Component {
     };
 
     onKeyDown = event => {
-        if (event.key === 'Enter') this.props.onImportClick();
+        if (event.key === 'Enter') this.props.onImportClick(this.state.value);
     }
 
     render() {
@@ -44,8 +44,8 @@ export default class DecklistLookup extends React.Component {
                     onSuggestionsClearRequested={onSuggestionsClearRequested}
                 />
                 <DeckListImport
-                    disabled={!this.state.value}
-                    onClick={this.props.onImportClick}
+                    disabled={!value}
+                    onClick={() => this.props.onImportClick(value)}
                 />
             </div>
         );

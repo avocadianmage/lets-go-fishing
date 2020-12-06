@@ -13,7 +13,8 @@ export default class GameLayout extends React.Component {
         };
     }
 
-    setLoadingState() {
+    loadDeck(deckUrl) {
+        // Show loading state.
         this.setTopCard(null);
     }
 
@@ -26,7 +27,7 @@ export default class GameLayout extends React.Component {
             <div className="gameLayout">
                 <div className="topPanel">
                     <DecklistLookup
-                        onImportClick={() => this.setLoadingState()}
+                        onImportClick={(deckUrl) => this.loadDeck(deckUrl)}
                     />
                 </div>
                 <div className="bottomPanel">
