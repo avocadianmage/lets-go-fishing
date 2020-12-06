@@ -1,7 +1,8 @@
 import React from 'react';
-import DecklistLookup from '../other-components/decklistLookup';
+import DeckLookup from '../other-components/deckLookup';
 import Hand from './hand';
 import Library from './library';
+import { DeckInfoService } from '../services/deckInfoSvc';
 
 import './gameLayout.css';
 
@@ -9,30 +10,41 @@ export default class GameLayout extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            libraryTopCard: null,
+            libraryContents: null,
         };
     }
 
     loadDeck(deckUrl) {
-        // Show loading state.
-        this.setTopCard(null);
+        this.showLoadingState();
+        DeckInfoService.getDecklist(deckUrl)
+            .then(decklist => {
+                this.setState({ 
+                    libraryContents: decklist
+                });
+            });
     }
 
-    setTopCard(name) {
-        this.setState({ libraryTopCard: { name, faceDown: true } });
+    showLoadingState() {
+        this.setState({ libraryContents: [ null ] });
+    }
+
+    getTopCard() {
+        return this.state.libraryContents ? 
+            { name: this.state.libraryContents[0], faceDown: true } :
+            null;
     }
 
     render() {
         return (
             <div className="gameLayout">
                 <div className="topPanel">
-                    <DecklistLookup
+                    <DeckLookup
                         onImportClick={(deckUrl) => this.loadDeck(deckUrl)}
                     />
                 </div>
                 <div className="bottomPanel">
                     <Hand />
-                    <Library topCard={this.state.libraryTopCard} />
+                    <Library topCard={this.getTopCard()} />
                 </div>
             </div>
         );

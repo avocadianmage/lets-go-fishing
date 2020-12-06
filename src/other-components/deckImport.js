@@ -1,7 +1,7 @@
 import React from "react";
 import './flatButton.css';
 
-export default class DecklistImport extends React.Component {
+export default class DeckImport extends React.Component {
     render() {
         return (
             <button 

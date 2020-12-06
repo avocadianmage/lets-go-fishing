@@ -1,6 +1,6 @@
 import React from "react";
 import Autosuggest from "react-autosuggest";
-import DeckListImport from './decklistImport';
+import DeckImport from './deckImport';
 import './textfield.css';
 
 const getSuggestionValue = _ => null;
@@ -8,7 +8,7 @@ const renderSuggestion = _ => null;
 const onSuggestionsFetchRequested = _ => null;
 const onSuggestionsClearRequested = _ => null;
 
-export default class DecklistLookup extends React.Component {
+export default class DeckLookup extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -43,7 +43,7 @@ export default class DecklistLookup extends React.Component {
                     onSuggestionsFetchRequested={onSuggestionsFetchRequested}
                     onSuggestionsClearRequested={onSuggestionsClearRequested}
                 />
-                <DeckListImport
+                <DeckImport
                     disabled={!value}
                     onClick={() => this.props.onImportClick(value)}
                 />

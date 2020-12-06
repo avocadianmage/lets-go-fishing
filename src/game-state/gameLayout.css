@@ -9,6 +9,7 @@
 
 .hand {
     flex: 1;
+    height: 340px;
 }
 
 .hand:empty::before {
