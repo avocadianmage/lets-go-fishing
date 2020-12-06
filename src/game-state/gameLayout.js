@@ -5,6 +5,7 @@ import Library from './library';
 import { DeckInfoService } from '../services/deckInfoSvc';
 
 import './gameLayout.css';
+import { DatabaseService } from '../services/dbSvc';
 
 export default class GameLayout extends React.Component {
     constructor(props) {
@@ -14,14 +15,14 @@ export default class GameLayout extends React.Component {
         };
     }
 
+    async componentDidMount() {
+        this.setState({ libraryContents: await DatabaseService.getDeck() });
+    }
+
     importDeck(deckUrl) {
         this.showLoadingState();
         DeckInfoService.getDecklist(deckUrl)
-            .then(decklist => {
-                this.setState({ 
-                    libraryContents: decklist
-                });
-            });
+            .then(decklist => this.setState({ libraryContents: decklist }));
     }
 
     showLoadingState() {

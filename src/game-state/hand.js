@@ -1,5 +1,4 @@
 import '../App.css';
-import Card from './card';
 
 export default function Hand() {
     return (

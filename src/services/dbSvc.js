@@ -21,8 +21,10 @@ class DbSvc {
         return (await dbPromise).put(CARD_STORE_NAME, blob, name);
     }
 
-    async getDeck(name) {
-        return (await dbPromise).get(DECK_STORE_NAME, name);
+    // Retrieve the first deck for now.
+    async getDeck() {
+        const decks = await (await dbPromise).getAll(DECK_STORE_NAME);
+        return decks.length ? decks[0] : null;
     }
 
     async putDeck(cardList, name) {
