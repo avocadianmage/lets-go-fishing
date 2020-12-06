@@ -3,9 +3,10 @@ import DeckLookup from '../other-components/deckLookup';
 import Hand from './hand';
 import Library from './library';
 import { DeckInfoService } from '../services/deckInfoSvc';
+import { DatabaseService } from '../services/dbSvc';
+import { shuffle } from '../utilities/shuffle';
 
 import './gameLayout.css';
-import { DatabaseService } from '../services/dbSvc';
 
 export default class GameLayout extends React.Component {
     constructor(props) {
@@ -16,13 +17,18 @@ export default class GameLayout extends React.Component {
     }
 
     async componentDidMount() {
-        this.setState({ libraryContents: await DatabaseService.getDeck() });
+        const deck = await DatabaseService.getDeck();
+        if (deck) this.shuffleDeck(deck);
     }
 
     importDeck(deckUrl) {
         this.showLoadingState();
         DeckInfoService.getDecklist(deckUrl)
-            .then(decklist => this.setState({ libraryContents: decklist }));
+            .then(decklist => this.shuffleDeck(decklist));
+    }
+
+    shuffleDeck(decklist) {
+        this.setState({ libraryContents: shuffle(decklist) });
     }
 
     showLoadingState() {
