@@ -7,7 +7,7 @@ export default class Library extends React.Component {
         const { topCard } = this.props;
         return (
             <div className="library gutter">
-                {topCard ? <Card {...topCard} /> : null}
+                {topCard ? <Card name={topCard} faceDown={true} /> : null}
             </div>
         );
     }

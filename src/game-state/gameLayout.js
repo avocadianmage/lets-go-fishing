@@ -36,9 +36,8 @@ export default class GameLayout extends React.Component {
     }
 
     getTopCard() {
-        return this.state.libraryContents ? 
-            { name: this.state.libraryContents[0], faceDown: true } :
-            null;
+        const { libraryContents } = this.state;
+        return libraryContents ? libraryContents[0] : null;
     }
 
     render() {
