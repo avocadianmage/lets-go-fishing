@@ -1,3 +1,5 @@
+import { DatabaseService } from "./dbSvc";
+
 function getApiUrl(deckUrl) {
     const split = deckUrl.split('/');
     const proxyPrefix = 'https://cors-anywhere.herokuapp.com/';
@@ -6,7 +8,9 @@ function getApiUrl(deckUrl) {
 }
 
 function parseAndSaveDeck(json) {
-    return Object.keys(json.mainboard);
+    const cardList = Object.keys(json.mainboard);
+    DatabaseService.putDeck(cardList, json.name);
+    return cardList;
 }
 
 class DeckInfoSvc {

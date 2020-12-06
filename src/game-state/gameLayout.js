@@ -14,7 +14,7 @@ export default class GameLayout extends React.Component {
         };
     }
 
-    loadDeck(deckUrl) {
+    importDeck(deckUrl) {
         this.showLoadingState();
         DeckInfoService.getDecklist(deckUrl)
             .then(decklist => {
@@ -39,7 +39,7 @@ export default class GameLayout extends React.Component {
             <div className="gameLayout">
                 <div className="topPanel">
                     <DeckLookup
-                        onImportClick={(deckUrl) => this.loadDeck(deckUrl)}
+                        onImportClick={deckUrl => this.importDeck(deckUrl)}
                     />
                 </div>
                 <div className="bottomPanel">

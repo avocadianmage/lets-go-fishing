@@ -25,6 +25,8 @@ export default class DeckLookup extends React.Component {
         if (event.key === 'Enter') this.props.onImportClick(this.state.value);
     }
 
+    onFocus = event => event.target.select();
+
     render() {
         const { value, suggestions } = this.state;
         const inputProps = {
@@ -32,6 +34,7 @@ export default class DeckLookup extends React.Component {
             value,
             onChange: this.onChange,
             onKeyDown: this.onKeyDown,
+            onFocus: this.onFocus,
         };
         return (
             <div style={{ position: "relative" }}>
