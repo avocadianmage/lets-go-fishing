@@ -26,8 +26,12 @@ export default class Hand extends React.Component {
         const rightPad = getCSSNumber(this.container, 'padding-right');
         const handWidthPx = this.state.width - leftPad - rightPad;
         const handSize = this.props.contents.length;
-        return Math.ceil(
-            (handSize * Constants.CARD_WIDTH_PX - handWidthPx) / (handSize - 1)
+        return Math.max(
+            0, 
+            Math.ceil(
+                (handSize * Constants.CARD_WIDTH_PX - handWidthPx) / 
+                (handSize - 1)
+            )
         );
     }
 
