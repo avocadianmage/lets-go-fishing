@@ -23,15 +23,21 @@ export default class Card extends React.Component {
     }
 
     render() {
-        const { name, faceDown, onClick } = this.props;
+        const { name, faceDown, onClick, style } = this.props;
         const { imageUrl, error } = this.state;
+        
         const loading = !name || (!imageUrl && !error && !faceDown);
+
         const imageUrlToUse = (loading || faceDown) ? cardBack : imageUrl;
+        const allStyles = Object.assign(
+            { backgroundImage: `url(${imageUrlToUse})` },
+            style,
+        );
 
         return (
             <div
                 className={"card " + (loading ? "loading" : "")}
-                style={{ backgroundImage: `url(${imageUrlToUse})` }}
+                style={allStyles}
                 onClick={onClick}
             >
                 { loading ? <div className="loader" /> : null}

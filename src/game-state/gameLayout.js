@@ -7,8 +7,7 @@ import { DatabaseService } from '../services/dbSvc';
 import { shuffle } from '../utilities/shuffle';
 
 import './gameLayout.css';
-
-const STARTING_HAND_SIZE = 7;
+import * as Constants from './constants';
 
 export default class GameLayout extends React.Component {
     constructor(props) {
@@ -33,7 +32,7 @@ export default class GameLayout extends React.Component {
     startGame(decklist) {
         if (!decklist) return;
         this.shuffleDeck(decklist);
-        this.draw(STARTING_HAND_SIZE);
+        this.draw(Constants.STARTING_HAND_SIZE);
     }
 
     shuffleDeck(decklist) {
