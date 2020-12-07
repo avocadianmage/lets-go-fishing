@@ -17,8 +17,15 @@ export default class Hand extends React.Component {
         };
     }
 
+    updateWidth = () => this.setState({ width: this.container.clientWidth });
+
     componentDidMount() {
-        this.setState({ width: this.container.clientWidth });
+        this.updateWidth();
+        window.addEventListener('resize', this.updateWidth);
+    }
+
+    componentWillUnmount() {
+        window.removeEventListener('resize', this.updateWidth);
     }
 
     getOverlapPx() {
