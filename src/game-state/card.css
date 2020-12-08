@@ -1,10 +1,8 @@
-@import "../nord.css";
-
 .card {
     width: 244px; 
     height: 340px;
     display: inline-block;
-    transition: background-color 0.5s ease;
+    transition: background-color 0.25s, box-shadow 0.5s, margin-left 0.03s;
     box-shadow: 1px 1px 8px rgba(0, 0, 0, 0.5);
     border-bottom-left-radius: 4.75% 3.5%;
     border-bottom-right-radius: 4.75% 3.5%;
@@ -13,7 +11,11 @@
     background-size: contain;
     background-blend-mode: darken;
     position: relative;
-    animation: fadeIn 0.25s ease;
+    animation: fadeIn 0.2s;
+}
+
+.card:hover {
+    background-color: rgba(0, 0, 0, 0.5);
 }
 
 .card.loading {
