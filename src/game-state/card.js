@@ -25,7 +25,7 @@ export default class Card extends React.Component {
     render() {
         const { name, faceDown, onClick, style } = this.props;
         const { imageUrl, error } = this.state;
-        
+
         const loading = !name || (!imageUrl && !error && !faceDown);
 
         const imageUrlToUse = (loading || faceDown) ? cardBack : imageUrl;
@@ -34,9 +34,12 @@ export default class Card extends React.Component {
             style,
         );
 
+        const loadingClass = loading ? "loading " : "";
+        const faceDownClass = faceDown ? "faceDown " : "";
+
         return (
             <div
-                className={"card " + (loading ? "loading" : "")}
+                className={"card " + loadingClass + faceDownClass}
                 style={allStyles}
                 onClick={onClick}
             >
