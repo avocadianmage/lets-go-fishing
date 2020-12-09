@@ -34,12 +34,9 @@ export default class Card extends React.Component {
             style,
         );
 
-        const loadingClass = loading ? "loading " : "";
-        const faceDownClass = faceDown ? "faceDown " : "";
-
         return (
             <div
-                className={"card " + loadingClass + faceDownClass}
+                className={"card " + (loading ? "loading " : "")}
                 style={allStyles}
                 onClick={onClick}
             >

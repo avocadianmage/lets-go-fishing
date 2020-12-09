@@ -1,5 +1,5 @@
 .card {
-    width: 244px; 
+    width: 244px;
     height: 340px;
     display: inline-block;
     transition: background-color 0.25s, box-shadow 0.5s, margin-left 0.01s;
@@ -18,7 +18,7 @@
     background-color: rgba(0, 0, 0, 0.5);
 }
 
-.card:not(.faceDown)::before {
+.hand .card::before {
     content: "";
     display: inherit;
     width: inherit;
@@ -31,7 +31,7 @@
     margin-top: 0px;
 }
 
-.card:not(.faceDown):hover::before {
+.hand .card:hover::before {
     margin-top: -340px;
 }
 
@@ -64,6 +64,6 @@
 
 @keyframes fadeIn {
     from {
-      opacity: 0;
+        opacity: 0;
     }
-  }
+}
