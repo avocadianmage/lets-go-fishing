@@ -6,8 +6,8 @@ function getPromisedTimeout() {
     return new Promise(r => setTimeout(r, MS_QUERY_RATE));
 }
 
-function getQueryUrl(name) {
-    return `https://api.scryfall.com/cards/named?exact=${name}`;
+function getQueryUrl(name, set) {
+    return `https://api.scryfall.com/cards/named?exact=${name}&set=${set}`;
 }
 
 class CardInfoSvc {
@@ -15,7 +15,7 @@ class CardInfoSvc {
         this.outgoingThrottle = Promise.resolve();
     }
 
-    getCardImageBlob(name) {
+    getCardImageBlob(name, set) {
         return new Promise(resolve => {
             DatabaseService.getCardBlob(name).then(blob => {
                 if (blob) {
@@ -25,7 +25,7 @@ class CardInfoSvc {
 
                 this.outgoingThrottle = this.outgoingThrottle
                     // Fetch card information from external site.
-                    .then(() => fetch(getQueryUrl(name)))
+                    .then(() => fetch(getQueryUrl(name, set)))
                     .then(result => result.json())
                     .then(
                         // Store the fetched image to the database as a blob.

@@ -6,7 +6,7 @@ export default class Library extends React.Component {
     renderTopCard() {
         const { loading, topCard, onClick } = this.props;
         return loading || topCard ?
-            <Card name={topCard} faceDown={true} onClick={onClick} /> :
+            <Card info={topCard} faceDown={true} onClick={onClick} /> :
             null;
     }
 

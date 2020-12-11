@@ -8,7 +8,12 @@ function getApiUrl(deckUrl) {
 }
 
 function parseAndSaveDeck(json) {
-    const cardList = Object.keys(json.mainboard);
+    const cardList = Object.entries(json.mainboard).map(([key, value]) => ({
+        name: key,
+        set: value.card.set,
+        quantity: value.quantity,
+    }));
+    
     DatabaseService.putDeck(cardList, json.name);
     return cardList;
 }
@@ -17,11 +22,11 @@ class DeckInfoSvc {
     getDecklist(deckUrl) {
         return new Promise(resolve => {
             fetch(
-                getApiUrl(deckUrl), 
+                getApiUrl(deckUrl),
                 { 'content-type': 'application/x-www-form-urlencoded' }
             )
-            .then(result => result.json())
-            .then(json => resolve(parseAndSaveDeck(json)))
+                .then(result => result.json())
+                .then(json => resolve(parseAndSaveDeck(json)))
         });
     }
 }

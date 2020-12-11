@@ -14,19 +14,19 @@ export default class Card extends React.Component {
     }
 
     componentDidMount() {
-        const { name } = this.props;
-        if (!name) return;
-        CardInfoService.getCardImageBlob(name)
+        const { info } = this.props;
+        if (!info) return;
+        CardInfoService.getCardImageBlob(info.name, info.set)
             .then(blob => this.setState({ 
                 imageUrl: URL.createObjectURL(blob) 
             }));
     }
 
     render() {
-        const { name, faceDown, onClick, style } = this.props;
+        const { info, faceDown, onClick, style } = this.props;
         const { imageUrl, error } = this.state;
 
-        const loading = !name || (!imageUrl && !error && !faceDown);
+        const loading = !info || (!imageUrl && !error && !faceDown);
 
         const imageUrlToUse = (loading || faceDown) ? cardBack : imageUrl;
         const allStyles = Object.assign(

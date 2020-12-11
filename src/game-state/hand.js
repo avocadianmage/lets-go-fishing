@@ -46,10 +46,10 @@ export default class Hand extends React.Component {
         const overlapPx = -this.getOverlapPx() + "px";
         return (
             <div className="hand gutter" ref={div => { this.container = div }}>
-                {this.props.contents.map((name, i) => {
+                {this.props.contents.map((card, i) => {
                     return <Card 
                         key={i} 
-                        name={name} 
+                        info={card} 
                         style={{ marginLeft: i === 0 ? 0 : overlapPx }} 
                     />
                 })}

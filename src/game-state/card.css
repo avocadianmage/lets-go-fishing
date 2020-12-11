@@ -14,29 +14,27 @@
     animation: fadeIn 0.2s;
 }
 
-.card:hover {
+.card.loading, .card:hover {
     background-color: rgba(0, 0, 0, 0.5);
 }
 
-.hand .card::before {
+.hand .card:not(.loading)::before {
     content: "";
     display: inherit;
     width: inherit;
     height: inherit;
-    position: absolute;
     background-image: inherit;
     background-size: inherit;
     border-radius: inherit;
+    position: absolute;
     transition: margin-top 0.15s;
     margin-top: 0px;
+    opacity: 0;
 }
 
-.hand .card:hover::before {
+.hand .card:not(.loading):hover::before {
     margin-top: -340px;
-}
-
-.card.loading {
-    background-color: rgba(0, 0, 0, 0.5);
+    opacity: 1;
 }
 
 .loader {
