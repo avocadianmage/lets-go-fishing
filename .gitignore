@@ -11,6 +11,9 @@
 # production
 /build
 
+# editor settings
+/.vscode
+
 # misc
 .DS_Store
 .env.local
