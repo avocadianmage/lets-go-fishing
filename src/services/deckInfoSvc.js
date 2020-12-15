@@ -12,6 +12,7 @@ function parseAndSaveDeck(json) {
         name: key,
         set: value.card.set,
         quantity: value.quantity,
+        foil: value.isFoil,
     }));
     
     DatabaseService.putDeck(cardList, json.name);
