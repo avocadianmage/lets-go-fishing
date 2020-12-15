@@ -18,8 +18,7 @@
     background-color: rgba(0, 0, 0, 0.5);
 }
 
-.hand .card:not(.loading)::after {
-    content: "";
+.hand .card:not(.loading) .card-face {
     display: inherit;
     width: inherit;
     height: inherit;
@@ -29,12 +28,10 @@
     position: absolute;
     transition: margin-top 0.15s;
     margin-top: 0px;
-    opacity: 0;
 }
 
-.hand .card:not(.loading):hover::after {
+.hand .card:not(.loading):hover .card-face {
     margin-top: -340px;
-    opacity: 1;
 }
 
 .loader {

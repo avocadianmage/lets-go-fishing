@@ -40,7 +40,9 @@ export default class Card extends React.Component {
                 style={allStyles}
                 onClick={onClick}
             >
-                { loading ? <div className="loader" /> : null}
+                <div className="card-face">
+                    { loading ? <div className="loader" /> : null}
+                </div>
             </div>
         );
     }
