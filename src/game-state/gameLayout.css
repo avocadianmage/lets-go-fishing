@@ -1,19 +1,14 @@
-html, body, #root {
-    height: 100%
-}
-
 .gameLayout {
     display: flex;
     flex-flow: column;
     row-gap: 6px;
-    height: 100%;
-    overflow: hidden;
+    height: calc(100% - 56px);
+    margin: 6px;
 }
 
 .bottomPanel {
     display: flex;
     column-gap: 6px;
-    margin: 0 6px 6px 6px;
 }
 
 .hand {
@@ -48,7 +43,6 @@ html, body, #root {
 
 .battlefield {
     flex: 1;
-    margin: 0 6px 0 6px;
 }
 
 .battlefield:empty::before {

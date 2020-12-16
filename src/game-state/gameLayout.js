@@ -1,5 +1,4 @@
 import React from 'react';
-import DeckLookup from '../other-components/deckLookup';
 import Hand from './hand';
 import Library from './library';
 import Battlefield from './battlefield';
@@ -64,11 +63,6 @@ export default class GameLayout extends React.Component {
         const { loading, handContents } = this.state;
         return (
             <div className="gameLayout">
-                <div className="topPanel">
-                    <DeckLookup
-                        onImportClick={deckUrl => this.importDeck(deckUrl)}
-                    />
-                </div>
                 <Battlefield />
                 <div className="bottomPanel">
                     <Hand contents={handContents} />

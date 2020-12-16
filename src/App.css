@@ -1,5 +1,10 @@
 @import "nord.css";
 
+html, body, #root, #root>div {
+    height: 100%;
+    overflow: hidden;
+}
+
 body {
     background-color: var(--nord0);
     color: var(--nord6);
