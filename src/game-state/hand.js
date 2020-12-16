@@ -1,5 +1,4 @@
 import React from 'react';
-import '../App.css';
 import Card from './card';
 import * as Constants from './constants';
 

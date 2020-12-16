@@ -2,11 +2,11 @@ import React from 'react';
 import DeckLookup from '../other-components/deckLookup';
 import Hand from './hand';
 import Library from './library';
+import Battlefield from './battlefield';
 import { DeckInfoService } from '../services/deckInfoSvc';
 import { DatabaseService } from '../services/dbSvc';
 import { shuffle } from '../utilities/shuffle';
 
-import './gameLayout.css';
 import * as Constants from './constants';
 
 export default class GameLayout extends React.Component {
@@ -69,6 +69,7 @@ export default class GameLayout extends React.Component {
                         onImportClick={deckUrl => this.importDeck(deckUrl)}
                     />
                 </div>
+                <Battlefield />
                 <div className="bottomPanel">
                     <Hand contents={handContents} />
                     <Library 

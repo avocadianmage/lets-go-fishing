@@ -1,7 +1,6 @@
 import React from 'react';
 import { CardInfoService } from '../services/cardInfoSvc';
 
-import './card.css';
 import cardBack from '../assets/mtg-card-back.png';
 
 export default class Card extends React.Component {

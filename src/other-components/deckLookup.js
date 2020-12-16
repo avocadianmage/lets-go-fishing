@@ -1,7 +1,6 @@
 import React from "react";
 import Autosuggest from "react-autosuggest";
 import DeckImport from './deckImport';
-import './textfield.css';
 
 const getSuggestionValue = _ => null;
 const renderSuggestion = _ => null;

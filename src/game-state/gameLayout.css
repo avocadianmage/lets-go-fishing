@@ -1,10 +1,19 @@
+html, body, #root {
+    height: 100%
+}
+
+.gameLayout {
+    display: flex;
+    flex-flow: column;
+    row-gap: 6px;
+    height: 100%;
+    overflow: hidden;
+}
+
 .bottomPanel {
     display: flex;
     column-gap: 6px;
-    margin: 6px;
-    position: fixed;
-    bottom: 0;
-    width: calc(100% - 12px);
+    margin: 0 6px 6px 6px;
 }
 
 .hand {
@@ -23,12 +32,27 @@
 }
 
 .library {
-    width: 244px; 
+    width: 244px;
     height: 340px;
 }
 
 .library:empty::before {
     content: "LIBRARY";
+    color: var(--nord3);
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+}
+
+.battlefield {
+    flex: 1;
+    margin: 0 6px 0 6px;
+}
+
+.battlefield:empty::before {
+    content: "BATTLEFIELD";
     color: var(--nord3);
     height: 100%;
     display: flex;

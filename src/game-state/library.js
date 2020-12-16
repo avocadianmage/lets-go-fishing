@@ -1,5 +1,4 @@
 import React from 'react';
-import '../App.css';
 import Card from './card';
 
 export default class Library extends React.Component {
