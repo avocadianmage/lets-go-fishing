@@ -18,10 +18,33 @@
     background-color: rgba(0, 0, 0, 0.5);
 }
 
-.hand .card:not(.loading) .card-face {
-    display: inherit;
+.card-face.foil::after {
+    position: absolute;
+    content: "";
+    overflow: hidden;
+    border-radius: 4.75% / 3.5%;
+    background-image: linear-gradient(
+        to bottom, 
+        transparent 0%, 
+        rgba(255, 255, 255, 0.2) 50%, 
+        transparent 100%
+    );
+    top: -90%;
+    left: -50%;
+    right: -50%;
+    height: 150px;
+    transform: rotate(-45deg);
+    animation-name: shine;
+    animation-timing-function: ease-out;
+    animation-duration: 7s;
+    animation-iteration-count: infinite;
+}
+
+.card .card-face {
+    overflow: hidden;
     width: inherit;
     height: inherit;
+    display: inherit;
     background-image: inherit;
     background-size: inherit;
     border-radius: inherit;
@@ -30,7 +53,7 @@
     margin-top: 0px;
 }
 
-.hand .card:not(.loading):hover .card-face {
+.hand .card:hover .card-face {
     margin-top: -340px;
 }
 
@@ -60,5 +83,14 @@
 @keyframes fadeIn {
     from {
         opacity: 0;
+    }
+}
+
+@keyframes shine {
+    0% {
+        top: -90%
+    }
+    100% {
+        top: 150%
     }
 }

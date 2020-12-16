@@ -17,8 +17,8 @@ export default class Card extends React.Component {
         const { info } = this.props;
         if (!info) return;
         CardInfoService.getCardImageBlob(info.name, info.set)
-            .then(blob => this.setState({ 
-                imageUrl: URL.createObjectURL(blob) 
+            .then(blob => this.setState({
+                imageUrl: URL.createObjectURL(blob)
             }));
     }
 
@@ -27,6 +27,7 @@ export default class Card extends React.Component {
         const { imageUrl, error } = this.state;
 
         const loading = !info || (!imageUrl && !error && !faceDown);
+        const showFoil = !loading && !faceDown && info.foil;
 
         const imageUrlToUse = (loading || faceDown) ? cardBack : imageUrl;
         const allStyles = Object.assign(
@@ -40,9 +41,15 @@ export default class Card extends React.Component {
                 style={allStyles}
                 onClick={onClick}
             >
-                <div className="card-face">
-                    { loading ? <div className="loader" /> : null}
-                </div>
+                {loading ? 
+                    <div className="loader" /> : 
+                    (!faceDown ?
+                        <div className={
+                            "card-face " + (showFoil ? "foil " : "")
+                        } /> : 
+                        null
+                    )
+                }
             </div>
         );
     }
