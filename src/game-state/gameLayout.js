@@ -2,6 +2,7 @@ import React from 'react';
 import Hand from './hand';
 import Library from './library';
 import Battlefield from './battlefield';
+import DeckLookup from '../other-components/deckLookup';
 import { DeckInfoService } from '../services/deckInfoSvc';
 import { DatabaseService } from '../services/dbSvc';
 import { shuffle } from '../utilities/shuffle';
@@ -35,9 +36,9 @@ export default class GameLayout extends React.Component {
     }
 
     shuffleDeck(decklist) {
-        this.setState({ 
+        this.setState({
             loading: false,
-            libraryContents: shuffle(decklist) 
+            libraryContents: shuffle(decklist)
         });
     }
 
@@ -62,15 +63,22 @@ export default class GameLayout extends React.Component {
     render() {
         const { loading, handContents } = this.state;
         return (
-            <div className="gameLayout">
-                <Battlefield />
-                <div className="bottomPanel">
-                    <Hand contents={handContents} />
-                    <Library 
-                        loading={loading}
-                        topCard={this.getTopCard()} 
-                        onClick={() => this.draw()} 
+            <div>
+                <div className="topPanel">
+                    <DeckLookup
+                        onImportClick={deckUrl => this.importDeck(deckUrl)}
                     />
+                </div>
+                <div className="gameLayout">
+                    <Battlefield />
+                    <div className="bottomPanel">
+                        <Hand contents={handContents} />
+                        <Library
+                            loading={loading}
+                            topCard={this.getTopCard()}
+                            onClick={() => this.draw()}
+                        />
+                    </div>
                 </div>
             </div>
         );
