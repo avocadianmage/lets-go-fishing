@@ -51,6 +51,7 @@
     position: absolute;
     transition: margin-top 0.15s;
     margin-top: 0px;
+    pointer-events: none;
 }
 
 .hand .card:hover .card-face {

@@ -1,3 +1,3 @@
 export const Battlefield = () => {
-    return <div className="battlefield gutter" />;
+    return <div className='battlefield zone' />;
 };

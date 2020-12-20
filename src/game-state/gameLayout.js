@@ -5,9 +5,8 @@ import { Battlefield } from './battlefield';
 import DeckLookup from '../other-components/deckLookup';
 import { DeckInfoService } from '../services/deckInfoSvc';
 import { DatabaseService } from '../services/dbSvc';
-import { shuffle } from '../utilities/shuffle';
-
 import * as Constants from '../utilities/constants';
+import { shuffle } from '../utilities/helpers';
 
 export default class GameLayout extends React.Component {
     constructor(props) {
