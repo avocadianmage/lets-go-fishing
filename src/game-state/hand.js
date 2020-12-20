@@ -1,6 +1,6 @@
 import React from 'react';
-import Card from './card';
-import * as Constants from './constants';
+import * as Constants from '../utilities/constants';
+import { Card } from './card';
 
 function getCSSNumber(elem, propertyName) {
     return !elem ? 0 : parseFloat(
@@ -33,9 +33,9 @@ export default class Hand extends React.Component {
         const handWidthPx = this.state.width - leftPad - rightPad;
         const handSize = this.props.contents.length;
         return Math.max(
-            0, 
+            0,
             Math.ceil(
-                (handSize * Constants.CARD_WIDTH_PX - handWidthPx) / 
+                (handSize * Constants.CARD_WIDTH_PX - handWidthPx) /
                 (handSize - 1)
             )
         );
@@ -44,12 +44,12 @@ export default class Hand extends React.Component {
     render() {
         const overlapPx = -this.getOverlapPx() + "px";
         return (
-            <div className="hand gutter" ref={div => { this.container = div }}>
-                {this.props.contents.map((card, i) => {
-                    return <Card 
-                        key={i} 
-                        info={card} 
-                        style={{ marginLeft: i === 0 ? 0 : overlapPx }} 
+            <div ref={div => { this.container = div }} className="hand gutter">
+                {this.props.contents.map((card, index) => {
+                    return <Card
+                        key={index}
+                        info={card}
+                        style={{marginLeft: index === 0 ? 0 : overlapPx}}
                     />
                 })}
             </div>

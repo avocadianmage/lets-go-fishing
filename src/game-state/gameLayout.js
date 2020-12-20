@@ -1,13 +1,13 @@
 import React from 'react';
 import Hand from './hand';
-import Library from './library';
-import Battlefield from './battlefield';
+import { Library } from './library';
+import { Battlefield } from './battlefield';
 import DeckLookup from '../other-components/deckLookup';
 import { DeckInfoService } from '../services/deckInfoSvc';
 import { DatabaseService } from '../services/dbSvc';
 import { shuffle } from '../utilities/shuffle';
 
-import * as Constants from './constants';
+import * as Constants from '../utilities/constants';
 
 export default class GameLayout extends React.Component {
     constructor(props) {

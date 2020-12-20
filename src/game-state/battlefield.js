@@ -1,3 +1,3 @@
-export default function Battlefield() {
+export const Battlefield = () => {
     return <div className="battlefield gutter" />;
-}
+};

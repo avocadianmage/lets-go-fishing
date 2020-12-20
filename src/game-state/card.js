@@ -1,55 +1,40 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { CardInfoService } from '../services/cardInfoSvc';
 
 import cardBack from '../assets/mtg-card-back.png';
 
-export default class Card extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            imageUrl: null,
-            error: null,
-        };
-    }
+export const Card = ({ info, faceDown, style, onClick }) => {
+    const [imageUrl, setImageUrl] = useState(null);
 
-    componentDidMount() {
-        const { info } = this.props;
+    const isLoading = !info || (!imageUrl && !faceDown);
+
+    // Perform card image lookup when info is set.
+    useEffect(() => {
         if (!info) return;
         CardInfoService.getCardImageBlob(info.name, info.set)
-            .then(blob => this.setState({
-                imageUrl: URL.createObjectURL(blob)
-            }));
-    }
+            .then(blob => setImageUrl(URL.createObjectURL(blob)));
+    }, [info]);
 
-    render() {
-        const { info, faceDown, onClick, style } = this.props;
-        const { imageUrl, error } = this.state;
-
-        const loading = !info || (!imageUrl && !error && !faceDown);
-        const showFoil = !loading && !faceDown && info.foil;
-
-        const imageUrlToUse = (loading || faceDown) ? cardBack : imageUrl;
-        const allStyles = Object.assign(
+    const getStyling = () => {
+        const imageUrlToUse = (isLoading || faceDown) ? cardBack : imageUrl;
+        return Object.assign(
             { backgroundImage: `url(${imageUrlToUse})` },
             style,
         );
+    };
 
-        return (
-            <div
-                className={"card " + (loading ? "loading " : "")}
-                style={allStyles}
-                onClick={onClick}
-            >
-                {loading ? 
-                    <div className="loader" /> : 
-                    (!faceDown ?
-                        <div className={
-                            "card-face " + (showFoil ? "foil " : "")
-                        } /> : 
-                        null
-                    )
-                }
-            </div>
-        );
-    }
-}
+    const getClasses = () => {
+        return "card " +
+            (isLoading ? "loading " : "") +
+            (!isLoading && !faceDown && info.foil ? "foil " : "");
+    };
+
+    return (
+        <div className={getClasses()} style={getStyling()} onClick={onClick}>
+            {isLoading ?
+                <div className="loader" /> :
+                (!faceDown && <div className={"card-face"} />)
+            }
+        </div>
+    );
+};
