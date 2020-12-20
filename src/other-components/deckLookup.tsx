@@ -1,14 +1,23 @@
 import React from "react";
-import Autosuggest from "react-autosuggest";
+import Autosuggest, { ChangeEvent, InputProps, GetSuggestionValue, RenderSuggestion, SuggestionsFetchRequested, OnSuggestionsClearRequested } from "react-autosuggest";
 import DeckImport from './deckImport';
 
-const getSuggestionValue = _ => null;
-const renderSuggestion = _ => null;
-const onSuggestionsFetchRequested = _ => null;
-const onSuggestionsClearRequested = _ => null;
+const getSuggestionValue: GetSuggestionValue<string> = (_: string) => "";
+const renderSuggestion: RenderSuggestion<string> = (_: string, _2: any) => null;
+const onSuggestionsFetchRequested: SuggestionsFetchRequested = (_: any) => null;
+const onSuggestionsClearRequested: OnSuggestionsClearRequested = () => null;
 
-export default class DeckLookup extends React.Component {
-    constructor(props) {
+export interface IDeckLookupProps {
+    onImportClick(value: string): void;
+}
+
+export interface IDeckLookupState {
+    value: string,
+    suggestions: string[]
+}
+
+export default class DeckLookup extends React.Component<IDeckLookupProps, IDeckLookupState> {
+    constructor(props: IDeckLookupProps) {
         super(props);
         this.state = {
             value: "",
@@ -16,15 +25,15 @@ export default class DeckLookup extends React.Component {
         };
     }
 
-    onChange = (_, { newValue }) => {
-        this.setState({ value: newValue });
+    onChange = (_: any, args: ChangeEvent) => {
+        this.setState({ value: args.newValue });
     };
 
-    onKeyDown = event => {
+    onKeyDown = (event: React.KeyboardEvent) => {
         if (event.key === 'Enter') this.props.onImportClick(this.state.value);
     }
 
-    onFocus = event => event.target.select();
+    onFocus = (event: React.FocusEvent<HTMLInputElement>) => event.target.select();
 
     render() {
         const { value, suggestions } = this.state;

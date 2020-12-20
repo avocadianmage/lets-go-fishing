@@ -4,13 +4,23 @@ import { Library } from './library';
 import { Battlefield } from './battlefield';
 import DeckLookup from '../other-components/deckLookup';
 import { DeckInfoService } from '../services/deckInfoSvc';
-import { DatabaseService } from '../services/dbSvc';
+import { DatabaseService, ICard } from '../services/dbSvc';
 import { shuffle } from '../utilities/shuffle';
 
 import * as Constants from '../utilities/constants';
 
-export default class GameLayout extends React.Component {
-    constructor(props) {
+export interface IGameLayoutProps {
+
+}
+
+export interface IGameLayoutState {
+    loading: boolean;
+    libraryContents: any[];
+    handContents: any[];
+}
+
+export default class GameLayout extends React.Component<IGameLayoutProps, IGameLayoutState> {
+    constructor(props: IGameLayoutProps) {
         super(props);
         this.state = {
             loading: false,
@@ -19,30 +29,30 @@ export default class GameLayout extends React.Component {
         };
     }
 
-    async componentDidMount() {
+    async componentDidMount(): Promise<void> {
         this.startGame(await DatabaseService.getDeck());
     }
 
-    importDeck(deckUrl) {
+    importDeck(deckUrl: string): void {
         this.showLoadingState();
         DeckInfoService.getDecklist(deckUrl)
             .then(decklist => this.startGame(decklist));
     }
 
-    startGame(decklist) {
+    startGame(decklist: ICard[] | undefined): void {
         if (!decklist) return;
         this.shuffleDeck(decklist);
         this.draw(Constants.STARTING_HAND_SIZE);
     }
 
-    shuffleDeck(decklist) {
+    shuffleDeck(decklist: ICard[]): void {
         this.setState({
             loading: false,
             libraryContents: shuffle(decklist)
         });
     }
 
-    draw(num = 1) {
+    draw(num = 1): void {
         const { loading, libraryContents, handContents } = this.state;
         if (loading) return;
         this.setState({
@@ -51,16 +61,16 @@ export default class GameLayout extends React.Component {
         });
     }
 
-    showLoadingState() {
+    showLoadingState(): void {
         this.setState({ loading: true });
     }
 
-    getTopCard() {
+    getTopCard(): any | null {
         const { libraryContents } = this.state;
         return libraryContents ? libraryContents[0] : null;
     }
 
-    render() {
+    render(): JSX.Element {
         const { loading, handContents } = this.state;
         return (
             <div>

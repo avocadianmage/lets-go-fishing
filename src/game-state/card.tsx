@@ -1,10 +1,18 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, FunctionComponent, MouseEventHandler, CSSProperties } from 'react';
 import { CardInfoService } from '../services/cardInfoSvc';
 
 import cardBack from '../assets/mtg-card-back.png';
 
-export const Card = ({ info, faceDown, style, onClick }) => {
-    const [imageUrl, setImageUrl] = useState(null);
+export interface ICardProps {
+    info?: any;
+    faceDown?: boolean;
+    style?: CSSProperties;
+
+    onClick?: MouseEventHandler<HTMLDivElement>;
+}
+
+export const Card: FunctionComponent<ICardProps> = ({ info, faceDown, style, onClick }) => {
+    const [imageUrl, setImageUrl] = useState<string | null>(null);
 
     const isLoading = !info || (!imageUrl && !faceDown);
 
@@ -15,7 +23,7 @@ export const Card = ({ info, faceDown, style, onClick }) => {
             .then(blob => setImageUrl(URL.createObjectURL(blob)));
     }, [info]);
 
-    const getStyling = () => {
+    const getStyling = (): CSSProperties => {
         const imageUrlToUse = (isLoading || faceDown) ? cardBack : imageUrl;
         return Object.assign(
             { backgroundImage: `url(${imageUrlToUse})` },
@@ -23,7 +31,7 @@ export const Card = ({ info, faceDown, style, onClick }) => {
         );
     };
 
-    const getClasses = () => {
+    const getClasses = (): string => {
         return "card " +
             (isLoading ? "loading " : "") +
             (!isLoading && !faceDown && info.foil ? "foil " : "");

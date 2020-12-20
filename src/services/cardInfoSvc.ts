@@ -2,20 +2,22 @@ import { DatabaseService } from "./dbSvc";
 
 const MS_QUERY_RATE = 80;
 
-function getPromisedTimeout() {
+function getPromisedTimeout(): Promise<number> {
     return new Promise(r => setTimeout(r, MS_QUERY_RATE));
 }
 
-function getQueryUrl(name, set) {
+function getQueryUrl(name: string, set: string): string {
     return `https://api.scryfall.com/cards/named?exact=${name}&set=${set}`;
 }
 
 class CardInfoSvc {
+    private __ongoingThrottle: Promise<any>;
+
     constructor() {
-        this.outgoingThrottle = Promise.resolve();
+        this.__ongoingThrottle = Promise.resolve();
     }
 
-    getCardImageBlob(name, set) {
+    public getCardImageBlob(name: string, set: string):Promise<Blob> {
         return new Promise(resolve => {
             DatabaseService.getCardBlob(name).then(blob => {
                 if (blob) {
@@ -23,7 +25,7 @@ class CardInfoSvc {
                     return;
                 }
 
-                this.outgoingThrottle = this.outgoingThrottle
+                this.__ongoingThrottle = this.__ongoingThrottle
                     // Fetch card information from external site.
                     .then(() => fetch(getQueryUrl(name, set)))
                     .then(result => result.json())
