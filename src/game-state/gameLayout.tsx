@@ -15,13 +15,10 @@ interface GameLayoutState {
 }
 
 export default class GameLayout extends Component<{}, GameLayoutState> {
-    constructor(props: {}) {
-        super(props);
-        this.state = {
-            loading: false,
-            libraryContents: [],
-            handContents: [],
-        };
+    state: GameLayoutState = {
+        loading: false,
+        libraryContents: [],
+        handContents: [],
     }
 
     async componentDidMount() {

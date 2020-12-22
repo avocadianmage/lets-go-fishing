@@ -11,11 +11,7 @@ function getQueryUrl({ name, set }: CardInfo) {
 }
 
 class CardInfoSvc {
-    private outgoingThrottle: Promise<any>;
-
-    constructor() {
-        this.outgoingThrottle = Promise.resolve();
-    }
+    private outgoingThrottle: Promise<any> = Promise.resolve();
 
     getCardImageBlob(cardInfo: CardInfo) {
         return new Promise(resolve => {

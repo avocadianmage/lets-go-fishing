@@ -20,11 +20,8 @@ interface HandState {
 export default class Hand extends Component<HandProps, HandState> {
     private container: HTMLDivElement | null = null;
 
-    constructor(props: HandProps) {
-        super(props);
-        this.state = {
-            width: 0,
-        };
+    state: HandState = {
+        width: 0,
     }
 
     updateWidth = () => this.setState({ width: this.container!.clientWidth });

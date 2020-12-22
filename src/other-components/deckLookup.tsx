@@ -14,12 +14,9 @@ interface DeckLookupState {
 export default class DeckLookup extends Component<
     DeckLookupProps, DeckLookupState
 > {
-    constructor(props: DeckLookupProps) {
-        super(props);
-        this.state = {
-            value: "",
-            suggestions: [],
-        };
+    state: DeckLookupState = {
+        value: "",
+        suggestions: [],
     }
 
     onChange = (_: any, { newValue }: ChangeEvent) => {
