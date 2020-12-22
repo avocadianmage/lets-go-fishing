@@ -1,22 +1,33 @@
-import React from 'react';
+import { Component } from 'react';
+import { CardInfo } from '../services/dbSvc';
 import * as Constants from '../utilities/constants';
 import { Card } from './card';
 
-function getCSSNumber(elem, propertyName) {
+function getCSSNumber(elem: Element | null, propertyName : string) {
     return !elem ? 0 : parseFloat(
         getComputedStyle(elem).getPropertyValue(propertyName)
     );
 }
 
-export default class Hand extends React.Component {
-    constructor(props) {
+interface HandProps {
+    contents: CardInfo[],
+}
+
+interface HandState {
+    width: number;
+}
+
+export default class Hand extends Component<HandProps, HandState> {
+    private container: HTMLDivElement | null = null;
+
+    constructor(props: HandProps) {
         super(props);
         this.state = {
             width: 0,
         };
     }
 
-    updateWidth = () => this.setState({ width: this.container.clientWidth });
+    updateWidth = () => this.setState({ width: this.container!.clientWidth });
 
     componentDidMount() {
         this.updateWidth();

@@ -1,14 +1,20 @@
-import React from "react";
-import Autosuggest from "react-autosuggest";
-import DeckImport from './deckImport';
+import { Component, FocusEvent, KeyboardEvent } from "react";
+import Autosuggest, { ChangeEvent } from "react-autosuggest";
+import { DeckImport } from './deckImport';
 
-const getSuggestionValue = _ => null;
-const renderSuggestion = _ => null;
-const onSuggestionsFetchRequested = _ => null;
-const onSuggestionsClearRequested = _ => null;
+interface DeckLookupProps {
+    onImportClick(value: string): void;
+}
 
-export default class DeckLookup extends React.Component {
-    constructor(props) {
+interface DeckLookupState {
+    value: string;
+    suggestions: [];
+}
+
+export default class DeckLookup extends Component<
+    DeckLookupProps, DeckLookupState
+> {
+    constructor(props: DeckLookupProps) {
         super(props);
         this.state = {
             value: "",
@@ -16,15 +22,15 @@ export default class DeckLookup extends React.Component {
         };
     }
 
-    onChange = (_, { newValue }) => {
+    onChange = (_: any, { newValue }: ChangeEvent) => {
         this.setState({ value: newValue });
     };
 
-    onKeyDown = event => {
+    onKeyDown = (event: KeyboardEvent) => {
         if (event.key === 'Enter') this.props.onImportClick(this.state.value);
     }
 
-    onFocus = event => event.target.select();
+    onFocus = (event: FocusEvent<HTMLInputElement>) => event.target.select();
 
     render() {
         const { value, suggestions } = this.state;
@@ -40,10 +46,10 @@ export default class DeckLookup extends React.Component {
                 <Autosuggest
                     inputProps={inputProps}
                     suggestions={suggestions}
-                    getSuggestionValue={getSuggestionValue}
-                    renderSuggestion={renderSuggestion}
-                    onSuggestionsFetchRequested={onSuggestionsFetchRequested}
-                    onSuggestionsClearRequested={onSuggestionsClearRequested}
+                    getSuggestionValue={() => ""}
+                    renderSuggestion={() => null}
+                    onSuggestionsFetchRequested={() => null}
+                    onSuggestionsClearRequested={() => null}
                 />
                 <DeckImport
                     disabled={!value}
