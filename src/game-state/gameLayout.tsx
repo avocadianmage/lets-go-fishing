@@ -28,6 +28,7 @@ export default class GameLayout extends Component<{}, GameLayoutState> {
         zones: {
             [Zone.Library]: [],
             [Zone.Hand]: [],
+            [Zone.Battlefield]: [],
         },
     }
 
@@ -77,6 +78,16 @@ export default class GameLayout extends Component<{}, GameLayoutState> {
         return libraryCards ? libraryCards[0] : undefined;
     }
 
+    sliceCardFromZone(cardInfo: CardInfo, zone: string) {
+        const sourceCards = this.state.zones[zone];
+        const sourceCardIndex = sourceCards.findIndex(
+            c => c.id === cardInfo.id
+        );
+        return sourceCards
+            .slice(0, sourceCardIndex)
+            .concat(sourceCards.slice(sourceCardIndex + 1));
+    }
+
     onDragCardStart(cardInfo: CardInfo, cardElem: HTMLElement) {
         this.setState({ 
             draggingCard: cardInfo,
@@ -85,17 +96,31 @@ export default class GameLayout extends Component<{}, GameLayoutState> {
         return true;
     }
 
-    onDragCardStop(cardInfo: CardInfo, cardElem: HTMLElement) {
-        const { dragSourceZone, dragTargetZone } = this.state;
-        
+    onDragCardStop(cardInfo: CardInfo, _: HTMLElement) {
+        const { dragSourceZone, dragTargetZone, zones } = this.state;
         this.setState({ 
             draggingCard: undefined, 
             dragSourceZone: undefined,
             dragTargetZone: undefined
         });
 
-        if (!dragTargetZone || dragSourceZone === dragTargetZone) return false;
+        if (
+            !dragSourceZone || 
+            !dragTargetZone || 
+            dragSourceZone === dragTargetZone
+        ) {
+            return false;
+        }
 
+        this.setState({
+            zones: {
+                ...zones,
+                [dragSourceZone]: this.sliceCardFromZone(
+                    cardInfo, dragSourceZone
+                ),
+                [dragTargetZone]: zones[dragTargetZone].concat(cardInfo),
+            }
+        });
         return true;
     }
 
@@ -122,6 +147,7 @@ export default class GameLayout extends Component<{}, GameLayoutState> {
                     onMouseMove={e => this.onMouseMove(e)}
                 >
                     <Battlefield 
+                        contents={zones[Zone.Battlefield]}
                         isDraggedOver={dragTargetZone === Zone.Battlefield} 
                     />
                     <div className="bottomPanel">
