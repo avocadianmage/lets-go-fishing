@@ -3,7 +3,7 @@ import { CardInfoService } from '../services/cardInfoSvc';
 
 import cardBack from '../assets/mtg-card-back.png';
 import { CardInfo } from '../services/dbSvc';
-import Draggable, { DraggableData, DraggableEvent } from 'react-draggable';
+import Draggable, { ControlPosition, DraggableData, DraggableEvent } from 'react-draggable';
 
 export interface CardProps {
     info?: CardInfo;
@@ -15,14 +15,15 @@ export interface CardProps {
 }
 
 export type CardDragEventHandler = (
-    cardInfo: CardInfo, 
+    cardInfo: CardInfo,
     cardElem: HTMLElement,
-) => void;
+) => boolean;
 
-export const Card = ({ 
+export const Card = ({
     info, faceDown, style, onClick, onDragStart, onDragStop
 }: CardProps) => {
-    const [imageUrl, setImageUrl] = useState<string>('');
+    const [imageUrl, setImageUrl] = useState('');
+    const [manualDragPos, setManualDragPos] = useState<ControlPosition>();
 
     const isLoading = !info || (!imageUrl && !faceDown);
 
@@ -48,23 +49,27 @@ export const Card = ({
     };
 
     const fireDragStart = (_: DraggableEvent, data: DraggableData) => {
-        return info ? onDragStart(info, data.node) : false;
+        setManualDragPos(undefined);
+        if (!info || !onDragStart(info, data.node)) return false;
     };
     const fireDragStop = (_: DraggableEvent, data: DraggableData) => {
-        return info ? onDragStop(info, data.node) : false;
+        if (info && !onDragStop(info, data.node)) {
+            setManualDragPos({ x: 0, y: 0 });
+        }
     }
 
     const nodeRef = React.useRef(null);
     return (
-        <Draggable 
-            nodeRef={nodeRef} 
-            onStart={fireDragStart} 
+        <Draggable
+            nodeRef={nodeRef}
+            onStart={fireDragStart}
             onStop={fireDragStop}
+            position={manualDragPos}
         >
-            <div 
+            <div
                 ref={nodeRef}
-                className={getClasses()} 
-                style={getStyling()} 
+                className={getClasses()}
+                style={getStyling()}
                 onClick={onClick}
             >
                 {isLoading ?

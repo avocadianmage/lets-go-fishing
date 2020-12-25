@@ -16,8 +16,8 @@ export const Library = ({ loading, topCard, onClick }: LibraryProps) => {
                     info={topCard} 
                     faceDown={true} 
                     onClick={onClick} 
-                    onDragStart={() => {}}
-                    onDragStop={() => {}}
+                    onDragStart={() => false}
+                    onDragStop={() => false}
                 />
             }
         </div>

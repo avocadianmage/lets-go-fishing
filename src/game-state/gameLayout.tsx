@@ -82,21 +82,21 @@ export default class GameLayout extends Component<{}, GameLayoutState> {
             draggingCard: cardInfo,
             dragSourceZone: cardElem.parentElement?.id,
         });
+        return true;
     }
 
     onDragCardStop(cardInfo: CardInfo, cardElem: HTMLElement) {
         const { dragSourceZone, dragTargetZone } = this.state;
-
-        if (!dragTargetZone || dragSourceZone === dragTargetZone) {
-            // Undo card element's position from the drag operation.
-            cardElem.style.transform = 'unset';
-        }
-
+        
         this.setState({ 
             draggingCard: undefined, 
             dragSourceZone: undefined,
             dragTargetZone: undefined
         });
+
+        if (!dragTargetZone || dragSourceZone === dragTargetZone) return false;
+
+        return true;
     }
 
     onMouseMove(e: React.MouseEvent) {
