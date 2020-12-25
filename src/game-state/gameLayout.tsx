@@ -87,9 +87,8 @@ export default class GameLayout extends Component<{}, GameLayoutState> {
     onDragCardStop(cardInfo: CardInfo, cardElem: HTMLElement) {
         const { dragSourceZone, dragTargetZone } = this.state;
 
-        // If the card is dropped in the same zone it started in, just reset
-        // it's position from the drag.
-        if (dragSourceZone === dragTargetZone) {
+        if (!dragTargetZone || dragSourceZone === dragTargetZone) {
+            // Undo card element's position from the drag operation.
             cardElem.style.transform = 'unset';
         }
 
