@@ -1,9 +1,9 @@
 import { DBSchema, openDB } from 'idb';
 
 export interface CardInfo {
+    id: number;
     name: string;
     set: string;
-    quantity: number;
     foil: boolean;
 }
 

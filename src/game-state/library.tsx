@@ -12,7 +12,13 @@ export const Library = ({ loading, topCard, onClick }: LibraryProps) => {
     return (
         <div className="library zone">
             {(loading || topCard) && 
-                <Card info={topCard} faceDown={true} onClick={onClick} />
+                <Card 
+                    info={topCard} 
+                    faceDown={true} 
+                    onClick={onClick} 
+                    onDragStart={() => {}}
+                    onDragStop={() => {}}
+                />
             }
         </div>
     );

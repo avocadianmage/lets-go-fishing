@@ -1,6 +1,6 @@
 @import "nord.css";
 
-html, body, #root, #root>div {
+html, body, #root {
     height: 100%;
     overflow: hidden;
 }
@@ -8,12 +8,4 @@ html, body, #root, #root>div {
 body {
     background-color: var(--nord0);
     color: var(--nord6);
-}
-
-.zone {
-    background-color: var(--nord1);
-    padding: 10px;
-    border-radius: 3px;
-    font-family: 'Bahnschrift Condensed', 'Arial Narrow Bold', sans-serif;
-    font-size: 60px;
 }

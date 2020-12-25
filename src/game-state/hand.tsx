@@ -1,7 +1,8 @@
 import { Component } from 'react';
 import { CardInfo } from '../services/dbSvc';
 import * as Constants from '../utilities/constants';
-import { Card } from './card';
+import { Card, CardDragEventHandler } from './card';
+import { Zone } from './gameLayout';
 
 function getCSSNumber(elem: Element | null, propertyName : string) {
     return !elem ? 0 : parseFloat(
@@ -10,7 +11,9 @@ function getCSSNumber(elem: Element | null, propertyName : string) {
 }
 
 interface HandProps {
-    contents: CardInfo[],
+    contents: CardInfo[];
+    onCardDragStart: CardDragEventHandler;
+    onCardDragStop: CardDragEventHandler;
 }
 
 interface HandState {
@@ -49,16 +52,30 @@ export default class Hand extends Component<HandProps, HandState> {
         );
     }
 
+    fireCardDragStart = (info: CardInfo, elem: HTMLElement) => {
+        return this.props.onCardDragStart(info, elem);
+    }
+
+    fireCardDragStop = (info: CardInfo, elem: HTMLElement) => {
+        return this.props.onCardDragStop(info, elem);
+    }
+
     render() {
         const { contents } = this.props;
         const overlapPx = -this.getOverlapPx() + "px";
         return (
-            <div ref={div => { this.container = div }} className="hand zone">
-                {contents.map((card, index) => {
+            <div 
+            ref={div => { this.container = div }} 
+            id={Zone.Hand}
+            className="hand zone"
+        >
+                {contents.map((cardInfo, index) => {
                     return <Card
-                        key={index}
-                        info={card}
+                        key={cardInfo.id}
+                        info={cardInfo}
                         style={{marginLeft: index === 0 ? 0 : overlapPx}}
+                        onDragStart={this.fireCardDragStart}
+                        onDragStop={this.fireCardDragStop}
                     />
                 })}
             </div>

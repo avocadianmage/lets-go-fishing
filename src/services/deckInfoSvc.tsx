@@ -31,12 +31,18 @@ class DeckInfoSvc {
     }
 
     private parseAndSaveDeck({ name, mainboard }: MoxfieldDeck) {
-        const cardList = Object.entries(mainboard).map(([cardName, entry]) => ({
-            name: cardName,
-            set: entry.card.set,
-            quantity: entry.quantity,
-            foil: entry.isFoil,
-        }));
+        const cardList = [];
+        let id = 0;
+        for (let [cardName, entry] of Object.entries(mainboard)) {
+            for (let i = 0; i < entry.quantity; i++) {
+                cardList[id] = {
+                    id: id++,
+                    name: cardName,
+                    set: entry.card.set,
+                    foil: entry.isFoil,
+                };
+            }
+        }
         
         DatabaseService.putDeck(cardList, name);
         return cardList;

@@ -18,6 +18,10 @@
     background-color: rgba(0, 0, 0, 0.5);
 }
 
+.card.react-draggable-dragging {
+    z-index: 1;
+}
+
 .card.foil .card-face::after {
     position: absolute;
     content: "";
@@ -54,7 +58,7 @@
     pointer-events: none;
 }
 
-.hand .card:hover .card-face {
+.hand .card:not(.react-draggable-dragging):hover .card-face {
     margin-top: -340px;
 }
 
