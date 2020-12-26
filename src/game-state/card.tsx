@@ -52,11 +52,15 @@ export const Card = ({
         setManualDragPos(undefined);
         if (!info || !onDragStart(info, data.node)) return false;
     };
+
     const fireDragStop = (_: DraggableEvent, data: DraggableData) => {
         if (info && !onDragStop(info, data.node)) {
             setManualDragPos({ x: 0, y: 0 });
         }
-    }
+        // Don't let react-draggable update since the card was dragged to a new 
+        // zone.
+        else return false; 
+    };
 
     const nodeRef = React.useRef(null);
     return (
