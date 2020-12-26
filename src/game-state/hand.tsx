@@ -52,12 +52,12 @@ export default class Hand extends Component<HandProps, HandState> {
         );
     }
 
-    fireCardDragStart = (info: CardInfo, elem: HTMLElement) => {
-        return this.props.onCardDragStart(info, elem);
+    fireCardDragStart = (card: CardInfo, elem: HTMLElement) => {
+        return this.props.onCardDragStart(card, elem);
     }
 
-    fireCardDragStop = (info: CardInfo, elem: HTMLElement) => {
-        return this.props.onCardDragStop(info, elem);
+    fireCardDragStop = (card: CardInfo, elem: HTMLElement) => {
+        return this.props.onCardDragStop(card, elem);
     }
 
     render() {
@@ -69,11 +69,11 @@ export default class Hand extends Component<HandProps, HandState> {
             id={Zone.Hand}
             className="hand zone"
         >
-                {contents.map((cardInfo, index) => {
+                {contents.map((card, index) => {
                     return <Card
-                        key={cardInfo.id}
-                        info={cardInfo}
-                        style={{marginLeft: index === 0 ? 0 : overlapPx}}
+                        key={card.id}
+                        info={card}
+                        style={{marginLeft: index ? overlapPx : 0}}
                         onDragStart={this.fireCardDragStart}
                         onDragStop={this.fireCardDragStop}
                     />

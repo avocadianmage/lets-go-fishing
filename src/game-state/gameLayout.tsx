@@ -78,25 +78,23 @@ export default class GameLayout extends Component<{}, GameLayoutState> {
         return libraryCards ? libraryCards[0] : undefined;
     }
 
-    sliceCardFromZone(cardInfo: CardInfo, zone: string) {
+    sliceCardFromZone(card: CardInfo, zone: string) {
         const sourceCards = this.state.zones[zone];
-        const sourceCardIndex = sourceCards.findIndex(
-            c => c.id === cardInfo.id
-        );
+        const sourceCardIndex = sourceCards.findIndex(c => c.id === card.id);
         return sourceCards
             .slice(0, sourceCardIndex)
             .concat(sourceCards.slice(sourceCardIndex + 1));
     }
 
-    onDragCardStart(cardInfo: CardInfo, cardElem: HTMLElement) {
+    onDragCardStart(card: CardInfo, elem: HTMLElement) {
         this.setState({ 
-            draggingCard: cardInfo,
-            dragSourceZone: cardElem.parentElement?.id,
+            draggingCard: card,
+            dragSourceZone: elem.parentElement?.id,
         });
         return true;
     }
 
-    onDragCardStop(cardInfo: CardInfo, _: HTMLElement) {
+    onDragCardStop(card: CardInfo, _: HTMLElement) {
         const { dragSourceZone, dragTargetZone, zones } = this.state;
         this.setState({ 
             draggingCard: undefined, 
@@ -116,9 +114,9 @@ export default class GameLayout extends Component<{}, GameLayoutState> {
             zones: {
                 ...zones,
                 [dragSourceZone]: this.sliceCardFromZone(
-                    cardInfo, dragSourceZone
+                    card, dragSourceZone
                 ),
-                [dragTargetZone]: zones[dragTargetZone].concat(cardInfo),
+                [dragTargetZone]: zones[dragTargetZone].concat(card),
             }
         });
         return true;
