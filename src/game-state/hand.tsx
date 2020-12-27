@@ -38,18 +38,18 @@ export default class Hand extends Component<HandProps, HandState> {
         window.removeEventListener('resize', this.updateWidth);
     }
 
-    getOverlapPx() {
+    getLeftMargin() {
         const leftPad = getCSSNumber(this.container, 'padding-left');
         const rightPad = getCSSNumber(this.container, 'padding-right');
         const handWidthPx = this.state.width - leftPad - rightPad;
         const handSize = this.props.contents.length;
-        return Math.max(
+        return -Math.max(
             0,
             Math.ceil(
                 (handSize * Constants.CARD_WIDTH_PX - handWidthPx) /
                 (handSize - 1)
             )
-        );
+        ) + 'px';
     }
 
     fireCardDragStart = (card: CardInfo, elem: HTMLElement) => {
@@ -61,19 +61,18 @@ export default class Hand extends Component<HandProps, HandState> {
     }
 
     render() {
-        const { contents } = this.props;
-        const overlapPx = -this.getOverlapPx() + "px";
+        const overlap = this.getLeftMargin();
         return (
             <div 
             ref={div => { this.container = div }} 
             id={Zone.Hand}
-            className="hand zone"
+            className='hand zone'
         >
-                {contents.map((card, index) => {
+                {this.props.contents.map((card, index) => {
                     return <Card
                         key={card.id}
                         info={card}
-                        style={{marginLeft: index ? overlapPx : 0}}
+                        style={{marginLeft: index === 0 ? 0 : overlap}}
                         onDragStart={this.fireCardDragStart}
                         onDragStop={this.fireCardDragStop}
                     />
