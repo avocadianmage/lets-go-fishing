@@ -41,12 +41,32 @@ export default class Hand extends Component<HandProps, HandState> {
         return (offset * index + ZONE_PADDING_PX) + 'px';
     }
 
+    repositionCards(draggingCardElem?: HTMLElement) {
+        const cardElems = this.container?.children;
+        if (!cardElems) return;
+
+        const cardCount = this.props.contents.length - (
+            draggingCardElem ? 1 : 0
+        );
+        let positioningIndex = 0;
+        for (let i = 0; i < cardElems.length; i++) {
+            const iElem = cardElems[i];
+            if (iElem === draggingCardElem) continue;
+            const left = this.getLeftForIndex(cardCount, positioningIndex++);
+            (iElem as HTMLElement).style.left = left;
+        }
+    }
+
     fireCardDragStart = (card: CardInfo, elem: HTMLElement) => {
-        return this.props.onCardDragStart(card, elem, Zone.Hand);
+        const success =  this.props.onCardDragStart(card, elem, Zone.Hand);
+        if (success) this.repositionCards(elem);
+        return success;
     }
 
     fireCardDragStop = (card: CardInfo, elem: HTMLElement) => {
-        return this.props.onCardDragStop(card, elem, Zone.Hand);
+        const success = this.props.onCardDragStop(card, elem, Zone.Hand);
+        if (!success) this.repositionCards();
+        return success;
     }
 
     render() {
