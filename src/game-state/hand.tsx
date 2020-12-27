@@ -52,12 +52,12 @@ export default class Hand extends Component<HandProps, HandState> {
         ) + 'px';
     }
 
-    fireCardDragStart = (card: CardInfo, elem: HTMLElement) => {
-        return this.props.onCardDragStart(card, elem);
+    fireCardDragStart = (card: CardInfo) => {
+        return this.props.onCardDragStart(card, Zone.Hand);
     }
 
-    fireCardDragStop = (card: CardInfo, elem: HTMLElement) => {
-        return this.props.onCardDragStop(card, elem);
+    fireCardDragStop = (card: CardInfo) => {
+        return this.props.onCardDragStop(card, Zone.Hand);
     }
 
     render() {

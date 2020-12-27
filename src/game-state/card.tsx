@@ -3,7 +3,7 @@ import { CardInfoService } from '../services/cardInfoSvc';
 
 import cardBack from '../assets/mtg-card-back.png';
 import { CardInfo } from '../services/dbSvc';
-import Draggable, { ControlPosition, DraggableData, DraggableEvent } from 'react-draggable';
+import Draggable, { ControlPosition } from 'react-draggable';
 
 export interface CardProps {
     info?: CardInfo;
@@ -16,7 +16,7 @@ export interface CardProps {
 
 export type CardDragEventHandler = (
     cardInfo: CardInfo,
-    cardElem: HTMLElement,
+    sourceZone?: string,
 ) => boolean;
 
 export const Card = ({
@@ -48,13 +48,13 @@ export const Card = ({
             (!isLoading && !faceDown && info?.foil ? "foil " : "");
     };
 
-    const fireDragStart = (_: DraggableEvent, data: DraggableData) => {
+    const fireDragStart = () => {
         setManualDragPos(undefined);
-        if (!info || !onDragStart(info, data.node)) return false;
+        if (!info || !onDragStart(info)) return false;
     };
 
-    const fireDragStop = (_: DraggableEvent, data: DraggableData) => {
-        if (info && !onDragStop(info, data.node)) {
+    const fireDragStop = () => {
+        if (info && !onDragStop(info)) {
             setManualDragPos({ x: 0, y: 0 });
         }
         // Don't let react-draggable update since the card was dragged to a new 

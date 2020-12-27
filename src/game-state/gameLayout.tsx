@@ -18,7 +18,6 @@ interface GameLayoutState {
     loading: boolean;
     zones: { [domId: string]: CardInfo[] };
     draggingCard?: CardInfo;
-    dragSourceZone?: string;
     dragTargetZone?: string;
 }
 
@@ -86,35 +85,27 @@ export default class GameLayout extends Component<{}, GameLayoutState> {
             .concat(sourceCards.slice(sourceCardIndex + 1));
     }
 
-    onDragCardStart(card: CardInfo, elem: HTMLElement) {
-        this.setState({ 
-            draggingCard: card,
-            dragSourceZone: elem.parentElement?.id,
-        });
+    onDragCardStart = (card: CardInfo) => {
+        this.setState({ draggingCard: card });
         return true;
     }
 
-    onDragCardStop(card: CardInfo, _: HTMLElement) {
-        const { dragSourceZone, dragTargetZone, zones } = this.state;
+    onDragCardStop = (card: CardInfo, sourceZone?: string) => {
+        const { dragTargetZone, zones } = this.state;
         this.setState({ 
             draggingCard: undefined, 
-            dragSourceZone: undefined,
             dragTargetZone: undefined
         });
 
-        if (
-            !dragSourceZone || 
-            !dragTargetZone || 
-            dragSourceZone === dragTargetZone
-        ) {
+        if (!sourceZone || !dragTargetZone || sourceZone === dragTargetZone) {
             return false;
         }
 
         this.setState({
             zones: {
                 ...zones,
-                [dragSourceZone]: this.sliceCardFromZone(
-                    card, dragSourceZone
+                [sourceZone]: this.sliceCardFromZone(
+                    card, sourceZone
                 ),
                 [dragTargetZone]: zones[dragTargetZone].concat(card),
             }
@@ -151,12 +142,8 @@ export default class GameLayout extends Component<{}, GameLayoutState> {
                     <div className="bottomPanel">
                         <Hand 
                             contents={zones[Zone.Hand]} 
-                            onCardDragStart={
-                                (info, elem) => this.onDragCardStart(info, elem)
-                            }
-                            onCardDragStop={
-                                (info, elem) => this.onDragCardStop(info, elem)
-                            }
+                            onCardDragStart={this.onDragCardStart}
+                            onCardDragStop={this.onDragCardStop}
                         />
                         <Library
                             loading={loading}
