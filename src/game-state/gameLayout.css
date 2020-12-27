@@ -31,6 +31,7 @@
 .hand {
     flex: 1;
     height: 340px;
+    position: relative;
 }
 
 .hand:empty::before {

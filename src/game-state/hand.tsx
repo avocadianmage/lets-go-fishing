@@ -32,36 +32,38 @@ export default class Hand extends Component<HandProps, HandState> {
         window.removeEventListener('resize', this.updateWidth);
     }
 
-    getLeftMargin() {
+    getLeftForIndex(cardCount: number, index: number) {
         const handWidth = this.state.width - ZONE_PADDING_PX * 2;
-        const cardCount = this.props.contents.length;
-        return -Math.max(
-            0,
-            Math.ceil((cardCount * CARD_WIDTH_PX - handWidth) / (cardCount - 1))
-        ) + 'px';
+        const offset = Math.min(
+            CARD_WIDTH_PX, 
+            (handWidth - CARD_WIDTH_PX) / (cardCount - 1)
+        );
+        return (offset * index + ZONE_PADDING_PX) + 'px';
     }
 
-    fireCardDragStart = (card: CardInfo) => {
-        return this.props.onCardDragStart(card, Zone.Hand);
+    fireCardDragStart = (card: CardInfo, elem: HTMLElement) => {
+        return this.props.onCardDragStart(card, elem, Zone.Hand);
     }
 
-    fireCardDragStop = (card: CardInfo) => {
-        return this.props.onCardDragStop(card, Zone.Hand);
+    fireCardDragStop = (card: CardInfo, elem: HTMLElement) => {
+        return this.props.onCardDragStop(card, elem, Zone.Hand);
     }
 
     render() {
-        const overlap = this.getLeftMargin();
+        const { contents } = this.props;
         return (
-            <div 
-            ref={div => { this.container = div }} 
-            id={Zone.Hand}
-            className='hand zone'
-        >
-                {this.props.contents.map((card, index) => {
+            <div
+                ref={div => { this.container = div }}
+                id={Zone.Hand}
+                className='hand zone'
+            >
+                {contents.map((card, index) => {
                     return <Card
                         key={card.id}
                         info={card}
-                        style={{marginLeft: index === 0 ? 0 : overlap}}
+                        style={{ 
+                            left: this.getLeftForIndex(contents.length, index),
+                        }}
                         onDragStart={this.fireCardDragStart}
                         onDragStop={this.fireCardDragStop}
                     />
