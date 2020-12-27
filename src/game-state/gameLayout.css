@@ -12,11 +12,11 @@
     border-radius: 3px;
     font-family: 'Bahnschrift Condensed', 'Arial Narrow Bold', sans-serif;
     font-size: 60px;
-    transition: background-color 0.15s
+    transition: filter 0.15s
 }
 
 .drag-over {
-    background-color: rgba(0,0,0,0.5);
+    filter: brightness(0.5);
 }
 
 .topPanel {
