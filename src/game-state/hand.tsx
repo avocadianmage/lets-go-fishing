@@ -12,6 +12,7 @@ interface HandProps {
 
 interface HandState {
     width: number;
+    draggingCard?: CardInfo;
 }
 
 export default class Hand extends Component<HandProps, HandState> {
@@ -35,42 +36,26 @@ export default class Hand extends Component<HandProps, HandState> {
     getLeftForIndex(cardCount: number, index: number) {
         const handWidth = this.state.width - ZONE_PADDING_PX * 2;
         const offset = Math.min(
-            CARD_WIDTH_PX, 
+            CARD_WIDTH_PX,
             (handWidth - CARD_WIDTH_PX) / (cardCount - 1)
         );
         return (offset * index + ZONE_PADDING_PX) + 'px';
     }
 
-    repositionCards(draggingCardElem?: HTMLElement) {
-        const cardElems = this.container?.children;
-        if (!cardElems) return;
-
-        const cardCount = this.props.contents.length - (
-            draggingCardElem ? 1 : 0
-        );
-        let positioningIndex = 0;
-        for (let i = 0; i < cardElems.length; i++) {
-            const iElem = cardElems[i];
-            if (iElem === draggingCardElem) continue;
-            const left = this.getLeftForIndex(cardCount, positioningIndex++);
-            (iElem as HTMLElement).style.left = left;
-        }
+    fireCardDragStart = (card: CardInfo) => {
+        this.setState({ draggingCard: card });
+        return this.props.onCardDragStart(card, Zone.Hand);
     }
 
-    fireCardDragStart = (card: CardInfo, elem: HTMLElement) => {
-        const success =  this.props.onCardDragStart(card, elem, Zone.Hand);
-        if (success) this.repositionCards(elem);
-        return success;
-    }
-
-    fireCardDragStop = (card: CardInfo, elem: HTMLElement) => {
-        const success = this.props.onCardDragStop(card, elem, Zone.Hand);
-        if (!success) this.repositionCards();
-        return success;
+    fireCardDragStop = (card: CardInfo) => {
+        this.setState({ draggingCard: undefined });
+        return this.props.onCardDragStop(card, Zone.Hand);
     }
 
     render() {
         const { contents } = this.props;
+        const { draggingCard } = this.state;
+        let nondraggedIndex = 0;
         return (
             <div
                 ref={div => { this.container = div }}
@@ -78,11 +63,19 @@ export default class Hand extends Component<HandProps, HandState> {
                 className='hand zone'
             >
                 {contents.map((card, index) => {
+                    const isThisDraggingCard = card.id === draggingCard?.id;
+                    const positioningCardCount = contents.length - (
+                        (!draggingCard || isThisDraggingCard) ? 0 : 1
+                    );
+                    const positioningIndex = isThisDraggingCard ?
+                        index : nondraggedIndex++;
                     return <Card
                         key={card.id}
                         info={card}
-                        style={{ 
-                            left: this.getLeftForIndex(contents.length, index),
+                        style={{
+                            left: this.getLeftForIndex(
+                                positioningCardCount, positioningIndex
+                            ),
                         }}
                         onDragStart={this.fireCardDragStart}
                         onDragStop={this.fireCardDragStop}
