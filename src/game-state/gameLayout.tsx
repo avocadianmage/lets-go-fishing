@@ -104,9 +104,7 @@ export default class GameLayout extends Component<{}, GameLayoutState> {
         this.setState({
             zones: {
                 ...zones,
-                [sourceZone]: this.sliceCardFromZone(
-                    card, sourceZone
-                ),
+                [sourceZone]: this.sliceCardFromZone(card, sourceZone),
                 [dragTargetZone]: zones[dragTargetZone].concat(card),
             }
         });
