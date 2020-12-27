@@ -1,14 +1,8 @@
 import { Component } from 'react';
 import { CardInfo } from '../services/dbSvc';
-import * as Constants from '../utilities/constants';
+import { ZONE_PADDING_PX, CARD_WIDTH_PX } from '../utilities/constants';
 import { Card, CardDragEventHandler } from './card';
 import { Zone } from './gameLayout';
-
-function getCSSNumber(elem: Element | null, propertyName : string) {
-    return !elem ? 0 : parseFloat(
-        getComputedStyle(elem).getPropertyValue(propertyName)
-    );
-}
 
 interface HandProps {
     contents: CardInfo[];
@@ -39,16 +33,11 @@ export default class Hand extends Component<HandProps, HandState> {
     }
 
     getLeftMargin() {
-        const leftPad = getCSSNumber(this.container, 'padding-left');
-        const rightPad = getCSSNumber(this.container, 'padding-right');
-        const handWidthPx = this.state.width - leftPad - rightPad;
-        const handSize = this.props.contents.length;
+        const handWidth = this.state.width - ZONE_PADDING_PX * 2;
+        const cardCount = this.props.contents.length;
         return -Math.max(
             0,
-            Math.ceil(
-                (handSize * Constants.CARD_WIDTH_PX - handWidthPx) /
-                (handSize - 1)
-            )
+            Math.ceil((cardCount * CARD_WIDTH_PX - handWidth) / (cardCount - 1))
         ) + 'px';
     }
 
