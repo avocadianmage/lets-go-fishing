@@ -14,7 +14,7 @@
     animation: fadeIn 0.2s;
 }
 
-.card.loading, .card:hover {
+.card.loading, .card:not(.react-draggable-dragging):hover {
     background-color: rgba(0, 0, 0, 0.5);
 }
 

@@ -1,4 +1,4 @@
-import React, { CSSProperties, MouseEventHandler, useEffect, useState } from 'react';
+import React, { CSSProperties, useEffect, useState } from 'react';
 import { CardInfoService } from '../services/cardInfoSvc';
 
 import cardBack from '../assets/mtg-card-back.png';
