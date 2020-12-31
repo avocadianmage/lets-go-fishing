@@ -42,12 +42,8 @@ export default class Hand extends Component<HandProps, HandState> {
         return (offset * index + ZONE_PADDING_PX) + 'px';
     }
 
-    fireCardDragStart = (drag: DragInfo) => {
-        return this.props.onCardDragStart({ ...drag, sourceZone: Zone.Hand });
-    }
-
     render() {
-        const { contents, drag } = this.props;
+        const { contents, drag, onCardDragStart, onCardDragStop } = this.props;
         let nondraggedIndex = 0;
         const className = 'hand zone' +
             (drag?.targetZone === Zone.Hand ? ' drag-over' : '');
@@ -64,16 +60,17 @@ export default class Hand extends Component<HandProps, HandState> {
                     );
                     const positioningIndex = isThisDraggingCard ?
                         index : nondraggedIndex++;
+                    const left = this.getLeftForIndex(
+                        positioningCardCount, positioningIndex
+                    );
                     return <Card
                         key={card.id}
                         info={card}
-                        style={{
-                            left: this.getLeftForIndex(
-                                positioningCardCount, positioningIndex
-                            ),
-                        }}
-                        onDragStart={this.fireCardDragStart}
-                        onDragStop={this.props.onCardDragStop}
+                        style={{ left }}
+                        onDragStart={drag => onCardDragStart({ 
+                            ...drag, sourceZone: Zone.Hand
+                        })}
+                        onDragStop={onCardDragStop}
                     />
                 })}
             </div>
