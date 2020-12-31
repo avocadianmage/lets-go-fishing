@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import Hand from './hand';
+import { Hand } from './hand';
 import { Library } from './library';
 import { Battlefield } from './battlefield';
 import DeckLookup from '../other-components/deckLookup';

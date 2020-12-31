@@ -1,6 +1,10 @@
 import { ZoneName } from "./gameLayout";
-import { CoreZoneProps, Zone } from "./zone";
+import { CardPosition, CoreZoneProps, Zone } from "./zone";
 
 export const Battlefield = (props: CoreZoneProps) => {
-    return <Zone name={ZoneName.Battlefield} {...props} />;
+    return <Zone 
+        {...props}
+        name={ZoneName.Battlefield} 
+        cardPosition={CardPosition.Manual}  
+    />;
 };
