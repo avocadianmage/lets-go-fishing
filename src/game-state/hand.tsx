@@ -1,18 +1,18 @@
 import { Component } from 'react';
 import { CardInfo } from '../services/dbSvc';
 import { ZONE_PADDING_PX, CARD_WIDTH_PX } from '../utilities/constants';
-import { Card, CardDragEventHandler } from './card';
+import { Card, CardDragStartEventHandler, CardDragStopEventHandler, DragInfo } from './card';
 import { Zone } from './gameLayout';
 
 interface HandProps {
     contents: CardInfo[];
-    onCardDragStart: CardDragEventHandler;
-    onCardDragStop: CardDragEventHandler;
+    drag?: DragInfo;
+    onCardDragStart: CardDragStartEventHandler;
+    onCardDragStop: CardDragStopEventHandler;
 }
 
 interface HandState {
     width: number;
-    draggingCard?: CardInfo;
 }
 
 export default class Hand extends Component<HandProps, HandState> {
@@ -42,30 +42,25 @@ export default class Hand extends Component<HandProps, HandState> {
         return (offset * index + ZONE_PADDING_PX) + 'px';
     }
 
-    fireCardDragStart = (card: CardInfo) => {
-        this.setState({ draggingCard: card });
-        return this.props.onCardDragStart(card, Zone.Hand);
-    }
-
-    fireCardDragStop = (card: CardInfo) => {
-        this.setState({ draggingCard: undefined });
-        return this.props.onCardDragStop(card, Zone.Hand);
+    fireCardDragStart = (drag: DragInfo) => {
+        return this.props.onCardDragStart({ ...drag, sourceZone: Zone.Hand });
     }
 
     render() {
-        const { contents } = this.props;
-        const { draggingCard } = this.state;
+        const { contents, drag } = this.props;
         let nondraggedIndex = 0;
+        const className = 'hand zone' +
+            (drag?.targetZone === Zone.Hand ? ' drag-over' : '');
         return (
             <div
                 ref={div => { this.container = div }}
                 id={Zone.Hand}
-                className='hand zone'
+                className={className}
             >
                 {contents.map((card, index) => {
-                    const isThisDraggingCard = card.id === draggingCard?.id;
+                    const isThisDraggingCard = card.id === drag?.card.id;
                     const positioningCardCount = contents.length - (
-                        (!draggingCard || isThisDraggingCard) ? 0 : 1
+                        (!drag?.card || isThisDraggingCard) ? 0 : 1
                     );
                     const positioningIndex = isThisDraggingCard ?
                         index : nondraggedIndex++;
@@ -78,7 +73,7 @@ export default class Hand extends Component<HandProps, HandState> {
                             ),
                         }}
                         onDragStart={this.fireCardDragStart}
-                        onDragStop={this.fireCardDragStop}
+                        onDragStop={this.props.onCardDragStop}
                     />
                 })}
             </div>

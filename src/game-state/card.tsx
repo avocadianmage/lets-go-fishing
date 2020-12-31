@@ -10,14 +10,18 @@ export interface CardProps {
     faceDown?: boolean;
     style?: CSSProperties;
     onClick?: MouseEventHandler<HTMLDivElement>;
-    onDragStart: CardDragEventHandler;
-    onDragStop: CardDragEventHandler;
+    onDragStart: CardDragStartEventHandler;
+    onDragStop: CardDragStopEventHandler;
 }
 
-export type CardDragEventHandler = (
-    card: CardInfo,
-    sourceZone?: string,
-) => boolean;
+export interface DragInfo {
+    card: CardInfo;
+    sourceZone?: string;
+    targetZone?: string;
+}
+
+export type CardDragStartEventHandler = (drag: DragInfo) => boolean;
+export type CardDragStopEventHandler = () => boolean;
 
 export const Card = ({
     info, faceDown, style, onClick, onDragStart, onDragStop
@@ -50,13 +54,11 @@ export const Card = ({
 
     const fireDragStart = () => {
         setManualDragPos(undefined);
-        if (!info || !onDragStart(info)) return false;
+        if (!info || !onDragStart({ card: info })) return false;
     };
 
     const fireDragStop = () => {
-        if (info && !onDragStop(info)) {
-            setManualDragPos({ x: 0, y: 0 });
-        }
+        if (info && !onDragStop()) setManualDragPos({ x: 0, y: 0 });
         // Don't let react-draggable update since the card was dragged to a new 
         // zone.
         else return false; 

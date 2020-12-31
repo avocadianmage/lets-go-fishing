@@ -1,15 +1,15 @@
 import { CardInfo } from "../services/dbSvc";
-import { Card } from "./card";
+import { Card, DragInfo } from "./card";
 import { Zone } from "./gameLayout";
 
 interface BattlefieldProps {
     contents: CardInfo[];
-    isDraggedOver: boolean;
+    drag?: DragInfo;
 }
 
-export const Battlefield = ({ isDraggedOver, contents }: BattlefieldProps) => {
+export const Battlefield = ({ contents, drag }: BattlefieldProps) => {
     const classNames = 'battlefield zone' +
-        (isDraggedOver ? ' drag-over' : '');
+        (drag?.targetZone === Zone.Battlefield ? ' drag-over' : '');
     return (
         <div id={Zone.Battlefield} className={classNames}>
             {contents.map(cardInfo => {
