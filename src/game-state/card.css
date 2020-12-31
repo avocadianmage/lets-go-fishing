@@ -54,7 +54,7 @@
     background-blend-mode: inherit;
     border-radius: inherit;
     position: absolute;
-    transition: background-color 0.2s, margin-top 0.15s;
+    transition: background-color 0.2s, margin-top 0.1s;
     margin-top: 0px;
     pointer-events: none;
 }
