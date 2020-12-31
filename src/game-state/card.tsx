@@ -12,7 +12,7 @@ export interface CardProps {
     style?: CSSProperties;
     onDragStart: CardDragStartEventHandler;
     onDragStop: CardDragStopEventHandler;
-    onClick?: CardClickEventHandler;
+    onClick?(): void;
 }
 
 export interface DragInfo {
@@ -21,7 +21,6 @@ export interface DragInfo {
     targetZone?: string;
 }
 
-export type CardClickEventHandler = (card: CardInfo) => void;
 export type CardDragStartEventHandler = (drag: DragInfo) => boolean;
 export type CardDragStopEventHandler = () => boolean;
 
@@ -33,7 +32,6 @@ export const Card = ({
 
     const isLoading = !imageUrl && !faceDown;
 
-    // Perform card image lookup when info is set.
     useEffect(() => {
         CardInfoService.getCardImageBlob(info)
             .then(blob => setImageUrl(URL.createObjectURL(blob)));
@@ -77,7 +75,7 @@ export const Card = ({
                 ref={nodeRef}
                 className={getClasses()}
                 style={getStyling()}
-                onClick={onClick ? (() => onClick(info)) : undefined}
+                onClick={onClick}
             >
                 {isLoading ?
                     <div className='loader' /> :

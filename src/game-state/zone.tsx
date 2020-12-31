@@ -1,7 +1,7 @@
 import { CSSProperties, useEffect, useRef, useState } from "react";
 import { CardInfo } from "../services/dbSvc";
 import { CARD_WIDTH_PX, ZONE_PADDING_PX } from "../utilities/constants";
-import { Card, CardClickEventHandler, CardDragStartEventHandler, CardDragStopEventHandler, DragInfo } from "./card";
+import { Card, CardDragStartEventHandler, CardDragStopEventHandler, DragInfo } from "./card";
 
 export enum CardPosition {
     Manual,
@@ -14,7 +14,7 @@ export interface CoreZoneProps {
     drag?: DragInfo;
     onCardDragStart: CardDragStartEventHandler;
     onCardDragStop: CardDragStopEventHandler;
-    onCardClick?: CardClickEventHandler;
+    onCardClick?(): void;
 }
 
 interface ZoneProps extends CoreZoneProps {
