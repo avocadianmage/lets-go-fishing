@@ -9,7 +9,7 @@ import * as Constants from '../utilities/constants';
 import { shuffle } from '../utilities/helpers';
 import { DragInfo } from './card';
 
-export const Zone = {
+export const ZoneName = {
     Library: 'library',
     Hand: 'hand',
     Battlefield: 'battlefield',
@@ -25,9 +25,9 @@ export default class GameLayout extends Component<{}, GameLayoutState> {
     state: GameLayoutState = {
         loading: false,
         zones: {
-            [Zone.Library]: [],
-            [Zone.Hand]: [],
-            [Zone.Battlefield]: [],
+            [ZoneName.Library]: [],
+            [ZoneName.Hand]: [],
+            [ZoneName.Battlefield]: [],
         },
     }
 
@@ -50,20 +50,20 @@ export default class GameLayout extends Component<{}, GameLayoutState> {
     shuffleDeck(decklist: CardInfo[]) {
         this.setState({
             loading: false,
-            zones: { ...this.state.zones, [Zone.Library]: shuffle(decklist) },
+            zones: { ...this.state.zones, [ZoneName.Library]: shuffle(decklist) },
         });
     }
 
     draw(num = 1) {
         const { loading, zones } = this.state;
         if (loading) return;
-        const handCards = zones[Zone.Hand];
-        const libraryCards = zones[Zone.Library];
+        const handCards = zones[ZoneName.Hand];
+        const libraryCards = zones[ZoneName.Library];
         this.setState({
             zones: {
                 ...zones,
-                [Zone.Hand]: handCards.concat(libraryCards.slice(0, num)),
-                [Zone.Library]: libraryCards.slice(num),
+                [ZoneName.Hand]: handCards.concat(libraryCards.slice(0, num)),
+                [ZoneName.Library]: libraryCards.slice(num),
             },
         });
     }
@@ -73,7 +73,7 @@ export default class GameLayout extends Component<{}, GameLayoutState> {
     }
 
     getTopCard() {
-        const libraryCards = this.state.zones[Zone.Library];
+        const libraryCards = this.state.zones[ZoneName.Library];
         return libraryCards ? libraryCards[0] : undefined;
     }
 
@@ -121,6 +121,11 @@ export default class GameLayout extends Component<{}, GameLayoutState> {
 
     render() {
         const { loading, zones, drag } = this.state;
+        const zoneProps = { 
+            drag, 
+            onCardDragStart: this.onDragCardStart,
+            onCardDragStop: this.onDragCardStop,
+        };
         return (
             <>
                 <div className="topPanel">
@@ -133,15 +138,13 @@ export default class GameLayout extends Component<{}, GameLayoutState> {
                     onMouseMove={e => this.onMouseMove(e)}
                 >
                     <Battlefield 
-                        contents={zones[Zone.Battlefield]}
-                        drag={drag}
+                        contents={zones[ZoneName.Battlefield]}
+                        {...zoneProps}
                     />
                     <div className="bottomPanel">
                         <Hand 
-                            contents={zones[Zone.Hand]} 
-                            drag={drag}
-                            onCardDragStart={this.onDragCardStart}
-                            onCardDragStop={this.onDragCardStop}
+                            contents={zones[ZoneName.Hand]} 
+                            {...zoneProps}
                         />
                         <Library
                             loading={loading}

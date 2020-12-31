@@ -2,7 +2,7 @@ import { Component } from 'react';
 import { CardInfo } from '../services/dbSvc';
 import { ZONE_PADDING_PX, CARD_WIDTH_PX } from '../utilities/constants';
 import { Card, CardDragStartEventHandler, CardDragStopEventHandler, DragInfo } from './card';
-import { Zone } from './gameLayout';
+import { ZoneName } from './gameLayout';
 
 interface HandProps {
     contents: CardInfo[];
@@ -45,24 +45,30 @@ export default class Hand extends Component<HandProps, HandState> {
     render() {
         const { contents, drag, onCardDragStart, onCardDragStop } = this.props;
         let nondraggedIndex = 0;
-        const isTargetZone = drag?.targetZone === Zone.Hand;
+        const isSourceZone = drag?.sourceZone === ZoneName.Hand;
+        const isTargetZone = drag?.targetZone === ZoneName.Hand;
         const className = 'zone' + (isTargetZone ? ' darken' : '');
+
+        const getCardReposition = (card: CardInfo, index: number) => {
+            const isDragging = card.id === drag?.card.id;
+            const positioningCardCount = contents.length - (
+                (!isSourceZone || isDragging) ? 0 : 1
+            );
+            const positioningIndex = isDragging ? index : nondraggedIndex++;
+            const left = this.getLeftForIndex(
+                positioningCardCount, positioningIndex
+            );
+            return { isDragging, left };
+        };
+
         return (
             <div
                 ref={div => { this.container = div }}
-                id={Zone.Hand}
+                id={ZoneName.Hand}
                 className={className}
             >
                 {contents.map((card, index) => {
-                    const isDragging = card.id === drag?.card.id;
-                    const positioningCardCount = contents.length - (
-                        (!drag?.card || isDragging) ? 0 : 1
-                    );
-                    const positioningIndex = isDragging ?
-                        index : nondraggedIndex++;
-                    const left = this.getLeftForIndex(
-                        positioningCardCount, positioningIndex
-                    );
+                    const { left, isDragging } = getCardReposition(card, index);
                     return <Card
                         key={card.id}
                         info={card}
@@ -70,8 +76,8 @@ export default class Hand extends Component<HandProps, HandState> {
                         darken={isTargetZone && !isDragging}
                         onDragStart={drag => onCardDragStart({ 
                             ...drag, 
-                            sourceZone: Zone.Hand,
-                            targetZone: Zone.Hand,
+                            sourceZone: ZoneName.Hand,
+                            targetZone: ZoneName.Hand,
                         })}
                         onDragStop={onCardDragStop}
                     />

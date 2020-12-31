@@ -1,7 +1,7 @@
 import React from 'react';
 import { CardInfo } from '../services/dbSvc';
 import { Card } from './card';
-import { Zone } from './gameLayout';
+import { ZoneName } from './gameLayout';
 
 interface LibraryProps {
     loading?: boolean;
@@ -11,7 +11,7 @@ interface LibraryProps {
 
 export const Library = ({ loading, topCard, onClick }: LibraryProps) => {
     return (
-        <div id={Zone.Library} className='zone'>
+        <div id={ZoneName.Library} className='zone'>
             {(loading || topCard) && 
                 <Card 
                     info={topCard} 
