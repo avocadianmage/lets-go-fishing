@@ -9,6 +9,7 @@ export interface CardProps {
     info?: CardInfo;
     faceDown?: boolean;
     style?: CSSProperties;
+    darken?: boolean;
     onClick?: MouseEventHandler<HTMLDivElement>;
     onDragStart: CardDragStartEventHandler;
     onDragStop: CardDragStopEventHandler;
@@ -24,7 +25,7 @@ export type CardDragStartEventHandler = (drag: DragInfo) => boolean;
 export type CardDragStopEventHandler = () => boolean;
 
 export const Card = ({
-    info, faceDown, style, onClick, onDragStart, onDragStop
+    info, faceDown, style, darken, onClick, onDragStart, onDragStop
 }: CardProps) => {
     const [imageUrl, setImageUrl] = useState('');
     const [manualDragPos, setManualDragPos] = useState<ControlPosition>();
@@ -79,8 +80,12 @@ export const Card = ({
                 onClick={onClick}
             >
                 {isLoading ?
-                    <div className="loader" /> :
-                    (!faceDown && <div className={"card-face"} />)
+                    <div className='loader' /> :
+                    (!faceDown && 
+                        <div 
+                            className={'card-face' + (darken ? ' darken' : '')} 
+                        />
+                    )
                 }
             </div>
         </Draggable>

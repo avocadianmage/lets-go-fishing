@@ -8,14 +8,15 @@ interface BattlefieldProps {
 }
 
 export const Battlefield = ({ contents, drag }: BattlefieldProps) => {
-    const classNames = 'battlefield zone' +
-        (drag?.targetZone === Zone.Battlefield ? ' drag-over' : '');
+    const isTargetZone = drag?.targetZone === Zone.Battlefield;
+    const classNames = 'battlefield zone' + (isTargetZone ? ' darken' : '');
     return (
         <div id={Zone.Battlefield} className={classNames}>
-            {contents.map(cardInfo => {
+            {contents.map(card => {
                 return <Card
-                    key={cardInfo.id}
-                    info={cardInfo}
+                    key={card.id}
+                    info={card}
+                    darken={isTargetZone}
                     onDragStart={() => false}
                     onDragStop={() => false}
                 />

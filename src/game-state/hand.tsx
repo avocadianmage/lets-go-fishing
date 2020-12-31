@@ -45,8 +45,8 @@ export default class Hand extends Component<HandProps, HandState> {
     render() {
         const { contents, drag, onCardDragStart, onCardDragStop } = this.props;
         let nondraggedIndex = 0;
-        const className = 'hand zone' +
-            (drag?.targetZone === Zone.Hand ? ' drag-over' : '');
+        const isTargetZone = drag?.targetZone === Zone.Hand;
+        const className = 'hand zone' + (isTargetZone ? ' darken' : '');
         return (
             <div
                 ref={div => { this.container = div }}
@@ -67,8 +67,11 @@ export default class Hand extends Component<HandProps, HandState> {
                         key={card.id}
                         info={card}
                         style={{ left }}
+                        darken={isTargetZone && !isThisDraggingCard}
                         onDragStart={drag => onCardDragStart({ 
-                            ...drag, sourceZone: Zone.Hand
+                            ...drag, 
+                            sourceZone: Zone.Hand,
+                            targetZone: Zone.Hand,
                         })}
                         onDragStop={onCardDragStop}
                     />
