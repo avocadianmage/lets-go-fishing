@@ -54,11 +54,11 @@ export default class Hand extends Component<HandProps, HandState> {
                 className={className}
             >
                 {contents.map((card, index) => {
-                    const isThisDraggingCard = card.id === drag?.card.id;
+                    const isDragging = card.id === drag?.card.id;
                     const positioningCardCount = contents.length - (
-                        (!drag?.card || isThisDraggingCard) ? 0 : 1
+                        (!drag?.card || isDragging) ? 0 : 1
                     );
-                    const positioningIndex = isThisDraggingCard ?
+                    const positioningIndex = isDragging ?
                         index : nondraggedIndex++;
                     const left = this.getLeftForIndex(
                         positioningCardCount, positioningIndex
@@ -67,7 +67,7 @@ export default class Hand extends Component<HandProps, HandState> {
                         key={card.id}
                         info={card}
                         style={{ left }}
-                        darken={isTargetZone && !isThisDraggingCard}
+                        darken={isTargetZone && !isDragging}
                         onDragStart={drag => onCardDragStart({ 
                             ...drag, 
                             sourceZone: Zone.Hand,

@@ -13,10 +13,11 @@ export const Battlefield = ({ contents, drag }: BattlefieldProps) => {
     return (
         <div id={Zone.Battlefield} className={classNames}>
             {contents.map(card => {
+                const isDragging = card.id === drag?.card.id;
                 return <Card
                     key={card.id}
                     info={card}
-                    darken={isTargetZone}
+                    darken={isTargetZone && !isDragging}
                     onDragStart={() => false}
                     onDragStop={() => false}
                 />
