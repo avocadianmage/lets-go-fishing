@@ -9,7 +9,7 @@ interface BattlefieldProps {
 
 export const Battlefield = ({ contents, drag }: BattlefieldProps) => {
     const isTargetZone = drag?.targetZone === Zone.Battlefield;
-    const classNames = 'battlefield zone' + (isTargetZone ? ' darken' : '');
+    const classNames = 'zone' + (isTargetZone ? ' darken' : '');
     return (
         <div id={Zone.Battlefield} className={classNames}>
             {contents.map(card => {

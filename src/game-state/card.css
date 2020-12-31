@@ -59,11 +59,11 @@
     pointer-events: none;
 }
 
-.hand .card {
+#hand .card {
     position: absolute;
 }
 
-.hand .card:not(.react-draggable-dragging):hover .card-face {
+#hand .card:not(.react-draggable-dragging):hover .card-face {
     margin-top: -340px;
 }
 

@@ -28,13 +28,13 @@
     column-gap: 6px;
 }
 
-.hand {
+#hand {
     flex: 1;
     height: 340px;
     position: relative;
 }
 
-.hand:empty::before {
+#hand:empty::before {
     content: "HAND";
     color: var(--nord3);
     height: 100%;
@@ -44,12 +44,12 @@
     text-align: center;
 }
 
-.library {
+#library {
     width: 244px;
     height: 340px;
 }
 
-.library:empty::before {
+#library:empty::before {
     content: "LIBRARY";
     color: var(--nord3);
     height: 100%;
@@ -59,11 +59,11 @@
     text-align: center;
 }
 
-.battlefield {
+#battlefield {
     flex: 1;
 }
 
-.battlefield:empty::before {
+#battlefield:empty::before {
     content: "BATTLEFIELD";
     color: var(--nord3);
     height: 100%;
