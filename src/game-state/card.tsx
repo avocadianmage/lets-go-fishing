@@ -6,13 +6,13 @@ import { CardInfo } from '../services/dbSvc';
 import Draggable, { ControlPosition } from 'react-draggable';
 
 export interface CardProps {
-    info?: CardInfo;
+    info: CardInfo;
+    darken: boolean;
     faceDown?: boolean;
     style?: CSSProperties;
-    darken?: boolean;
-    onClick?: MouseEventHandler<HTMLDivElement>;
     onDragStart: CardDragStartEventHandler;
     onDragStop: CardDragStopEventHandler;
+    onClick?: CardClickEventHandler;
 }
 
 export interface DragInfo {
@@ -21,20 +21,20 @@ export interface DragInfo {
     targetZone?: string;
 }
 
+export type CardClickEventHandler = (card: CardInfo) => void;
 export type CardDragStartEventHandler = (drag: DragInfo) => boolean;
 export type CardDragStopEventHandler = () => boolean;
 
 export const Card = ({
-    info, faceDown, style, darken, onClick, onDragStart, onDragStop
+    info, faceDown, style, darken, onDragStart, onDragStop, onClick
 }: CardProps) => {
     const [imageUrl, setImageUrl] = useState('');
     const [manualDragPos, setManualDragPos] = useState<ControlPosition>();
 
-    const isLoading = !info || (!imageUrl && !faceDown);
+    const isLoading = !imageUrl && !faceDown;
 
     // Perform card image lookup when info is set.
     useEffect(() => {
-        if (!info) return;
         CardInfoService.getCardImageBlob(info)
             .then(blob => setImageUrl(URL.createObjectURL(blob)));
     }, [info]);
@@ -50,16 +50,16 @@ export const Card = ({
     const getClasses = () => {
         return "card " +
             (isLoading ? "loading " : "") +
-            (!isLoading && !faceDown && info?.foil ? "foil " : "");
+            (!isLoading && !faceDown && info.foil ? "foil " : "");
     };
 
     const fireDragStart = () => {
         setManualDragPos(undefined);
-        if (!info || !onDragStart({ card: info })) return false;
+        if (!onDragStart({ card: info })) return false;
     };
 
     const fireDragStop = () => {
-        if (info && !onDragStop()) setManualDragPos({ x: 0, y: 0 });
+        if (!onDragStop()) setManualDragPos({ x: 0, y: 0 });
         // Don't let react-draggable update since the card was dragged to a new 
         // zone.
         else return false; 
@@ -77,7 +77,7 @@ export const Card = ({
                 ref={nodeRef}
                 className={getClasses()}
                 style={getStyling()}
-                onClick={onClick}
+                onClick={onClick ? (() => onClick(info)) : undefined}
             >
                 {isLoading ?
                     <div className='loader' /> :

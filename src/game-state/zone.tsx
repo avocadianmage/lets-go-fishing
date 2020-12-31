@@ -1,11 +1,11 @@
 import { CSSProperties, useEffect, useRef, useState } from "react";
 import { CardInfo } from "../services/dbSvc";
 import { CARD_WIDTH_PX, ZONE_PADDING_PX } from "../utilities/constants";
-import { Card, CardDragStartEventHandler, CardDragStopEventHandler, DragInfo } from "./card";
+import { Card, CardClickEventHandler, CardDragStartEventHandler, CardDragStopEventHandler, DragInfo } from "./card";
 
 export enum CardPosition {
     Manual,
-    ShowTopOnly,
+    ShowTopFaceDown,
     HorizontallyStacked,
 }
 
@@ -14,6 +14,7 @@ export interface CoreZoneProps {
     drag?: DragInfo;
     onCardDragStart: CardDragStartEventHandler;
     onCardDragStop: CardDragStopEventHandler;
+    onCardClick?: CardClickEventHandler;
 }
 
 interface ZoneProps extends CoreZoneProps {
@@ -22,7 +23,8 @@ interface ZoneProps extends CoreZoneProps {
 }
 
 export const Zone = ({ 
-    name, cardPosition, contents, drag, onCardDragStart, onCardDragStop 
+    name, cardPosition, contents, drag, 
+    onCardDragStart, onCardDragStop, onCardClick
 }: ZoneProps) => {
     const [width, setWidth] = useState(0);
 
@@ -53,12 +55,14 @@ export const Zone = ({
     const createCard = (card: CardInfo, style?: CSSProperties) => <Card
         key={card.id}
         info={card}
+        faceDown={cardPosition === CardPosition.ShowTopFaceDown}
         style={style}
         darken={isTargetZone && !isCardDragging(card)}
         onDragStart={drag => onCardDragStart({ 
             ...drag, sourceZone: name, targetZone: name
         })}
         onDragStop={onCardDragStop}
+        onClick={onCardClick}
     />;
 
     let nondraggedIndex = 0;
@@ -73,16 +77,16 @@ export const Zone = ({
     };
     return (
         <div id={name} className={classes} ref={container}>
-            {cardPosition === CardPosition.ShowTopOnly 
-                ? 
-                    createCard(contents[0])
-                :
-                    contents.map((card, index) => {
-                        const style = 
-                            cardPosition === CardPosition.HorizontallyStacked ? 
-                                { left: getCardLeft(card, index) } : undefined;
-                        return createCard(card, style);
-                    })
+            {cardPosition === CardPosition.ShowTopFaceDown ? 
+                (contents.length > 0 && 
+                    createCard(contents[contents.length - 1])
+                ) :
+                contents.map((card, index) => {
+                    const style = 
+                        cardPosition === CardPosition.HorizontallyStacked ? 
+                            { left: getCardLeft(card, index) } : undefined;
+                    return createCard(card, style);
+                })
             }
         </div>
     );

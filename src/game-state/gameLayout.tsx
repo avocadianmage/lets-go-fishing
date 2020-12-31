@@ -59,22 +59,18 @@ export default class GameLayout extends Component<{}, GameLayoutState> {
         if (loading) return;
         const handCards = zones[ZoneName.Hand];
         const libraryCards = zones[ZoneName.Library];
+        const cutIndex = libraryCards.length - num;
         this.setState({
             zones: {
                 ...zones,
-                [ZoneName.Hand]: handCards.concat(libraryCards.slice(0, num)),
-                [ZoneName.Library]: libraryCards.slice(num),
+                [ZoneName.Hand]: handCards.concat(libraryCards.slice(cutIndex)),
+                [ZoneName.Library]: libraryCards.slice(0, cutIndex),
             },
         });
     }
 
     showLoadingState() {
         this.setState({ loading: true });
-    }
-
-    getTopCard() {
-        const libraryCards = this.state.zones[ZoneName.Library];
-        return libraryCards ? libraryCards[0] : undefined;
     }
 
     sliceCardFromZone(card: CardInfo, zone: string) {
@@ -120,7 +116,7 @@ export default class GameLayout extends Component<{}, GameLayoutState> {
     }
 
     render() {
-        const { loading, zones, drag } = this.state;
+        const { zones, drag } = this.state;
         const zoneProps = { 
             drag, 
             onCardDragStart: this.onDragCardStart,
@@ -138,18 +134,18 @@ export default class GameLayout extends Component<{}, GameLayoutState> {
                     onMouseMove={e => this.onMouseMove(e)}
                 >
                     <Battlefield 
-                        contents={zones[ZoneName.Battlefield]}
                         {...zoneProps}
+                        contents={zones[ZoneName.Battlefield]}
                     />
                     <div className="bottomPanel">
                         <Hand 
-                            contents={zones[ZoneName.Hand]} 
                             {...zoneProps}
+                            contents={zones[ZoneName.Hand]} 
                         />
-                        <Library
-                            loading={loading}
-                            topCard={this.getTopCard()}
-                            onClick={() => this.draw()}
+                        <Library 
+                            {...zoneProps}
+                            contents={zones[ZoneName.Library]} 
+                            onCardClick={() => this.draw()}
                         />
                     </div>
                 </div>
