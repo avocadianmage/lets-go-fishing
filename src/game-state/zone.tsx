@@ -14,7 +14,6 @@ export interface CoreZoneProps {
     drag?: DragInfo;
     onCardDragStart: CardDragStartEventHandler;
     onCardDragStop: CardDragStopEventHandler;
-    onCardClick?(): void;
 }
 
 interface ZoneProps extends CoreZoneProps {
@@ -23,8 +22,7 @@ interface ZoneProps extends CoreZoneProps {
 }
 
 export const Zone = ({ 
-    name, arrangement, contents, drag, 
-    onCardDragStart, onCardDragStop, onCardClick
+    name, arrangement, contents, drag, onCardDragStart, onCardDragStop
 }: ZoneProps) => {
     const [width, setWidth] = useState(0);
 
@@ -62,7 +60,6 @@ export const Zone = ({
             ...drag, sourceZone: name, targetZone: name
         })}
         onDragStop={onCardDragStop}
-        onClick={onCardClick}
     />;
 
     let nondraggedIndex = 0;

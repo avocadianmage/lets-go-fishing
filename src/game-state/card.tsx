@@ -12,7 +12,6 @@ export interface CardProps {
     style?: CSSProperties;
     onDragStart: CardDragStartEventHandler;
     onDragStop: CardDragStopEventHandler;
-    onClick?(): void;
 }
 
 export interface DragInfo {
@@ -25,7 +24,7 @@ export type CardDragStartEventHandler = (drag: DragInfo) => boolean;
 export type CardDragStopEventHandler = () => boolean;
 
 export const Card = ({
-    info, faceDown, style, darken, onDragStart, onDragStop, onClick
+    info, faceDown, style, darken, onDragStart, onDragStop
 }: CardProps) => {
     const [imageUrl, setImageUrl] = useState('');
     const [manualDragPos, setManualDragPos] = useState<ControlPosition>();
@@ -76,7 +75,6 @@ export const Card = ({
                 ref={nodeRef}
                 className={getClasses()}
                 style={getStyling()}
-                onClick={onClick}
             >
                 {isLoading ?
                     <div className='loader' /> :

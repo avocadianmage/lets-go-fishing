@@ -149,7 +149,6 @@ export default class GameLayout extends Component<{}, GameLayoutState> {
                         <Library 
                             {...zoneProps}
                             contents={zones[ZoneName.Library]} 
-                            //onCardClick={() => this.draw()}
                         />
                     </div>
                 </div>
