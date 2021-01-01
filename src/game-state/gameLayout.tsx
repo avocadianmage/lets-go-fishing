@@ -10,6 +10,7 @@ import { shuffle } from '../utilities/helpers';
 import { DragInfo } from './card';
 
 export const ZoneName = {
+    None: 'none',
     Library: 'library',
     Hand: 'hand',
     Battlefield: 'battlefield',
@@ -91,10 +92,10 @@ export default class GameLayout extends Component<{}, GameLayoutState> {
         const { card, sourceZone, targetZone } = this.state.drag!;
         this.setState({ drag: undefined });
 
-        if (!sourceZone || !targetZone) {
-            return false;
-        }
-        if (sourceZone === targetZone) {
+        if (!sourceZone || targetZone === ZoneName.None) return false;
+        // If the card was clicked without dragging or the card was not dragged 
+        // away from the zone:
+        if (!targetZone || sourceZone === targetZone) {
             if (sourceZone === ZoneName.Library) this.draw();
             return false;
         }
@@ -116,7 +117,10 @@ export default class GameLayout extends Component<{}, GameLayoutState> {
         const targetElem = mouseOverElems.find(
             elem => elem.classList.contains('zone')
         );
-        this.setState({ drag: { ...drag, targetZone: targetElem?.id } });
+        this.setState({ drag: { 
+            ...drag,
+            targetZone: targetElem ? targetElem.id : ZoneName.None,
+        } });
     }
 
     render() {

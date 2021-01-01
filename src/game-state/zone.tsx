@@ -56,9 +56,7 @@ export const Zone = ({
         faceDown={arrangement === Arrangement.ShowTopFaceDown}
         style={style}
         darken={isTargetZone && !isCardDragging(card)}
-        onDragStart={drag => onCardDragStart({ 
-            ...drag, sourceZone: name, targetZone: name
-        })}
+        onDragStart={drag => onCardDragStart({ ...drag, sourceZone: name })}
         onDragStop={onCardDragStop}
     />;
 
