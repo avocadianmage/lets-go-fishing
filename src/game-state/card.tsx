@@ -29,6 +29,7 @@ export const Card = ({
 }: CardProps) => {
     const [imageUrl, setImageUrl] = useState('');
     const [manualDragPos, setManualDragPos] = useState<ControlPosition>();
+    const [isDragging, setIsDragging] = useState(false);
 
     const isLoading = !imageUrl && !faceDown;
 
@@ -52,16 +53,22 @@ export const Card = ({
     };
 
     const fireDragStart = () => {
+        setIsDragging(true);
         setManualDragPos(undefined);
         if (!onDragStart({ card: info })) return false;
     };
 
     const fireDragStop = () => {
+        setTimeout(() => setIsDragging(false));
         if (!onDragStop()) setManualDragPos({ x: 0, y: 0 });
         // Don't let react-draggable update since the card was dragged to a new 
         // zone.
         else return false; 
     };
+
+    const fireClick = () => {
+        if (onClick && !isDragging) onClick();
+    }
 
     const nodeRef = React.useRef(null);
     return (
@@ -75,7 +82,7 @@ export const Card = ({
                 ref={nodeRef}
                 className={getClasses()}
                 style={getStyling()}
-                onClick={onClick}
+                onClick={fireClick}
             >
                 {isLoading ?
                     <div className='loader' /> :
