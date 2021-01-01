@@ -4,6 +4,7 @@ import { CardInfoService } from '../services/cardInfoSvc';
 import cardBack from '../assets/mtg-card-back.png';
 import { CardInfo } from '../services/dbSvc';
 import Draggable, { ControlPosition } from 'react-draggable';
+import { cancelablePromise } from '../utilities/helpers';
 
 export interface CardProps {
     info: CardInfo;
@@ -32,8 +33,13 @@ export const Card = ({
     const isLoading = !imageUrl && !faceDown;
 
     useEffect(() => {
-        CardInfoService.getCardImageBlob(info)
-            .then(blob => setImageUrl(URL.createObjectURL(blob)));
+        const { promise, cancel } = cancelablePromise(
+            CardInfoService.getCardImageBlob(info)
+        );
+        promise
+            .then(blob => setImageUrl(URL.createObjectURL(blob)))
+            .catch(() => {});
+        return cancel;
     }, [info]);
 
     const getStyling = () => {
