@@ -46,9 +46,10 @@ export const Card = ({
     };
 
     const getClasses = () => {
-        return "card " +
-            (isLoading ? "loading " : "") +
-            (!isLoading && !faceDown && info.foil ? "foil " : "");
+        return 'card' +
+            (isLoading ? ' loading' : '') +
+            (!isLoading && !faceDown && info.foil ? ' foil' : '') +
+            (darken ? ' darken' : '');
     };
 
     const fireDragStart = () => {
@@ -80,9 +81,7 @@ export const Card = ({
                 {isLoading ?
                     <div className='loader' /> :
                     (!faceDown && 
-                        <div 
-                            className={'card-face' + (darken ? ' darken' : '')} 
-                        />
+                        <div className='card-face' />
                     )
                 }
             </div>

@@ -59,6 +59,10 @@
     pointer-events: none;
 }
 
+.card.darken .card-face {
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
 #hand .card {
     position: absolute;
 }

@@ -91,7 +91,11 @@ export default class GameLayout extends Component<{}, GameLayoutState> {
         const { card, sourceZone, targetZone } = this.state.drag!;
         this.setState({ drag: undefined });
 
-        if (!sourceZone || !targetZone || sourceZone === targetZone) {
+        if (!sourceZone || !targetZone) {
+            return false;
+        }
+        if (sourceZone === targetZone) {
+            if (sourceZone === ZoneName.Library) this.draw();
             return false;
         }
 
@@ -145,7 +149,7 @@ export default class GameLayout extends Component<{}, GameLayoutState> {
                         <Library 
                             {...zoneProps}
                             contents={zones[ZoneName.Library]} 
-                            onCardClick={() => this.draw()}
+                            //onCardClick={() => this.draw()}
                         />
                     </div>
                 </div>
