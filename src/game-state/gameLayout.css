@@ -29,19 +29,19 @@
     column-gap: 6px;
 }
 
-#hand {
-    flex: 1;
-    height: 340px;
-}
-
-#hand:empty::before {
-    content: "HAND";
+.zone:empty::before {
+    content: attr(data-name);
     color: var(--nord3);
     height: 100%;
     display: flex;
     flex-direction: column;
     justify-content: center;
     text-align: center;
+}
+
+#hand {
+    flex: 1;
+    height: 340px;
 }
 
 #library {
@@ -49,26 +49,6 @@
     height: 340px;
 }
 
-#library:empty::before {
-    content: "LIBRARY";
-    color: var(--nord3);
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    text-align: center;
-}
-
 #battlefield {
     flex: 1;
-}
-
-#battlefield:empty::before {
-    content: "BATTLEFIELD";
-    color: var(--nord3);
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    text-align: center;
 }

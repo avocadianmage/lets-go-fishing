@@ -39,6 +39,8 @@ export const Zone = ({
         return () => window.removeEventListener('resize', updateWidth);
     });
 
+    const isCardDragging = (card: CardInfo) => card.id === drag?.card.id;
+
     const getLeftForIndex = (cardCount: number, index: number) => {
         const handWidth = width - ZONE_PADDING_PX * 2;
         const offset = Math.min(
@@ -48,7 +50,16 @@ export const Zone = ({
         return (offset * index + ZONE_PADDING_PX) + 'px';
     };
 
-    const isCardDragging = (card: CardInfo) => card.id === drag?.card.id;
+    let nondraggedIndex = 0;
+    const getCardLeft = (card: CardInfo, index: number) => {
+        const isDragging = isCardDragging(card);
+        const positioningCardCount = contents.length - (
+            (!isSourceZone || isDragging) ? 0 : 1
+        );
+        const positioningIndex = isDragging ? index : nondraggedIndex++;
+        const left = getLeftForIndex(positioningCardCount, positioningIndex);
+        return left;
+    };
 
     const createCard = (card: CardInfo, style?: CSSProperties) => <Card
         key={card.id}
@@ -76,18 +87,13 @@ export const Zone = ({
         }
     }
 
-    let nondraggedIndex = 0;
-    const getCardLeft = (card: CardInfo, index: number) => {
-        const isDragging = isCardDragging(card);
-        const positioningCardCount = contents.length - (
-            (!isSourceZone || isDragging) ? 0 : 1
-        );
-        const positioningIndex = isDragging ? index : nondraggedIndex++;
-        const left = getLeftForIndex(positioningCardCount, positioningIndex);
-        return left;
-    };
     return (
-        <div id={name} className={classes} ref={container}>
+        <div 
+            id={name} 
+            className={classes} 
+            ref={container} 
+            data-name={name.toUpperCase()}
+        >
             {createArrangement()}
         </div>
     );
