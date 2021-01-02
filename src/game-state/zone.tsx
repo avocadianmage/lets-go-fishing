@@ -60,6 +60,22 @@ export const Zone = ({
         onDragStop={onCardDragStop}
     />;
 
+    const createArrangement = () => {
+        switch (arrangement) {
+            case Arrangement.Manual:
+                return contents.map(card => createCard(card));
+
+            case Arrangement.ShowTopFaceDown:
+                if (contents.length === 0) return null;
+                return createCard(contents[contents.length - 1]);
+
+            case Arrangement.HorizontallyStacked:
+                return contents.map((card, index) => (
+                    createCard(card, { left: getCardLeft(card, index) })
+                ));
+        }
+    }
+
     let nondraggedIndex = 0;
     const getCardLeft = (card: CardInfo, index: number) => {
         const isDragging = isCardDragging(card);
@@ -72,17 +88,7 @@ export const Zone = ({
     };
     return (
         <div id={name} className={classes} ref={container}>
-            {arrangement === Arrangement.ShowTopFaceDown ? 
-                (contents.length > 0 && 
-                    createCard(contents[contents.length - 1])
-                ) :
-                contents.map((card, index) => {
-                    const style = 
-                        arrangement === Arrangement.HorizontallyStacked ? 
-                            { left: getCardLeft(card, index) } : undefined;
-                    return createCard(card, style);
-                })
-            }
+            {createArrangement()}
         </div>
     );
 }
