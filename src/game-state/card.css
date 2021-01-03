@@ -1,6 +1,6 @@
 .card {
-    width: 244px;
-    height: 340px;
+    width: var(--card-width);
+    height: var(--card-height);
     display: inline-block;
     transition: background-color 0.2s, box-shadow 0.5s, left 0.05s;
     box-shadow: 1px 1px 8px rgba(0, 0, 0, 0.5);
@@ -68,7 +68,7 @@
 }
 
 #hand .card:not(.react-draggable-dragging):hover .card-face {
-    margin-top: -340px;
+    margin-top: calc(-1 * var(--card-height));
 }
 
 .loader {

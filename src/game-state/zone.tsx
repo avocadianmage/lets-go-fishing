@@ -21,14 +21,13 @@ interface ZoneProps extends CoreZoneProps {
     arrangement: Arrangement;
 }
 
-export const Zone = ({ 
+export const Zone = ({
     name, arrangement, contents, drag, onCardDragStart, onCardDragStop
 }: ZoneProps) => {
     const [width, setWidth] = useState(0);
 
     const isSourceZone = drag?.sourceZone === name;
     const isTargetZone = drag?.targetZone === name;
-    const classes = 'zone' + (isTargetZone ? ' darken' : '');
 
     const container = useRef<HTMLDivElement>(null);
     useEffect(() => {
@@ -38,6 +37,17 @@ export const Zone = ({
         window.addEventListener('resize', updateWidth);
         return () => window.removeEventListener('resize', updateWidth);
     });
+
+    const getClasses = () => {
+        let classes = 'zone';
+        if (isTargetZone) classes += ' darken';
+        if (
+            arrangement === Arrangement.ShowTopFaceDown && contents.length > 1
+        ) {
+            classes += ' card-underneath';
+        }
+        return classes;
+    }
 
     const isCardDragging = (card: CardInfo) => card.id === drag?.card.id;
 
@@ -88,10 +98,10 @@ export const Zone = ({
     }
 
     return (
-        <div 
-            id={name} 
-            className={classes} 
-            ref={container} 
+        <div
+            id={name}
+            className={getClasses()}
+            ref={container}
             data-name={name.toUpperCase()}
         >
             {createArrangement()}

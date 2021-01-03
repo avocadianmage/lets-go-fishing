@@ -39,14 +39,21 @@
     text-align: center;
 }
 
+.card-underneath {
+    background-image: url(../assets/mtg-card-back.png);
+    background-size: var(--card-width) var(--card-height);
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
 #hand {
     flex: 1;
-    height: 340px;
+    height: var(--card-height);
 }
 
 #library {
-    width: 244px;
-    height: 340px;
+    width: var(--card-width);
+    height: var(--card-height);
 }
 
 #battlefield {

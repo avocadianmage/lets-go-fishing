@@ -1,5 +1,10 @@
 @import "nord.css";
 
+:root {
+    --card-width: 244px;
+    --card-height: 340px;
+}
+
 html, body, #root {
     height: 100%;
     overflow: hidden;
