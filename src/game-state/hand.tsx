@@ -5,6 +5,6 @@ export const Hand = (props: CoreZoneProps) => {
     return <Zone 
         {...props}
         name={ZoneName.Hand} 
-        arrangement={Arrangement.HorizontallyStacked}  
+        arrangement={Arrangement.HorizontalOverlap}  
     />;
 };

@@ -5,7 +5,8 @@ export const Library = (props: CoreZoneProps) => {
     return <Zone 
         {...props}
         name={ZoneName.Library} 
-        arrangement={Arrangement.ShowTopFaceDown}  
+        arrangement={Arrangement.ShowTop} 
+        faceDown={true} 
     />;
 };
 
