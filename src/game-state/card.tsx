@@ -8,10 +8,10 @@ import { cancelablePromise } from '../utilities/helpers';
 
 export interface CardProps {
     info: CardInfo;
-    darken: boolean;
     faceDown?: boolean;
+    hasPreview?: boolean;
     style?: CSSProperties;
-    supportsPreview?: boolean;
+    darken?: boolean;
     onDragStart: CardDragStartEventHandler;
     onDragStop: CardDragStopEventHandler;
 }
@@ -26,7 +26,7 @@ export type CardDragStartEventHandler = (drag: DragInfo) => boolean;
 export type CardDragStopEventHandler = () => boolean;
 
 export const Card = ({
-    info, faceDown, style, darken, supportsPreview, onDragStart, onDragStop
+    info, faceDown, hasPreview, style, darken, onDragStart, onDragStop
 }: CardProps) => {
     const [imageUrl, setImageUrl] = useState('');
     const [manualDragPos, setManualDragPos] = useState<ControlPosition>();
@@ -85,9 +85,7 @@ export const Card = ({
             >
                 {isLoading ?
                     <div className='loader' /> :
-                    (supportsPreview && !faceDown &&
-                        <div className='card-face' />
-                    )
+                    (hasPreview && !faceDown && <div className='card-face' />)
                 }
             </div>
         </Draggable>
