@@ -75,8 +75,8 @@ export const Zone = ({
         key={card.id}
         info={card}
         faceDown={arrangement === Arrangement.ShowTopFaceDown}
-        style={style}
         hasPreview={arrangement === Arrangement.HorizontallyStacked}
+        style={style}
         darken={isTargetZone && !isCardDragging(card)}
         onDragStart={drag => onCardDragStart({ ...drag, sourceZone: name })}
         onDragStop={onCardDragStop}
