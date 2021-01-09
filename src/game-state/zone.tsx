@@ -76,7 +76,7 @@ export const Zone = ({
         key={card.id}
         info={card}
         faceDown={faceDown}
-        hasPreview={arrangement === Arrangement.HorizontalOverlap}
+        enablePreview={arrangement === Arrangement.HorizontalOverlap}
         style={style}
         darken={isTargetZone && !isCardDragging(card)}
         onDragStart={drag => onCardDragStart({ ...drag, sourceZone: name })}

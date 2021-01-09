@@ -14,7 +14,10 @@
     animation: fadeIn 0.2s;
 }
 
-.card.loading, .card:not(.react-draggable-dragging):hover {
+.card.loading, 
+.card:not(.react-draggable-dragging):hover, 
+.card:not(.react-draggable-dragging):not(.enable-preview):hover .card-face,
+.card.darken .card-face {
     background-color: rgba(0, 0, 0, 0.5);
 }
 
@@ -59,15 +62,11 @@
     pointer-events: none;
 }
 
-.card.darken .card-face {
-    background-color: rgba(0, 0, 0, 0.5);
-}
-
 #hand .card {
     position: absolute;
 }
 
-#hand .card:not(.react-draggable-dragging):hover .card-face {
+#hand .card.enable-preview:not(.react-draggable-dragging):hover .card-face {
     margin-top: calc(-1 * var(--card-height));
 }
 
