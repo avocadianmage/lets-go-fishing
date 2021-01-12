@@ -62,11 +62,7 @@
     pointer-events: none;
 }
 
-#hand .card, #library .card {
-    position: absolute;
-}
-
-#hand .card.enable-preview:not(.react-draggable-dragging):hover .card-face {
+.card.enable-preview:not(.react-draggable-dragging):hover .card-face {
     margin-top: calc(-1 * var(--card-height));
 }
 

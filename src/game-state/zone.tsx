@@ -85,7 +85,10 @@ export const Zone = ({
 
             case Arrangement.HorizontalOverlap:
                 return cardsToShow.map((card, index) => (
-                    createCard(card, { left: getCardLeft(card, index) })
+                    createCard(card, { 
+                        left: getCardLeft(card, index),
+                        position: 'absolute',
+                    })
                 ));
         }
     }
