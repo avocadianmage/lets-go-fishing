@@ -5,8 +5,9 @@ export const Library = (props: CoreZoneProps) => {
     return <Zone 
         {...props}
         name={ZoneName.Library} 
-        arrangement={Arrangement.ShowTop} 
+        arrangement={Arrangement.HorizontalOverlap} 
         faceDown={true} 
+        maxToShow={2}
     />;
 };
 

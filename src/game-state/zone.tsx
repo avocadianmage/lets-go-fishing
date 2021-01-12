@@ -4,9 +4,8 @@ import { CARD_WIDTH_PX, ZONE_PADDING_PX } from "../utilities/constants";
 import { Card, CardDragStartEventHandler, CardDragStopEventHandler, DragInfo } from "./card";
 
 export enum Arrangement {
-    Manual,
-    ShowTop,
     HorizontalOverlap,
+    Manual,
 }
 
 export interface CoreZoneProps {
@@ -20,10 +19,12 @@ interface ZoneProps extends CoreZoneProps {
     name: string;
     arrangement: Arrangement;
     faceDown?: boolean;
+    maxToShow?: number;
 }
 
 export const Zone = ({
-    name, arrangement, faceDown, contents, drag, onCardDragStart, onCardDragStop
+    name, arrangement, faceDown, maxToShow,
+    contents, drag, onCardDragStart, onCardDragStop
 }: ZoneProps) => {
     const [width, setWidth] = useState(0);
 
@@ -39,16 +40,7 @@ export const Zone = ({
         return () => window.removeEventListener('resize', updateWidth);
     });
 
-    const getClasses = () => {
-        let classes = 'zone';
-        if (isTargetZone) classes += ' darken';
-        if (
-            arrangement === Arrangement.ShowTop && contents.length > 1
-        ) {
-            classes += ' card-underneath';
-        }
-        return classes;
-    }
+    const getClasses = () => 'zone' + (isTargetZone ? ' darken' : '');
 
     const isCardDragging = (card: CardInfo) => card.id === drag?.card.id;
 
@@ -84,16 +76,15 @@ export const Zone = ({
     />;
 
     const createArrangement = () => {
+        const cardsToShow = maxToShow ? 
+            contents.slice(contents.length - maxToShow) : contents;
+
         switch (arrangement) {
             case Arrangement.Manual:
-                return contents.map(card => createCard(card));
-
-            case Arrangement.ShowTop:
-                if (contents.length === 0) return null;
-                return createCard(contents[contents.length - 1]);
+                return cardsToShow.map(card => createCard(card));
 
             case Arrangement.HorizontalOverlap:
-                return contents.map((card, index) => (
+                return cardsToShow.map((card, index) => (
                     createCard(card, { left: getCardLeft(card, index) })
                 ));
         }

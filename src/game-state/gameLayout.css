@@ -14,11 +14,6 @@
     font-size: 60px;
     transition: background-color 0.2s;
     position: relative;
-
-    /* To suport showing card underneath. */
-    background-size: var(--card-width) var(--card-height);
-    background-position: center;
-    background-repeat: no-repeat;
 }
 
 .darken {
@@ -42,10 +37,6 @@
     flex-direction: column;
     justify-content: center;
     text-align: center;
-}
-
-.card-underneath {
-    background-image: url(../assets/mtg-card-back.png);
 }
 
 #hand {

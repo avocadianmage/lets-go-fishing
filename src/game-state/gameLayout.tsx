@@ -88,8 +88,9 @@ export default class GameLayout extends Component<{}, GameLayoutState> {
     }
 
     onDragCardStop = () => {
-        const { zones } = this.state;
-        const { card, sourceZone, targetZone } = this.state.drag!;
+        const { zones, drag } = this.state;
+        if (!drag) return false;
+        const { card, sourceZone, targetZone } = drag;
         this.setState({ drag: undefined });
 
         if (!sourceZone || targetZone === ZoneName.None) return false;
