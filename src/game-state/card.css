@@ -2,7 +2,7 @@
     width: var(--card-width);
     height: var(--card-height);
     display: inline-block;
-    transition: background-color 0.2s, box-shadow 0.5s, left 0.05s;
+    transition: background-color 0.2s, box-shadow 0.5s, left 0.1s;
     box-shadow: 1px 1px 8px rgba(0, 0, 0, 0.5);
     border-bottom-left-radius: 4.75% 3.5%;
     border-bottom-right-radius: 4.75% 3.5%;
