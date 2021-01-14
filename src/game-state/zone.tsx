@@ -1,7 +1,6 @@
-import { CSSProperties, useEffect, useRef, useState } from "react";
-import { CardInfo } from "../services/dbSvc";
+import { useEffect, useRef, useState } from "react";
 import { CARD_WIDTH_PX, ZONE_PADDING_PX } from "../utilities/constants";
-import { Card, CardDragStartEventHandler, CardDragStopEventHandler, DragInfo } from "./card";
+import { Card, CardDragStartEventHandler, CardDragStopEventHandler, CardInfo, DragInfo } from "./card";
 
 export enum Arrangement {
     HorizontalOverlap,
@@ -64,12 +63,11 @@ export const Zone = ({
         return left;
     };
 
-    const createCard = (card: CardInfo, style?: CSSProperties) => <Card
+    const createCard = (card: CardInfo) => <Card
         key={card.id}
         info={card}
         faceDown={faceDown}
         enablePreview={arrangement === Arrangement.HorizontalOverlap}
-        style={style}
         darken={isTargetZone && !isCardDragging(card)}
         onDragStart={drag => onCardDragStart({ ...drag, sourceZone: name })}
         onDragStop={onCardDragStop}
@@ -85,9 +83,9 @@ export const Zone = ({
 
             case Arrangement.HorizontalOverlap:
                 return cardsToShow.map((card, index) => (
-                    createCard(card, { 
-                        left: getCardLeft(card, index),
-                        position: 'absolute',
+                    createCard({ 
+                        ...card, 
+                        style: { left: getCardLeft(card, index) } 
                     })
                 ));
         }

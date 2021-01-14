@@ -10,7 +10,7 @@
     border-top-right-radius: 4.75% 3.5%;
     background-size: contain;
     background-blend-mode: darken;
-    position: relative;
+    position: absolute;
     animation: fadeIn 0.2s;
 }
 

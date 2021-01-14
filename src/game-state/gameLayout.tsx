@@ -4,10 +4,10 @@ import { Library } from './library';
 import { Battlefield } from './battlefield';
 import DeckLookup from '../other-components/deckLookup';
 import { DeckInfoService } from '../services/deckInfoSvc';
-import { CardInfo, DatabaseService } from '../services/dbSvc';
+import { DatabaseService } from '../services/dbSvc';
 import * as Constants from '../utilities/constants';
 import { shuffle } from '../utilities/helpers';
-import { DragInfo } from './card';
+import { CardInfo, DragInfo } from './card';
 
 export const ZoneName = {
     None: 'none',
@@ -82,6 +82,19 @@ export default class GameLayout extends Component<{}, GameLayoutState> {
             .concat(sourceCards.slice(sourceCardIndex + 1));
     }
 
+    getCardAfterDrag(drag: DragInfo) {
+        const { card, node, targetZone } = drag;
+        if (targetZone !== ZoneName.Battlefield) return card;
+
+        const cardRect = node.getBoundingClientRect();
+        const zoneRect = 
+            document.getElementById(targetZone!)!.getBoundingClientRect();
+        return { ...card, style: { 
+            left: cardRect.left - zoneRect.left,
+            top: cardRect.top - zoneRect.top,
+        } };
+    }
+
     onDragCardStart = (drag: DragInfo) => {
         this.setState({ drag });
         return true;
@@ -90,7 +103,7 @@ export default class GameLayout extends Component<{}, GameLayoutState> {
     onDragCardStop = () => {
         const { zones, drag } = this.state;
         if (!drag) return false;
-        const { card, sourceZone, targetZone } = drag;
+        const { sourceZone, targetZone } = drag;
         this.setState({ drag: undefined });
 
         if (!sourceZone || targetZone === ZoneName.None) return false;
@@ -102,6 +115,7 @@ export default class GameLayout extends Component<{}, GameLayoutState> {
             return true;
         }
 
+        const card = this.getCardAfterDrag(drag);
         this.setState({
             zones: {
                 ...zones,
@@ -119,16 +133,18 @@ export default class GameLayout extends Component<{}, GameLayoutState> {
         const targetElem = mouseOverElems.find(
             elem => elem.classList.contains('zone')
         );
-        this.setState({ drag: { 
-            ...drag,
-            targetZone: targetElem ? targetElem.id : ZoneName.None,
-        } });
+        this.setState({
+            drag: {
+                ...drag,
+                targetZone: targetElem ? targetElem.id : ZoneName.None,
+            }
+        });
     }
 
     render() {
         const { zones, drag } = this.state;
-        const zoneProps = { 
-            drag, 
+        const zoneProps = {
+            drag,
             onCardDragStart: this.onDragCardStart,
             onCardDragStop: this.onDragCardStop,
         };
@@ -139,22 +155,22 @@ export default class GameLayout extends Component<{}, GameLayoutState> {
                         onImportClick={deckUrl => this.importDeck(deckUrl)}
                     />
                 </div>
-                <div 
-                    className="gameLayout" 
+                <div
+                    className="gameLayout"
                     onMouseMove={e => this.onMouseMove(e)}
                 >
-                    <Battlefield 
+                    <Battlefield
                         {...zoneProps}
                         contents={zones[ZoneName.Battlefield]}
                     />
                     <div className="bottomPanel">
-                        <Hand 
+                        <Hand
                             {...zoneProps}
-                            contents={zones[ZoneName.Hand]} 
+                            contents={zones[ZoneName.Hand]}
                         />
-                        <Library 
+                        <Library
                             {...zoneProps}
-                            contents={zones[ZoneName.Library]} 
+                            contents={zones[ZoneName.Library]}
                         />
                     </div>
                 </div>

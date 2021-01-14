@@ -2,22 +2,29 @@ import React, { CSSProperties, useEffect, useState } from 'react';
 import { CardInfoService } from '../services/cardInfoSvc';
 
 import cardBack from '../assets/mtg-card-back.png';
-import { CardInfo } from '../services/dbSvc';
-import Draggable, { ControlPosition } from 'react-draggable';
+import Draggable, { ControlPosition, DraggableData } from 'react-draggable';
 import { cancelablePromise } from '../utilities/helpers';
 
 export interface CardProps {
     info: CardInfo;
     faceDown?: boolean;
     enablePreview?: boolean;
-    style?: CSSProperties;
     darken?: boolean;
     onDragStart: CardDragStartEventHandler;
     onDragStop: CardDragStopEventHandler;
 }
 
+export interface CardInfo {
+    id: number;
+    name: string;
+    set: string;
+    foil: boolean;
+    style?: CSSProperties;
+}
+
 export interface DragInfo {
     card: CardInfo;
+    node: HTMLElement;
     sourceZone?: string;
     targetZone?: string;
 }
@@ -26,7 +33,7 @@ export type CardDragStartEventHandler = (drag: DragInfo) => boolean;
 export type CardDragStopEventHandler = () => boolean;
 
 export const Card = ({
-    info, faceDown, enablePreview, style, darken, onDragStart, onDragStop
+    info, faceDown, enablePreview, darken, onDragStart, onDragStop
 }: CardProps) => {
     const [imageUrl, setImageUrl] = useState('');
     const [manualDragPos, setManualDragPos] = useState<ControlPosition>();
@@ -35,19 +42,19 @@ export const Card = ({
 
     useEffect(() => {
         const { promise, cancel } = cancelablePromise(
-            CardInfoService.getCardImageBlob(info)
+            CardInfoService.getCardImageBlob(info.name, info.set)
         );
         promise
             .then(blob => setImageUrl(URL.createObjectURL(blob)))
             .catch(() => {});
         return cancel;
-    }, [info]);
+    }, [info.name, info.set]);
 
     const getStyling = () => {
         const imageUrlToUse = (isLoading || faceDown) ? cardBack : imageUrl;
         return Object.assign(
             { backgroundImage: `url(${imageUrlToUse})` },
-            style,
+            info.style,
         );
     };
 
@@ -60,9 +67,9 @@ export const Card = ({
             (darken ? ' darken' : '');
     };
 
-    const fireDragStart = () => {
+    const fireDragStart = (_: any, data: DraggableData) => {
         setManualDragPos(undefined);
-        if (!onDragStart({ card: info })) return false;
+        if (!onDragStart({ card: info, node: data.node })) return false;
     };
 
     const fireDragStop = () => {

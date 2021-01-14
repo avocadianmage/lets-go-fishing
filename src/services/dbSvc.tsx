@@ -1,11 +1,5 @@
 import { DBSchema, openDB } from 'idb';
-
-export interface CardInfo {
-    id: number;
-    name: string;
-    set: string;
-    foil: boolean;
-}
+import { CardInfo } from '../game-state/card';
 
 const dbName = 'lets-go-fishing-db';
 const dbVersion = 1;

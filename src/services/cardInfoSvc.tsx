@@ -1,4 +1,4 @@
-import { CardInfo, DatabaseService } from "./dbSvc";
+import { DatabaseService } from './dbSvc';
 
 const MS_QUERY_RATE = 80;
 
@@ -6,16 +6,16 @@ function getPromisedTimeout() {
     return new Promise(r => setTimeout(r, MS_QUERY_RATE));
 }
 
-function getQueryUrl({ name, set }: CardInfo) {
+function getQueryUrl(name: string, set: string) {
     return `https://api.scryfall.com/cards/named?exact=${name}&set=${set}`;
 }
 
 class CardInfoSvc {
     private outgoingThrottle: Promise<any> = Promise.resolve();
 
-    getCardImageBlob(cardInfo: CardInfo) {
+    getCardImageBlob(name: string, set: string) {
         return new Promise(resolve => {
-            DatabaseService.getCardBlob(cardInfo.name).then(blob => {
+            DatabaseService.getCardBlob(name).then(blob => {
                 if (blob) {
                     resolve(blob);
                     return;
@@ -23,7 +23,7 @@ class CardInfoSvc {
 
                 this.outgoingThrottle = this.outgoingThrottle
                     // Fetch card information from external site.
-                    .then(() => fetch(getQueryUrl(cardInfo)))
+                    .then(() => fetch(getQueryUrl(name, set)))
                     .then(result => result.json())
                     // Store the fetched image to the database as a blob.
                     .then(json => {
@@ -31,10 +31,7 @@ class CardInfoSvc {
                             .then(() => fetch(json.image_uris.normal))
                             .then(response => response.blob())
                             .then(blob => {
-                                DatabaseService.putCardBlob(
-                                    blob, 
-                                    cardInfo.name
-                                );
+                                DatabaseService.putCardBlob(blob, name);
                                 resolve(blob);
                             });
                     })
