@@ -107,13 +107,15 @@ export default class GameLayout extends Component<{}, GameLayoutState> {
         this.setState({ drag: undefined });
 
         if (!sourceZone || targetZone === ZoneName.None) return false;
-        // If the card was clicked without dragging or the card was not dragged 
-        // away from the zone:
-        if (!targetZone || sourceZone === targetZone) {
+        
+        // If the card was clicked without dragging:
+        if (!targetZone) {
             if (sourceZone !== ZoneName.Library) return false;
             this.draw();
             return true;
         }
+
+        if (sourceZone === targetZone) return false;
 
         const card = this.getCardAfterDrag(drag);
         this.setState({
