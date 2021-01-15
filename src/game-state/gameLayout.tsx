@@ -1,14 +1,11 @@
 import React, { Component } from 'react';
-import { Hand } from './hand';
-import { Library } from './library';
-import { Battlefield } from './battlefield';
 import DeckLookup from '../other-components/deckLookup';
 import { DeckInfoService } from '../services/deckInfoSvc';
 import { DatabaseService } from '../services/dbSvc';
 import * as Constants from '../utilities/constants';
 import { shuffle } from '../utilities/helpers';
 import { CardInfo, DragInfo } from './card';
-import { ZoneCardInfo } from './zone';
+import { Arrangement, Zone, ZoneCardInfo } from './zone';
 
 export const ZoneName = {
     None: 'none',
@@ -181,18 +178,26 @@ export default class GameLayout extends Component<{}, GameLayoutState> {
                     className="gameLayout"
                     onMouseMove={e => this.onMouseMove(e)}
                 >
-                    <Battlefield
+                    <Zone
                         {...zoneProps}
                         contents={zones[ZoneName.Battlefield]}
+                        name={ZoneName.Battlefield} 
+                        arrangement={Arrangement.Manual}  
                     />
                     <div className="bottomPanel">
-                        <Hand
+                        <Zone
                             {...zoneProps}
                             contents={zones[ZoneName.Hand]}
+                            name={ZoneName.Hand} 
+                            arrangement={Arrangement.HorizontalOverlap}  
                         />
-                        <Library
+                        <Zone 
                             {...zoneProps}
                             contents={zones[ZoneName.Library]}
+                            name={ZoneName.Library} 
+                            arrangement={Arrangement.HorizontalOverlap} 
+                            faceDown={true} 
+                            maxToShow={2}
                         />
                     </div>
                 </div>
