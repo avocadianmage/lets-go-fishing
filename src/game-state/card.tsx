@@ -5,21 +5,11 @@ import cardBack from '../assets/mtg-card-back.png';
 import Draggable, { ControlPosition, DraggableData } from 'react-draggable';
 import { cancelablePromise } from '../utilities/helpers';
 
-export interface CardProps {
-    info: CardInfo;
-    faceDown?: boolean;
-    enablePreview?: boolean;
-    darken?: boolean;
-    onDragStart: CardDragStartEventHandler;
-    onDragStop: CardDragStopEventHandler;
-}
-
 export interface CardInfo {
     id: number;
     name: string;
     set: string;
     foil: boolean;
-    style?: CSSProperties;
 }
 
 export interface DragInfo {
@@ -29,11 +19,21 @@ export interface DragInfo {
     targetZone?: string;
 }
 
+export interface CardProps {
+    info: CardInfo;
+    style: CSSProperties;
+    faceDown?: boolean;
+    enablePreview?: boolean;
+    darken?: boolean;
+    onDragStart: CardDragStartEventHandler;
+    onDragStop: CardDragStopEventHandler;
+}
+
 export type CardDragStartEventHandler = (drag: DragInfo) => boolean;
 export type CardDragStopEventHandler = () => boolean;
 
 export const Card = ({
-    info, faceDown, enablePreview, darken, onDragStart, onDragStop
+    info, style, faceDown, enablePreview, darken, onDragStart, onDragStop
 }: CardProps) => {
     const [imageUrl, setImageUrl] = useState('');
     const [manualDragPos, setManualDragPos] = useState<ControlPosition>();
@@ -48,13 +48,13 @@ export const Card = ({
             .then(blob => setImageUrl(URL.createObjectURL(blob)))
             .catch(() => {});
         return cancel;
-    }, [info.name, info.set]);
+    }, [info]);
 
     const getStyling = () => {
         const imageUrlToUse = (isLoading || faceDown) ? cardBack : imageUrl;
         return Object.assign(
             { backgroundImage: `url(${imageUrlToUse})` },
-            info.style,
+            style,
         );
     };
 

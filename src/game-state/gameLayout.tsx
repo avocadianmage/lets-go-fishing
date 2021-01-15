@@ -8,6 +8,7 @@ import { DatabaseService } from '../services/dbSvc';
 import * as Constants from '../utilities/constants';
 import { shuffle } from '../utilities/helpers';
 import { CardInfo, DragInfo } from './card';
+import { ZoneCardInfo } from './zone';
 
 export const ZoneName = {
     None: 'none',
@@ -18,7 +19,7 @@ export const ZoneName = {
 
 interface GameLayoutState {
     loading: boolean;
-    zones: { [domId: string]: CardInfo[] };
+    zones: { [domId: string]: ZoneCardInfo[] };
     drag?: DragInfo;
 }
 
@@ -51,7 +52,10 @@ export default class GameLayout extends Component<{}, GameLayoutState> {
     shuffleDeck(decklist: CardInfo[]) {
         this.setState({
             loading: false,
-            zones: { ...this.state.zones, [ZoneName.Library]: shuffle(decklist) },
+            zones: {
+                ...this.state.zones,
+                [ZoneName.Library]: shuffle(decklist).map(card => ({ card })),
+            },
         });
     }
 
@@ -76,23 +80,26 @@ export default class GameLayout extends Component<{}, GameLayoutState> {
 
     sliceCardFromZone(card: CardInfo, zone: string) {
         const sourceCards = this.state.zones[zone];
-        const sourceCardIndex = sourceCards.findIndex(c => c.id === card.id);
+        const sourceCardIndex = sourceCards.findIndex(
+            zoneCard => zoneCard.card.id === card.id
+        );
         return sourceCards
             .slice(0, sourceCardIndex)
             .concat(sourceCards.slice(sourceCardIndex + 1));
     }
 
-    getCardAfterDrag(drag: DragInfo) {
+    getZoneCardAfterDrag(drag: DragInfo) {
         const { card, node, targetZone } = drag;
-        if (targetZone !== ZoneName.Battlefield) return card;
+        if (targetZone !== ZoneName.Battlefield) return { card };
 
         const cardRect = node.getBoundingClientRect();
-        const zoneRect = 
+        const zoneRect =
             document.getElementById(targetZone!)!.getBoundingClientRect();
-        return { ...card, style: { 
-            left: cardRect.left - zoneRect.left,
-            top: cardRect.top - zoneRect.top,
-        } };
+        return {
+            card,
+            x: cardRect.left - zoneRect.left,
+            y: cardRect.top - zoneRect.top,
+        };
     }
 
     onDragCardStart = (drag: DragInfo) => {
@@ -103,11 +110,11 @@ export default class GameLayout extends Component<{}, GameLayoutState> {
     onDragCardStop = () => {
         const { zones, drag } = this.state;
         if (!drag) return false;
-        const { sourceZone, targetZone } = drag;
+        const { card, sourceZone, targetZone } = drag;
         this.setState({ drag: undefined });
 
         if (!sourceZone || targetZone === ZoneName.None) return false;
-        
+
         // If the card was clicked without dragging:
         if (!targetZone) {
             if (sourceZone !== ZoneName.Library) return false;
@@ -115,14 +122,27 @@ export default class GameLayout extends Component<{}, GameLayoutState> {
             return true;
         }
 
-        if (sourceZone === targetZone) return false;
+        // If the card was dragged within a zone that is not the Battlefield:
+        if (sourceZone === targetZone && sourceZone !== ZoneName.Battlefield) {
+            return false;
+        }
 
-        const card = this.getCardAfterDrag(drag);
+        const zoneCard = this.getZoneCardAfterDrag(drag);
+        const sourceZoneCards = this.sliceCardFromZone(card, sourceZone);
+        if (sourceZone === targetZone) {
+            this.setState({
+                zones: {
+                    ...zones,
+                    [sourceZone]: sourceZoneCards.concat(zoneCard)
+                }
+            });
+            return false;
+        }
         this.setState({
             zones: {
                 ...zones,
-                [sourceZone]: this.sliceCardFromZone(card, sourceZone),
-                [targetZone]: zones[targetZone].concat(card),
+                [sourceZone]: sourceZoneCards,
+                [targetZone]: zones[targetZone].concat(zoneCard),
             }
         });
         return true;

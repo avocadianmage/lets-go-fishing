@@ -7,8 +7,14 @@ export enum Arrangement {
     Manual,
 }
 
+export interface ZoneCardInfo {
+    card: CardInfo;
+    x?: number;
+    y?: number;
+}
+
 export interface CoreZoneProps {
-    contents: CardInfo[];
+    contents: ZoneCardInfo[];
     drag?: DragInfo;
     onCardDragStart: CardDragStartEventHandler;
     onCardDragStop: CardDragStopEventHandler;
@@ -49,11 +55,11 @@ export const Zone = ({
             CARD_WIDTH_PX,
             (handWidth - CARD_WIDTH_PX) / (cardCount - 1)
         );
-        return (offset * index + ZONE_PADDING_PX) + 'px';
+        return offset * index + ZONE_PADDING_PX;
     };
 
     let nondraggedIndex = 0;
-    const getCardLeft = (card: CardInfo, index: number) => {
+    const getCardX = (card: CardInfo, index: number) => {
         const isDragging = isCardDragging(card);
         const positioningCardCount = contents.length - (
             (!isSourceZone || isDragging) ? 0 : 1
@@ -63,31 +69,42 @@ export const Zone = ({
         return left;
     };
 
-    const createCard = (card: CardInfo) => <Card
-        key={card.id}
-        info={card}
-        faceDown={faceDown}
-        enablePreview={arrangement === Arrangement.HorizontalOverlap}
-        darken={isTargetZone && !isCardDragging(card)}
-        onDragStart={drag => onCardDragStart({ ...drag, sourceZone: name })}
-        onDragStop={onCardDragStop}
-    />;
+    const createCard = (zoneCard: ZoneCardInfo) => {
+        const { card, x, y } = zoneCard;
+        const transition = 'background-color 0.2s, box-shadow 0.5s' +
+            (arrangement === Arrangement.HorizontalOverlap ? 
+                ', left 0.1s' : '');
+        const style = {
+            transition,
+            left: x ? x + 'px' : undefined,
+            top: y ? y + 'px' : undefined,
+        };
+        return <Card
+            key={card.id}
+            info={card}
+            style={style}
+            faceDown={faceDown}
+            enablePreview={arrangement === Arrangement.HorizontalOverlap}
+            darken={isTargetZone && !isCardDragging(card)}
+            onDragStart={drag => onCardDragStart({ ...drag, sourceZone: name })}
+            onDragStop={onCardDragStop}
+        />;
+    }
 
     const createArrangement = () => {
-        const cardsToShow = maxToShow ? 
+        const cardsToShow = maxToShow ?
             contents.slice(contents.length - maxToShow) : contents;
 
         switch (arrangement) {
             case Arrangement.Manual:
-                return cardsToShow.map(card => createCard(card));
+                return cardsToShow.map(zoneCard => createCard(zoneCard));
 
             case Arrangement.HorizontalOverlap:
-                return cardsToShow.map((card, index) => (
-                    createCard({ 
-                        ...card, 
-                        style: { left: getCardLeft(card, index) } 
-                    })
-                ));
+                console.log(cardsToShow);
+                return cardsToShow.map((zoneCard, index) => {
+                    const { card } = zoneCard;
+                    return createCard({ card, x: getCardX(card, index) })
+                });
         }
     }
 
