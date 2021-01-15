@@ -97,7 +97,7 @@ export const Zone = ({
 
         switch (arrangement) {
             case Arrangement.Manual:
-                return cardsToShow.map(zoneCard => createCard(zoneCard));
+                return cardsToShow.map(createCard);
 
             case Arrangement.HorizontalOverlap:
                 console.log(cardsToShow);
