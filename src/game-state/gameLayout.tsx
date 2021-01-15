@@ -5,7 +5,8 @@ import { DatabaseService } from '../services/dbSvc';
 import * as Constants from '../utilities/constants';
 import { shuffle } from '../utilities/helpers';
 import { CardInfo, DragInfo } from './card';
-import { Arrangement, Zone, ZoneCardInfo } from './zone';
+import { Zone, ZoneCardInfo } from './zone';
+import { StackZone } from './stackZone';
 
 export const ZoneName = {
     None: 'none',
@@ -180,22 +181,20 @@ export default class GameLayout extends Component<{}, GameLayoutState> {
                 >
                     <Zone
                         {...zoneProps}
-                        contents={zones[ZoneName.Battlefield]}
                         name={ZoneName.Battlefield} 
-                        arrangement={Arrangement.Manual}  
+                        contents={zones[ZoneName.Battlefield]}
                     />
                     <div className="bottomPanel">
-                        <Zone
+                        <StackZone 
                             {...zoneProps}
+                            name={ZoneName.Hand}
                             contents={zones[ZoneName.Hand]}
-                            name={ZoneName.Hand} 
-                            arrangement={Arrangement.HorizontalOverlap}  
+                            enablePreview={true}
                         />
-                        <Zone 
+                        <StackZone 
                             {...zoneProps}
+                            name={ZoneName.Library}
                             contents={zones[ZoneName.Library]}
-                            name={ZoneName.Library} 
-                            arrangement={Arrangement.HorizontalOverlap} 
                             faceDown={true} 
                             maxToShow={2}
                         />

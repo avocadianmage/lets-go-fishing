@@ -19,7 +19,7 @@ export interface DragInfo {
     targetZone?: string;
 }
 
-export interface CardProps {
+interface CardProps {
     info: CardInfo;
     style: CSSProperties;
     faceDown?: boolean;
