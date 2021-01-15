@@ -13,23 +13,20 @@ export interface ZoneCardInfo {
     y?: number;
 }
 
-export interface CoreZoneProps {
+export interface ZoneProps {
+    name: string;
     contents: ZoneCardInfo[];
+    arrangement: Arrangement;
+    faceDown?: boolean;
+    maxToShow?: number;
     drag?: DragInfo;
     onCardDragStart: CardDragStartEventHandler;
     onCardDragStop: CardDragStopEventHandler;
 }
 
-interface ZoneProps extends CoreZoneProps {
-    name: string;
-    arrangement: Arrangement;
-    faceDown?: boolean;
-    maxToShow?: number;
-}
-
 export const Zone = ({
-    name, arrangement, faceDown, maxToShow,
-    contents, drag, onCardDragStart, onCardDragStop
+    name, contents, arrangement, faceDown, maxToShow,
+    drag, onCardDragStart, onCardDragStop
 }: ZoneProps) => {
     const [width, setWidth] = useState(0);
 
