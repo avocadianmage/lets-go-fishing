@@ -106,48 +106,63 @@ export default class GameLayout extends Component<{}, GameLayoutState> {
     }
 
     onDragCardStop = () => {
-        const { zones, drag } = this.state;
+        const { drag } = this.state;
         if (!drag) return false;
-        const { card, sourceZone, targetZone } = drag;
+        const { sourceZone, targetZone } = drag;
         this.setState({ drag: undefined });
-        
+
+        const isFromLibrary = sourceZone === ZoneName.Library;
+        const isFromBattlefield = sourceZone === ZoneName.Battlefield;
         const isTrueClick = !targetZone;
         const isIntrazoneDrag = targetZone && targetZone === sourceZone;
 
         if (!sourceZone) return false;
         if (targetZone === ZoneName.None) return false;
 
-        if (sourceZone === ZoneName.Library && (isTrueClick || isIntrazoneDrag)) {
-            this.draw();
-            return true;
-        }
-
-        if (sourceZone !== ZoneName.Library && isTrueClick) return false;
-
-        // If the card was dragged within a zone that is not the Battlefield:
-        if (sourceZone !== ZoneName.Battlefield && isIntrazoneDrag) {
+        if (isTrueClick) {
+            if (isFromLibrary) {
+                this.draw();
+                return true;
+            }
             return false;
         }
 
-        const zoneCard = this.getZoneCardAfterDrag(drag);
-        const sourceZoneCards = this.sliceCardFromZone(card, sourceZone);
         if (isIntrazoneDrag) {
+            if (isFromLibrary) {
+                this.draw();
+                return true;
+            }
+            if (isFromBattlefield) this.updateCardFromDrag(drag);
+            return false;
+        }
+
+        // This is interzone drag.
+        this.updateCardFromDrag(drag);
+        return true;
+    }
+
+    updateCardFromDrag(drag: DragInfo) {
+        const { zones } = this.state
+        const { card, sourceZone, targetZone } = drag;
+        const zoneCard = this.getZoneCardAfterDrag(drag);
+        const sourceZoneCards = this.sliceCardFromZone(card, sourceZone!);
+        if (sourceZone === targetZone) {
             this.setState({
                 zones: {
                     ...zones,
-                    [sourceZone]: sourceZoneCards.concat(zoneCard)
+                    [sourceZone!]: sourceZoneCards.concat(zoneCard),
                 }
             });
-            return false;
         }
-        this.setState({
-            zones: {
-                ...zones,
-                [sourceZone]: sourceZoneCards,
-                [targetZone!]: zones[targetZone!].concat(zoneCard),
-            }
-        });
-        return true;
+        else {
+            this.setState({
+                zones: {
+                    ...zones,
+                    [sourceZone!]: sourceZoneCards,
+                    [targetZone!]: zones[targetZone!].concat(zoneCard),
+                }
+            });
+        }
     }
 
     onMouseMove(e: React.MouseEvent) {
@@ -185,21 +200,21 @@ export default class GameLayout extends Component<{}, GameLayoutState> {
                 >
                     <Zone
                         {...zoneProps}
-                        name={ZoneName.Battlefield} 
+                        name={ZoneName.Battlefield}
                         contents={zones[ZoneName.Battlefield]}
                     />
                     <div className="bottomPanel">
-                        <StackZone 
+                        <StackZone
                             {...zoneProps}
                             name={ZoneName.Hand}
                             contents={zones[ZoneName.Hand]}
                             enablePreview={true}
                         />
-                        <StackZone 
+                        <StackZone
                             {...zoneProps}
                             name={ZoneName.Library}
                             contents={zones[ZoneName.Library]}
-                            faceDown={true} 
+                            faceDown={true}
                             maxToShow={2}
                         />
                     </div>
