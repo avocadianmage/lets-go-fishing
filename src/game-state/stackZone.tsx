@@ -8,8 +8,13 @@ interface StackZoneProps extends ZoneProps {
 }
 
 export const StackZone = (props: StackZoneProps) => {
-    const { name, contents, drag, maxToShow } = props;
+    const { name, contents, drag, maxToShow, onSizeChanged } = props;
     const [width, setWidth] = useState(0);
+
+    const fireSizeChanged = (width: number) => {
+        if (onSizeChanged) onSizeChanged(width);
+        setWidth(width);
+    }
 
     const getXForIndex = (cardCount: number, index: number) => {
         const handWidth = width - ZONE_PADDING_PX * 2;
@@ -40,6 +45,6 @@ export const StackZone = (props: StackZoneProps) => {
     return <Zone 
         {...props} 
         contents={updatedContents} 
-        onSizeUpdated={setWidth} 
+        onSizeChanged={fireSizeChanged} 
     />;
 }

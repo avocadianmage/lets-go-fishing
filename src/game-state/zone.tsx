@@ -15,17 +15,17 @@ export interface ZoneProps {
     drag?: DragInfo;
     onCardDragStart: CardDragStartEventHandler;
     onCardDragStop: CardDragStopEventHandler;
-    onSizeUpdated?(width: number): void;
+    onSizeChanged?(width: number): void;
 }
 
 export const Zone = ({
     name, contents, faceDown, enablePreview, drag, 
-    onCardDragStart, onCardDragStop, onSizeUpdated
+    onCardDragStart, onCardDragStop, onSizeChanged
 }: ZoneProps) => {
     const containerRef = useRef<HTMLDivElement>(null);
     useEffect(() => {
-        if (!onSizeUpdated) return;
-        const updateWidth = () => onSizeUpdated(containerRef.current!.clientWidth);
+        if (!onSizeChanged) return;
+        const updateWidth = () => onSizeChanged(containerRef.current!.clientWidth);
         updateWidth();
         window.addEventListener('resize', updateWidth);
         return () => window.removeEventListener('resize', updateWidth);
