@@ -110,24 +110,28 @@ export default class GameLayout extends Component<{}, GameLayoutState> {
         if (!drag) return false;
         const { card, sourceZone, targetZone } = drag;
         this.setState({ drag: undefined });
+        
+        const isTrueClick = !targetZone;
+        const isIntrazoneDrag = targetZone && targetZone === sourceZone;
 
-        if (!sourceZone || targetZone === ZoneName.None) return false;
+        if (!sourceZone) return false;
+        if (targetZone === ZoneName.None) return false;
 
-        // If the card was clicked without dragging:
-        if (!targetZone) {
-            if (sourceZone !== ZoneName.Library) return false;
+        if (sourceZone === ZoneName.Library && (isTrueClick || isIntrazoneDrag)) {
             this.draw();
             return true;
         }
 
+        if (sourceZone !== ZoneName.Library && isTrueClick) return false;
+
         // If the card was dragged within a zone that is not the Battlefield:
-        if (sourceZone === targetZone && sourceZone !== ZoneName.Battlefield) {
+        if (sourceZone !== ZoneName.Battlefield && isIntrazoneDrag) {
             return false;
         }
 
         const zoneCard = this.getZoneCardAfterDrag(drag);
         const sourceZoneCards = this.sliceCardFromZone(card, sourceZone);
-        if (sourceZone === targetZone) {
+        if (isIntrazoneDrag) {
             this.setState({
                 zones: {
                     ...zones,
@@ -140,7 +144,7 @@ export default class GameLayout extends Component<{}, GameLayoutState> {
             zones: {
                 ...zones,
                 [sourceZone]: sourceZoneCards,
-                [targetZone]: zones[targetZone].concat(zoneCard),
+                [targetZone!]: zones[targetZone!].concat(zoneCard),
             }
         });
         return true;
