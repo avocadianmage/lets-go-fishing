@@ -65,10 +65,6 @@
     margin-top: calc(-1 * var(--card-height));
 }
 
-.zone.darken .card-face {
-    transition: none;
-}
-
 .loader {
     position: absolute;
     top: 50%;
