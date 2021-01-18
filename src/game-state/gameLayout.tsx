@@ -77,13 +77,9 @@ export default class GameLayout extends Component<{}, GameLayoutState> {
     }
 
     sliceCardFromZone(card: CardInfo, zone: string) {
-        const sourceCards = this.state.zones[zone];
-        const sourceCardIndex = sourceCards.findIndex(
-            zoneCard => zoneCard.card.id === card.id
-        );
-        return sourceCards
-            .slice(0, sourceCardIndex)
-            .concat(sourceCards.slice(sourceCardIndex + 1));
+        const cards = this.state.zones[zone];
+        const index = cards.findIndex(zc => zc.card.id === card.id);
+        return cards.slice(0, index).concat(cards.slice(index + 1));
     }
 
     getZoneCardAfterDrag(drag: DragInfo) {
@@ -100,12 +96,12 @@ export default class GameLayout extends Component<{}, GameLayoutState> {
         };
     }
 
-    onDragCardStart = (drag: DragInfo) => {
+    onCardDragStart = (drag: DragInfo) => {
         this.setState({ drag });
         return true;
     }
 
-    onDragCardStop = () => {
+    onCardDragStop = () => {
         const { drag } = this.state;
         if (!drag) return false;
         const { sourceZone, targetZone } = drag;
@@ -184,8 +180,8 @@ export default class GameLayout extends Component<{}, GameLayoutState> {
         const { zones, drag } = this.state;
         const zoneProps = {
             drag,
-            onCardDragStart: this.onDragCardStart,
-            onCardDragStop: this.onDragCardStop,
+            onCardDragStart: this.onCardDragStart,
+            onCardDragStop: this.onCardDragStop,
         };
         return (
             <>
