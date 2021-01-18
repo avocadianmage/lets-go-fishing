@@ -115,20 +115,12 @@ export default class GameLayout extends Component<{}, GameLayoutState> {
         if (!sourceZone) return false;
         if (targetZone === ZoneName.None) return false;
 
-        if (isTrueClick) {
+        if (isTrueClick || isIntrazoneDrag) {
             if (isFromLibrary) {
                 this.draw();
                 return true;
             }
-            return false;
-        }
-
-        if (isIntrazoneDrag) {
-            if (isFromLibrary) {
-                this.draw();
-                return true;
-            }
-            if (isFromBattlefield) this.updateCardFromDrag(drag);
+            if (isIntrazoneDrag && isFromBattlefield) this.updateCardFromDrag(drag);
             return false;
         }
 
