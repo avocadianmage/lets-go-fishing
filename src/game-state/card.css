@@ -59,6 +59,10 @@
     pointer-events: none;
 }
 
+#hand .card .card-face {
+    animation: slideIn 0.1s;
+}
+
 .card.enable-preview:not(.react-draggable-dragging):hover .card-face {
     transform: translate(0, -100%);
 }
@@ -98,5 +102,11 @@
     }
     100% {
         top: 150%
+    }
+}
+
+@keyframes slideIn {
+    from {
+        transform: translate(0, -10%);
     }
 }
