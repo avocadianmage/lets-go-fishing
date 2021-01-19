@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import DeckLookup from '../other-components/deckLookup';
 import { DeckInfoService } from '../services/deckInfoSvc';
-import { DatabaseService } from '../services/dbSvc';
+import { CardInfo, DatabaseService } from '../services/dbSvc';
 import * as Constants from '../utilities/constants';
 import { shuffle } from '../utilities/helpers';
-import { CardInfo, DragInfo } from './card';
+import { DragInfo } from './card';
 import { Zone, ZoneCardInfo } from './zone';
 import { StackZone } from './stackZone';
 

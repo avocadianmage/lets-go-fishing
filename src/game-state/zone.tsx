@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
-import { Card, CardDragStartEventHandler, CardDragStopEventHandler, CardInfo, DragInfo } from "./card";
+import { CardInfo } from "../services/dbSvc";
+import { Card, CardDragStartEventHandler, CardDragStopEventHandler, DragInfo } from "./card";
 
 export interface ZoneCardInfo {
     card: CardInfo;

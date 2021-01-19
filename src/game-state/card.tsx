@@ -4,13 +4,7 @@ import { CardInfoService } from '../services/cardInfoSvc';
 import cardBack from '../assets/mtg-card-back.png';
 import Draggable, { ControlPosition, DraggableData } from 'react-draggable';
 import { cancelablePromise } from '../utilities/helpers';
-
-export interface CardInfo {
-    id: number;
-    name: string;
-    set: string;
-    foil: boolean;
-}
+import { CardInfo } from '../services/dbSvc';
 
 export interface DragInfo {
     card: CardInfo;
@@ -42,11 +36,9 @@ export const Card = ({
 
     useEffect(() => {
         const { promise, cancel } = cancelablePromise(
-            CardInfoService.getCardImageBlob(info.name, info.set)
+            CardInfoService.getCardImageUrl(info)
         );
-        promise
-            .then(blob => setImageUrl(URL.createObjectURL(blob)))
-            .catch(() => {});
+        promise.then(url => setImageUrl(url)).catch(() => {});
         return cancel;
     }, [info]);
 

@@ -1,6 +1,6 @@
 import { useState } from "react";
+import { CardInfo } from "../services/dbSvc";
 import { CARD_WIDTH_PX, ZONE_PADDING_PX } from "../utilities/constants";
-import { CardInfo } from "./card";
 import { Zone, ZoneProps } from "./zone";
 
 interface StackZoneProps extends ZoneProps {

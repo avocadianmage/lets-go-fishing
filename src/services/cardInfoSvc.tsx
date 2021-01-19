@@ -1,4 +1,4 @@
-import { DatabaseService } from './dbSvc';
+import { CardInfo, DatabaseService } from './dbSvc';
 
 const MS_QUERY_RATE = 80;
 
@@ -12,12 +12,29 @@ function getQueryUrl(name: string, set: string) {
 
 class CardInfoSvc {
     private outgoingThrottle: Promise<any> = Promise.resolve();
+    private cache: string[] = [];
 
-    getCardImageBlob(name: string, set: string) {
+    processBlob(id: number, blob: Blob) {
+        const url = URL.createObjectURL(blob);
+        this.cache[id] = url;
+        return url;
+    }
+
+    getCardImageUrl({ id, name, set }: CardInfo) {
         return new Promise(resolve => {
+
+            // Check if the URL is already stored in the local cache.
+            const cachedUrl = this.cache[id];
+            if (cachedUrl) {
+                resolve(cachedUrl);
+                return;
+            }
+
             DatabaseService.getCardBlob(name).then(blob => {
+
+                // Check if the blob is already stored in the IndexedDB.
                 if (blob) {
-                    resolve(blob);
+                    resolve(this.processBlob(id, blob));
                     return;
                 }
 
@@ -32,7 +49,7 @@ class CardInfoSvc {
                             .then(response => response.blob())
                             .then(blob => {
                                 DatabaseService.putCardBlob(blob, name);
-                                resolve(blob);
+                                resolve(this.processBlob(id, blob));
                             });
                     })
                     // Ensure the next request is throttled.
