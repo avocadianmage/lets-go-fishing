@@ -10,7 +10,6 @@
     background-size: contain;
     background-blend-mode: darken;
     position: absolute;
-    animation: fadeIn 0.2s;
 }
 
 .card.loading, 
@@ -74,7 +73,7 @@
     border-radius: 50%;
     width: 64px;
     height: 64px;
-    animation: spin 1s linear infinite;
+    animation: fadeIn 0.2s, spin 1s linear infinite;
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 1);
 }
 
