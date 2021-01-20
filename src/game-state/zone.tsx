@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { ForwardedRef, forwardRef, RefObject, useEffect, useState } from "react";
 import { CardInfo } from "../services/dbSvc";
 import { Card, CardDragStartEventHandler, CardDragStopEventHandler, DragInfo } from "./card";
 
@@ -11,7 +11,6 @@ export interface ZoneCardInfo {
 export interface ZoneProps {
     name: string;
     contents: ZoneCardInfo[];
-    containerRef: React.RefObject<HTMLDivElement>;
     faceDown?: boolean;
     enablePreview?: boolean;
     drag?: DragInfo;
@@ -19,7 +18,7 @@ export interface ZoneProps {
     onCardDragStop: CardDragStopEventHandler;
 }
 
-export const useSize = (nodeRef: React.RefObject<HTMLElement>) => {
+export const useSize = (nodeRef: RefObject<HTMLElement>) => {
     const [size, setSize] = useState([0, 0]);
     useEffect(() => {
         const updateSize = () => {
@@ -33,10 +32,10 @@ export const useSize = (nodeRef: React.RefObject<HTMLElement>) => {
     return size;
 };
 
-export const Zone = ({
-    name, contents, containerRef, faceDown, enablePreview, drag, 
-    onCardDragStart, onCardDragStop
-}: ZoneProps) => {
+export const Zone = forwardRef((
+    { name, contents, faceDown, enablePreview, drag, onCardDragStart, onCardDragStop }: ZoneProps,
+    ref: ForwardedRef<HTMLDivElement>
+) => {
     const isTargetZone = drag?.targetZone === name;
     const classes = 'zone' + (isTargetZone ? ' highlight' : '');
 
@@ -61,7 +60,7 @@ export const Zone = ({
 
     return (
         <div
-            ref={containerRef}
+            ref={ref}
             id={name}
             className={classes}
             data-name={name.toUpperCase()}
@@ -69,4 +68,4 @@ export const Zone = ({
             {contents.map(createCard)}
         </div>
     );
-}
+});

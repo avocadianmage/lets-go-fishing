@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import { Component, createRef } from 'react';
 import DeckLookup from '../other-components/deckLookup';
 import { DeckInfoService } from '../services/deckInfoSvc';
 import { CardInfo, DatabaseService } from '../services/dbSvc';
@@ -20,6 +20,8 @@ interface GameLayoutState {
     zones: { [domId: string]: ZoneCardInfo[] };
     drag?: DragInfo;
 }
+
+const battlefieldRef = createRef<HTMLDivElement>();
 
 export default class GameLayout extends Component<{}, GameLayoutState> {
     state: GameLayoutState = {
@@ -87,8 +89,7 @@ export default class GameLayout extends Component<{}, GameLayoutState> {
         if (targetZone !== ZoneName.Battlefield) return { card };
 
         const cardRect = node.getBoundingClientRect();
-        const zoneRect =
-            document.getElementById(targetZone!)!.getBoundingClientRect();
+        const zoneRect = battlefieldRef.current!.getBoundingClientRect();
         return {
             card,
             x: cardRect.left - zoneRect.left,
@@ -187,24 +188,22 @@ export default class GameLayout extends Component<{}, GameLayoutState> {
                     onMouseMove={e => this.onMouseMove(e)}
                 >
                     <Zone
+                        ref={battlefieldRef}
                         {...zoneProps}
                         name={ZoneName.Battlefield}
                         contents={zones[ZoneName.Battlefield]}
-                        containerRef={React.createRef()}
                     />
                     <div className="bottomPanel">
                         <StackZone
                             {...zoneProps}
                             name={ZoneName.Hand}
                             contents={zones[ZoneName.Hand]}
-                            containerRef={React.createRef()}
                             enablePreview={true}
                         />
                         <StackZone
                             {...zoneProps}
                             name={ZoneName.Library}
                             contents={zones[ZoneName.Library]}
-                            containerRef={React.createRef()}
                             faceDown={true}
                             maxToShow={2}
                         />
