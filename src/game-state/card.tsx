@@ -37,7 +37,7 @@ export const Card = ({
         const { promise, cancel } = cancelablePromise(
             CardInfoService.getCardImageUrl(info)
         );
-        promise.then(url => setImageUrl(url)).catch(() => {});
+        promise.then(url => setImageUrl(url)).catch(() => { });
         return cancel;
     }, [info]);
 
@@ -66,7 +66,7 @@ export const Card = ({
         if (!onDragStop()) setManualDragPos({ x: 0, y: 0 });
         // Don't let react-draggable update since the card was dragged to a new 
         // zone.
-        else return false; 
+        else return false;
     };
 
     const nodeRef = React.useRef(null);
