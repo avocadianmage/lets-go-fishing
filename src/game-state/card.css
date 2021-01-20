@@ -14,8 +14,8 @@
 
 .card.loading, 
 .card:not(.react-draggable-dragging):hover, 
-.card:not(.react-draggable-dragging):not(.enable-preview):hover .card-face,
-.card.darken .card-face {
+.card:not(.react-draggable-dragging):not(.enable-preview):hover .card-face
+{
     background-color: rgba(0, 0, 0, 0.5);
 }
 

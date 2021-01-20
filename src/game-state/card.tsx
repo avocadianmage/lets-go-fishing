@@ -18,7 +18,6 @@ interface CardProps {
     style: CSSProperties;
     faceDown?: boolean;
     enablePreview?: boolean;
-    darken?: boolean;
     onDragStart: CardDragStartEventHandler;
     onDragStop: CardDragStopEventHandler;
 }
@@ -27,7 +26,7 @@ export type CardDragStartEventHandler = (drag: DragInfo) => boolean;
 export type CardDragStopEventHandler = () => boolean;
 
 export const Card = ({
-    info, style, faceDown, enablePreview, darken, onDragStart, onDragStop
+    info, style, faceDown, enablePreview, onDragStart, onDragStop
 }: CardProps) => {
     const [imageUrl, setImageUrl] = useState('');
     const [manualDragPos, setManualDragPos] = useState<ControlPosition>();
@@ -55,8 +54,7 @@ export const Card = ({
         return 'card' +
             (isLoading ? ' loading' : '') +
             (faceUpAndLoaded && enablePreview ? ' enable-preview' : '') +
-            (faceUpAndLoaded && info.foil ? ' foil' : '') +
-            (darken ? ' darken' : '');
+            (faceUpAndLoaded && info.foil ? ' foil' : '');
     };
 
     const fireDragStart = (_: any, data: DraggableData) => {

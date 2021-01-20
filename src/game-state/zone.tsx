@@ -33,9 +33,7 @@ export const Zone = ({
     });
 
     const isTargetZone = drag?.targetZone === name;
-    const classes = 'zone' + (isTargetZone ? ' darken' : '');
-
-    const isCardDragging = (card: CardInfo) => card.id === drag?.card.id;
+    const classes = 'zone' + (isTargetZone ? ' highlight' : '');
 
     const createCard = (zoneCard: ZoneCardInfo) => {
         const { card, x, y } = zoneCard;
@@ -51,7 +49,6 @@ export const Zone = ({
             style={style}
             faceDown={faceDown}
             enablePreview={enablePreview}
-            darken={isTargetZone && !isCardDragging(card)}
             onDragStart={drag => onCardDragStart({ ...drag, sourceZone: name })}
             onDragStop={onCardDragStop}
         />;
