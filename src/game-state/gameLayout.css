@@ -15,9 +15,21 @@
     position: relative;
 }
 
-.highlight {
-    transition: box-shadow 0.15s;
+.zone::before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    border-radius: inherit;
     box-shadow: inset 0 0 16px var(--nord6);
+    opacity: 0;
+}
+
+.zone.highlight::before {
+    opacity: 1;
+    transition: opacity 0.2s;
 }
 
 .topPanel {
@@ -29,7 +41,7 @@
     column-gap: 6px;
 }
 
-.zone:empty::before {
+.zone:empty::after {
     content: attr(data-name);
     color: var(--nord3);
     height: 100%;

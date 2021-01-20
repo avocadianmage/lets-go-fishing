@@ -59,8 +59,12 @@
     pointer-events: none;
 }
 
+#hand .card {
+    animation: fadeIn 0.15s;
+}
+
 #hand .card .card-face {
-    animation: slideIn 0.1s;
+    animation: slideIn 0.15s;
 }
 
 .card.enable-preview:not(.react-draggable-dragging):hover .card-face {

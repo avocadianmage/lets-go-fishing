@@ -29,7 +29,7 @@ export const useSize = (nodeRef: React.RefObject<HTMLElement>) => {
         window.addEventListener('resize', updateSize);
         updateSize();
         return () => window.removeEventListener('resize', updateSize);
-    });
+    }, [nodeRef]);
     return size;
 };
 
