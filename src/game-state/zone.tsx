@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useState } from "react";
 import { CardInfo } from "../services/dbSvc";
 import { Card, CardDragStartEventHandler, CardDragStopEventHandler, DragInfo } from "./card";
 
@@ -11,27 +11,32 @@ export interface ZoneCardInfo {
 export interface ZoneProps {
     name: string;
     contents: ZoneCardInfo[];
+    containerRef: React.RefObject<HTMLDivElement>;
     faceDown?: boolean;
     enablePreview?: boolean;
     drag?: DragInfo;
     onCardDragStart: CardDragStartEventHandler;
     onCardDragStop: CardDragStopEventHandler;
-    onSizeChanged?(width: number): void;
 }
 
-export const Zone = ({
-    name, contents, faceDown, enablePreview, drag, 
-    onCardDragStart, onCardDragStop, onSizeChanged
-}: ZoneProps) => {
-    const containerRef = useRef<HTMLDivElement>(null);
+export const useSize = (nodeRef: React.RefObject<HTMLElement>) => {
+    const [size, setSize] = useState([0, 0]);
     useEffect(() => {
-        if (!onSizeChanged) return;
-        const updateWidth = () => onSizeChanged(containerRef.current!.clientWidth);
-        updateWidth();
-        window.addEventListener('resize', updateWidth);
-        return () => window.removeEventListener('resize', updateWidth);
+        const updateSize = () => {
+            const rect = nodeRef.current!.getBoundingClientRect();
+            setSize([rect.width, rect.height]);
+        };
+        window.addEventListener('resize', updateSize);
+        updateSize();
+        return () => window.removeEventListener('resize', updateSize);
     });
+    return size;
+};
 
+export const Zone = ({
+    name, contents, containerRef, faceDown, enablePreview, drag, 
+    onCardDragStart, onCardDragStop
+}: ZoneProps) => {
     const isTargetZone = drag?.targetZone === name;
     const classes = 'zone' + (isTargetZone ? ' highlight' : '');
 
@@ -56,9 +61,9 @@ export const Zone = ({
 
     return (
         <div
+            ref={containerRef}
             id={name}
             className={classes}
-            ref={containerRef}
             data-name={name.toUpperCase()}
         >
             {contents.map(createCard)}

@@ -1,20 +1,14 @@
-import { useState } from "react";
 import { CardInfo } from "../services/dbSvc";
 import { CARD_WIDTH_PX, ZONE_PADDING_PX } from "../utilities/constants";
-import { Zone, ZoneProps } from "./zone";
+import { useSize, Zone, ZoneProps } from "./zone";
 
 interface StackZoneProps extends ZoneProps {
     maxToShow?: number;
 }
 
 export const StackZone = (props: StackZoneProps) => {
-    const { name, contents, drag, maxToShow, onSizeChanged } = props;
-    const [width, setWidth] = useState(0);
-
-    const fireSizeChanged = (width: number) => {
-        if (onSizeChanged) onSizeChanged(width);
-        setWidth(width);
-    }
+    const { name, contents, containerRef, drag, maxToShow } = props;
+    const [width] = useSize(containerRef);
 
     const getXForIndex = (cardCount: number, index: number) => {
         const handWidth = width - ZONE_PADDING_PX * 2;
@@ -45,6 +39,5 @@ export const StackZone = (props: StackZoneProps) => {
     return <Zone 
         {...props} 
         contents={updatedContents} 
-        onSizeChanged={fireSizeChanged} 
     />;
 }

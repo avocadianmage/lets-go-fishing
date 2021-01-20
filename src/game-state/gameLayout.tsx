@@ -190,18 +190,21 @@ export default class GameLayout extends Component<{}, GameLayoutState> {
                         {...zoneProps}
                         name={ZoneName.Battlefield}
                         contents={zones[ZoneName.Battlefield]}
+                        containerRef={React.createRef()}
                     />
                     <div className="bottomPanel">
                         <StackZone
                             {...zoneProps}
                             name={ZoneName.Hand}
                             contents={zones[ZoneName.Hand]}
+                            containerRef={React.createRef()}
                             enablePreview={true}
                         />
                         <StackZone
                             {...zoneProps}
                             name={ZoneName.Library}
                             contents={zones[ZoneName.Library]}
+                            containerRef={React.createRef()}
                             faceDown={true}
                             maxToShow={2}
                         />
