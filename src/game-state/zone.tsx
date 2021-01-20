@@ -42,7 +42,7 @@ export const Zone = ({
 
     const createCard = (zoneCard: ZoneCardInfo) => {
         const { card, x, y } = zoneCard;
-        const transition = 'background-color 0.2s, box-shadow 0.5s' + (x && y ? '' : ', left 0.1s');
+        const transition = 'background-color 0.2s' + (x && y ? '' : ', left 0.1s');
         const style = {
             transition,
             left: x ? x + 'px' : undefined,
