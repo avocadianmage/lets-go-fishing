@@ -6,7 +6,7 @@ import * as Constants from '../utilities/constants';
 import { shuffle } from '../utilities/helpers';
 import { DragInfo } from './card';
 import { Zone, ZoneCardInfo } from './zone';
-import { WithStack } from './withStack';
+import { StackZone } from './stackZone';
 
 export const ZoneName = {
     None: 'none',
@@ -20,9 +20,6 @@ interface GameLayoutState {
     zones: { [domId: string]: ZoneCardInfo[] };
     drag?: DragInfo;
 }
-
-const Hand = WithStack(Zone);
-const Library = WithStack(Zone, true);
 
 export default class GameLayout extends Component<{}, GameLayoutState> {
     state: GameLayoutState = {
@@ -90,7 +87,8 @@ export default class GameLayout extends Component<{}, GameLayoutState> {
         if (targetZone !== ZoneName.Battlefield) return { card };
 
         const cardRect = node.getBoundingClientRect();
-        const zoneRect = document.getElementById(targetZone!)!.getBoundingClientRect();
+        const zoneRect =
+            document.getElementById(targetZone!)!.getBoundingClientRect();
         return {
             card,
             x: cardRect.left - zoneRect.left,
@@ -194,17 +192,18 @@ export default class GameLayout extends Component<{}, GameLayoutState> {
                         contents={zones[ZoneName.Battlefield]}
                     />
                     <div className="bottomPanel">
-                        <Hand
+                        <StackZone
                             {...zoneProps}
                             name={ZoneName.Hand}
                             contents={zones[ZoneName.Hand]}
                             enablePreview={true}
                         />
-                        <Library
+                        <StackZone
                             {...zoneProps}
                             name={ZoneName.Library}
                             contents={zones[ZoneName.Library]}
                             faceDown={true}
+                            maxToShow={2}
                         />
                     </div>
                 </div>
