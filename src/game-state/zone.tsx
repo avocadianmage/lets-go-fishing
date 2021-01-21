@@ -18,18 +18,17 @@ export interface ZoneProps {
     onCardDragStop: CardDragStopEventHandler;
 }
 
-export const useSize = (nodeRef: RefObject<HTMLElement>) => {
-    const [size, setSize] = useState([0, 0]);
+export const useRect = (nodeRef: RefObject<HTMLElement>) => {
+    const [rect, setRect] = useState<DOMRect>(new DOMRect());
     useEffect(() => {
-        const updateSize = () => {
-            const { width, height } = nodeRef.current!.getBoundingClientRect();
-            setSize([width, height]);
+        const updateRect = () => {
+            setRect(nodeRef.current!.getBoundingClientRect());
         };
-        window.addEventListener('resize', updateSize);
-        updateSize();
-        return () => window.removeEventListener('resize', updateSize);
+        window.addEventListener('resize', updateRect);
+        updateRect();
+        return () => window.removeEventListener('resize', updateRect);
     }, [nodeRef]);
-    return size;
+    return rect;
 };
 
 export const Zone = forwardRef((

@@ -1,12 +1,13 @@
-import { Component, createRef } from 'react';
+import { Component } from 'react';
 import DeckLookup from '../other-components/deckLookup';
 import { DeckInfoService } from '../services/deckInfoSvc';
 import { CardInfo, DatabaseService } from '../services/dbSvc';
 import * as Constants from '../utilities/constants';
 import { shuffle } from '../utilities/helpers';
 import { DragInfo } from './card';
-import { Zone, ZoneCardInfo } from './zone';
+import { ZoneCardInfo } from './zone';
 import { StackZone } from './stackZone';
+import { BattlefieldZone } from './battlefieldZone';
 
 export const ZoneName = {
     None: 'none',
@@ -20,8 +21,6 @@ interface GameLayoutState {
     zones: { [domId: string]: ZoneCardInfo[] };
     drag?: DragInfo;
 }
-
-const battlefieldRef = createRef<HTMLDivElement>();
 
 export default class GameLayout extends Component<{}, GameLayoutState> {
     state: GameLayoutState = {
@@ -87,14 +86,7 @@ export default class GameLayout extends Component<{}, GameLayoutState> {
     getZoneCardAfterDrag(drag: DragInfo) {
         const { card, node, targetZone } = drag;
         if (targetZone !== ZoneName.Battlefield) return { card };
-
-        const cardRect = node.getBoundingClientRect();
-        const zoneRect = battlefieldRef.current!.getBoundingClientRect();
-
-        const clamp = (num: number, min: number, max: number) => Math.min(Math.max(num, min), max);
-        const x = clamp(cardRect.left - zoneRect.left, 0, zoneRect.width - cardRect.width);
-        const y = clamp(cardRect.top - zoneRect.top, 0, zoneRect.height - cardRect.height);
-
+        const { x, y } = node.getBoundingClientRect();
         return { card, x, y };
     }
 
@@ -188,8 +180,7 @@ export default class GameLayout extends Component<{}, GameLayoutState> {
                     className="gameLayout"
                     onMouseMove={e => this.onMouseMove(e)}
                 >
-                    <Zone
-                        ref={battlefieldRef}
+                    <BattlefieldZone
                         {...zoneProps}
                         name={ZoneName.Battlefield}
                         contents={zones[ZoneName.Battlefield]}

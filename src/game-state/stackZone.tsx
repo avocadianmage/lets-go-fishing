@@ -1,7 +1,7 @@
 import { forwardRef, useImperativeHandle, useRef } from "react";
 import { CardInfo } from "../services/dbSvc";
 import { CARD_WIDTH_PX, ZONE_PADDING_PX } from "../utilities/constants";
-import { useSize, Zone, ZoneProps } from "./zone";
+import { useRect, Zone, ZoneProps } from "./zone";
 
 interface StackZoneProps extends ZoneProps {
     maxToShow?: number;
@@ -14,7 +14,7 @@ export const StackZone = forwardRef((props: StackZoneProps, ref) => {
     useImperativeHandle(ref, () => ({
         getBoundingClientRect: () => divRef.current!.getBoundingClientRect()
     }));
-    const [width] = useSize(divRef);
+    const { width } = useRect(divRef);
 
     const getXForIndex = (cardCount: number, index: number) => {
         const handWidth = width - ZONE_PADDING_PX * 2;
@@ -42,9 +42,5 @@ export const StackZone = forwardRef((props: StackZoneProps, ref) => {
         return { card, x: getCardX(card, i) };
     });
 
-    return <Zone 
-        ref={divRef}
-        {...props} 
-        contents={updatedContents} 
-    />;
+    return <Zone ref={divRef} {...props} contents={updatedContents} />;
 });
