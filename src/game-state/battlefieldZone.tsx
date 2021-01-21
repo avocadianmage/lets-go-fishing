@@ -18,5 +18,5 @@ export const BattlefieldZone = forwardRef((props: ZoneProps, ref) => {
         y: clamp(zc.y! - top, 0, height - CARD_HEIGHT_PX)
     }));
 
-    return <Zone ref={divRef} {...props} contents={updatedContents} />
+    return <Zone ref={divRef} {...props} contents={updatedContents} />;
 });
