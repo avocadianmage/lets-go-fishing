@@ -90,11 +90,12 @@ export default class GameLayout extends Component<{}, GameLayoutState> {
 
         const cardRect = node.getBoundingClientRect();
         const zoneRect = battlefieldRef.current!.getBoundingClientRect();
-        return {
-            card,
-            x: cardRect.left - zoneRect.left,
-            y: cardRect.top - zoneRect.top,
-        };
+
+        const clamp = (num: number, min: number, max: number) => Math.min(Math.max(num, min), max);
+        const x = clamp(cardRect.left - zoneRect.left, 0, zoneRect.width - cardRect.width);
+        const y = clamp(cardRect.top - zoneRect.top, 0, zoneRect.height - cardRect.height);
+
+        return { card, x, y };
     }
 
     onCardDragStart = (drag: DragInfo) => {
