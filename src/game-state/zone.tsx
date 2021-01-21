@@ -22,8 +22,8 @@ export const useSize = (nodeRef: RefObject<HTMLElement>) => {
     const [size, setSize] = useState([0, 0]);
     useEffect(() => {
         const updateSize = () => {
-            const rect = nodeRef.current!.getBoundingClientRect();
-            setSize([rect.width, rect.height]);
+            const { width, height } = nodeRef.current!.getBoundingClientRect();
+            setSize([width, height]);
         };
         window.addEventListener('resize', updateSize);
         updateSize();
