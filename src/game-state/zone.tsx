@@ -38,13 +38,9 @@ export const Zone = forwardRef((
 
     const createCard = (zoneCard: ZoneCardInfo) => {
         const { card, x, y } = zoneCard;
-        const [xIsDefined, yIsDefined] = [x !== undefined, y !== undefined];
-        const manualMove = xIsDefined && yIsDefined;
-        const transition = 'background-color 0.2s' + (manualMove ? '' : ', left 0.1s');
         const style = {
-            transition,
-            left: xIsDefined ? x + 'px' : undefined,
-            top: yIsDefined ? y + 'px' : undefined,
+            left: x !== undefined ? x + 'px' : undefined,
+            top: y !== undefined ? y + 'px' : undefined,
         };
         return <Card
             key={card.id}

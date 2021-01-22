@@ -10,6 +10,7 @@
     background-size: contain;
     background-blend-mode: darken;
     position: absolute;
+    transition: background-color 0.2s
 }
 
 .card.loading, 
@@ -60,6 +61,7 @@
 }
 
 #hand .card {
+    transition: background-color 0.2s, left 0.1s;
     animation: fadeIn 0.15s;
 }
 
