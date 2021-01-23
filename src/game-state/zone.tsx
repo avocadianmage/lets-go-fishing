@@ -37,15 +37,9 @@ export const Zone = forwardRef((
     const classes = 'zone' + (isTargetZone ? ' highlight' : '');
 
     const createCard = (zoneCard: ZoneCardInfo) => {
-        const { card, x, y } = zoneCard;
-        const style = {
-            left: x !== undefined ? x + 'px' : undefined,
-            top: y !== undefined ? y + 'px' : undefined,
-        };
         return <Card
-            key={card.id}
-            info={card}
-            style={style}
+            key={zoneCard.card.id}
+            info={zoneCard}
             faceDown={faceDown}
             enablePreview={enablePreview}
             onDragStart={drag => onCardDragStart({ ...drag, sourceZone: name })}

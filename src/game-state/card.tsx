@@ -1,10 +1,11 @@
-import React, { CSSProperties, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { CardInfoService } from '../services/cardInfoSvc';
 
 import cardBack from '../assets/mtg-card-back.png';
 import Draggable, { ControlPosition, DraggableData } from 'react-draggable';
 import { cancelablePromise } from '../utilities/helpers';
 import { CardInfo } from '../services/dbSvc';
+import { ZoneCardInfo } from './zone';
 
 export interface DragInfo {
     card: CardInfo;
@@ -14,8 +15,7 @@ export interface DragInfo {
 }
 
 interface CardProps {
-    info: CardInfo;
-    style: CSSProperties;
+    info: ZoneCardInfo;
     faceDown?: boolean;
     enablePreview?: boolean;
     onDragStart: CardDragStartEventHandler;
@@ -25,28 +25,27 @@ interface CardProps {
 export type CardDragStartEventHandler = (drag: DragInfo) => boolean;
 export type CardDragStopEventHandler = () => boolean;
 
-export const Card = ({
-    info, style, faceDown, enablePreview, onDragStart, onDragStop
-}: CardProps) => {
+export const Card = ({ info, faceDown, enablePreview, onDragStart, onDragStop }: CardProps) => {
+    const { card, x, y } = info;
+
     const [imageUrl, setImageUrl] = useState('');
     const [manualDragPos, setManualDragPos] = useState<ControlPosition>();
 
     const isLoading = !imageUrl && !faceDown;
 
     useEffect(() => {
-        const { promise, cancel } = cancelablePromise(
-            CardInfoService.getCardImageUrl(info)
-        );
+        const { promise, cancel } = cancelablePromise(CardInfoService.getCardImageUrl(card));
         promise.then(url => setImageUrl(url)).catch(() => {});
         return cancel;
-    }, [info]);
+    }, [card]);
 
     const getStyling = () => {
         const imageUrlToUse = (isLoading || faceDown) ? cardBack : imageUrl;
-        return Object.assign(
-            { backgroundImage: `url(${imageUrlToUse})` },
-            style,
-        );
+        const normalize = (n?: number) => n ? Math.round(n) : 0;
+        return {
+            backgroundImage: `url(${imageUrlToUse})`,
+            transform: `translate(${normalize(x)}px, ${normalize(y)}px)`,
+        };
     };
 
     const getClasses = () => {
@@ -54,12 +53,12 @@ export const Card = ({
         return 'card' +
             (isLoading ? ' loading' : '') +
             (faceUpAndLoaded && enablePreview ? ' enable-preview' : '') +
-            (faceUpAndLoaded && info.foil ? ' foil' : '');
+            (faceUpAndLoaded && card.foil ? ' foil' : '');
     };
 
     const fireDragStart = (_: any, data: DraggableData) => {
         setManualDragPos(undefined);
-        const success = onDragStart({ card: info, node: data.node.firstElementChild! });
+        const success = onDragStart({ card, node: data.node.firstElementChild! });
         if (!success) return false;
     };
 
