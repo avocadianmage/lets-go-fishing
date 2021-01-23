@@ -8,7 +8,7 @@ import { CardInfo } from '../services/dbSvc';
 
 export interface DragInfo {
     card: CardInfo;
-    node: HTMLElement;
+    node: Element;
     sourceZone?: string;
     targetZone?: string;
 }
@@ -59,7 +59,8 @@ export const Card = ({
 
     const fireDragStart = (_: any, data: DraggableData) => {
         setManualDragPos(undefined);
-        if (!onDragStart({ card: info, node: data.node })) return false;
+        const success = onDragStart({ card: info, node: data.node.firstElementChild! });
+        if (!success) return false;
     };
 
     const fireDragStop = () => {
@@ -77,15 +78,13 @@ export const Card = ({
             onStop={fireDragStop}
             position={manualDragPos}
         >
-            <div
-                ref={nodeRef}
-                className={getClasses()}
-                style={getStyling()}
-            >
-                {isLoading ?
-                    <div className='loader' /> :
-                    <div className='card-face' />
-                }
+            <div ref={nodeRef}>
+                <div className={getClasses()} style={getStyling()}>
+                    {isLoading ?
+                        <div className='loader' /> :
+                        <div className='card-face' />
+                    }
+                </div>
             </div>
         </Draggable>
     );

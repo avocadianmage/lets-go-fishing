@@ -1,3 +1,16 @@
+.react-draggable {
+    width: var(--card-width);
+    height: var(--card-height);
+    display: inline-block;
+    position: absolute;
+    left: 0;
+    top: 0;
+}
+
+.react-draggable-dragging {
+    z-index: 1;
+}
+
 .card {
     width: var(--card-width);
     height: var(--card-height);
@@ -14,14 +27,10 @@
 }
 
 .card.loading, 
-.card:not(.react-draggable-dragging):hover, 
-.card:not(.react-draggable-dragging):not(.enable-preview):hover .card-face
+.react-draggable:not(.react-draggable-dragging) .card:hover, 
+.react-draggable:not(.react-draggable-dragging) .card:not(.enable-preview):hover .card-face
 {
     background-color: rgba(0, 0, 0, 0.5);
-}
-
-.card.react-draggable-dragging {
-    z-index: 1;
 }
 
 .card.foil .card-face::after {
@@ -69,7 +78,7 @@
     animation: slideIn 0.15s;
 }
 
-.card.enable-preview:not(.react-draggable-dragging):hover .card-face {
+.react-draggable:not(.react-draggable-dragging) .card.enable-preview:hover .card-face {
     transform: translate(0, -100%);
 }
 

@@ -151,9 +151,7 @@ export default class GameLayout extends Component<{}, GameLayoutState> {
         const { drag } = this.state;
         if (!drag) return;
         const mouseOverElems = document.elementsFromPoint(e.clientX, e.clientY);
-        const targetElem = mouseOverElems.find(
-            elem => elem.classList.contains('zone')
-        );
+        const targetElem = mouseOverElems.find(elem => elem.classList.contains('zone'));
         this.setState({
             drag: {
                 ...drag,

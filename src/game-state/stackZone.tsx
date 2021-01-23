@@ -39,7 +39,7 @@ export const StackZone = forwardRef((props: StackZoneProps, ref) => {
     let updatedContents = maxToShow ? contents.slice(contents.length - maxToShow) : contents;
     updatedContents = updatedContents.map((zc, i) => {
         const { card } = zc;
-        return { card, x: getCardX(card, i) };
+        return { card, x: getCardX(card, i), y: ZONE_PADDING_PX };
     });
 
     return <Zone ref={divRef} {...props} contents={updatedContents} />;
