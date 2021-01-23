@@ -44,7 +44,9 @@ class CardInfoSvc {
                 .then(json => {
                     this.outgoingThrottle = this.outgoingThrottle
                         .then(getPromisedTimeout)
-                        .then(() => fetch((json.card_faces ?? json).image_uris.normal))
+                        .then(() => 
+                            fetch((json.card_faces ? json.card_faces[0] : json).image_uris.normal)
+                        )
                         .then(response => response.blob())
                         .then(blob => {
                             DatabaseService.putCardBlob(blob, name);
