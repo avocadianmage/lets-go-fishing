@@ -77,19 +77,6 @@ export default class GameLayout extends Component<{}, GameLayoutState> {
         this.setState({ loading: true });
     }
 
-    sliceCardFromZone(card: CardInfo, zone: string) {
-        const cards = this.state.zones[zone];
-        const index = cards.findIndex(zc => zc.card.id === card.id);
-        return cards.slice(0, index).concat(cards.slice(index + 1));
-    }
-
-    getZoneCardAfterDrag(drag: DragInfo) {
-        const { card, node, targetZone } = drag;
-        if (targetZone !== ZoneName.Battlefield) return { card };
-        const { x, y } = node.getBoundingClientRect();
-        return { card, x, y };
-    }
-
     onCardDragStart = (drag: DragInfo) => {
         this.setState({ drag });
         return true;
@@ -115,6 +102,7 @@ export default class GameLayout extends Component<{}, GameLayoutState> {
                 return true;
             }
             if (isIntrazoneDrag && isFromBattlefield) this.updateCardFromDrag(drag);
+            if (isTrueClick && isFromBattlefield) this.updateCardFromTap(drag);
             return false;
         }
 
@@ -123,16 +111,42 @@ export default class GameLayout extends Component<{}, GameLayoutState> {
         return true;
     }
 
+    sliceCardFromZone(card: CardInfo, zone: string) {
+        const cards = this.state.zones[zone];
+        const index = cards.findIndex(zc => zc.card.id === card.id);
+        return cards.slice(0, index).concat(cards.slice(index + 1));
+    }
+
+    findZoneCard(drag: DragInfo) {
+        return this.state.zones[drag.sourceZone!].find(zc => zc.card.id === drag.card.id)!;
+    }
+
+    getZoneCardAfterDrag(drag: DragInfo) {
+        const { card, node, targetZone } = drag;
+        if (targetZone !== ZoneName.Battlefield) return { card };
+        const { x, y } = node.getBoundingClientRect();
+        const zoneCard = this.findZoneCard(drag);
+        return { ...zoneCard, x, y };
+    }
+
+    updateCardFromTap(drag: DragInfo) {
+        const zoneCard = this.findZoneCard(drag);
+        this.applyUpdatedCardToZones({ ...zoneCard, tapped: !zoneCard.tapped }, drag);
+    }
+
     updateCardFromDrag(drag: DragInfo) {
-        const { zones } = this.state
+        this.applyUpdatedCardToZones(this.getZoneCardAfterDrag(drag), drag);
+    }
+
+    applyUpdatedCardToZones(updatedZoneCard: ZoneCardInfo, drag: DragInfo) {
+        const { zones } = this.state;
         const { card, sourceZone, targetZone } = drag;
-        const zoneCard = this.getZoneCardAfterDrag(drag);
         const sourceZoneCards = this.sliceCardFromZone(card, sourceZone!);
-        if (sourceZone === targetZone) {
+        if (!targetZone || sourceZone === targetZone) {
             this.setState({
                 zones: {
                     ...zones,
-                    [sourceZone!]: sourceZoneCards.concat(zoneCard),
+                    [sourceZone!]: sourceZoneCards.concat(updatedZoneCard),
                 }
             });
         }
@@ -141,7 +155,7 @@ export default class GameLayout extends Component<{}, GameLayoutState> {
                 zones: {
                     ...zones,
                     [sourceZone!]: sourceZoneCards,
-                    [targetZone!]: zones[targetZone!].concat(zoneCard),
+                    [targetZone]: zones[targetZone].concat(updatedZoneCard),
                 }
             });
         }
