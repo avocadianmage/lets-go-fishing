@@ -2,7 +2,7 @@
     position: absolute;
     top: 4px;
     right: 4px;
-    background-image: url('../assets/download.svg');
+    background-image: url('../../assets/download.svg');
     background-size: 24px 24px;
     background-repeat: no-repeat;
     background-position: center;

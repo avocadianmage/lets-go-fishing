@@ -1,6 +1,6 @@
 import { forwardRef, useImperativeHandle, useRef } from "react";
-import { CardInfo } from "../services/dbSvc";
-import { CARD_WIDTH_PX, ZONE_PADDING_PX } from "../utilities/constants";
+import { CardInfo } from "../../services/dbSvc";
+import { CARD_WIDTH_PX, ZONE_PADDING_PX } from "../../utilities/constants";
 import { useRect, Zone, ZoneProps } from "./zone";
 
 interface StackZoneProps extends ZoneProps {

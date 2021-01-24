@@ -1,19 +1,19 @@
 import { Component } from 'react';
-import DeckLookup from '../other-components/deckLookup';
-import { DeckInfoService } from '../services/deckInfoSvc';
-import { CardInfo, DatabaseService } from '../services/dbSvc';
-import * as Constants from '../utilities/constants';
-import { shuffle } from '../utilities/helpers';
+import DeckLookup from '../other-components/deckLookup'
+import { DeckInfoService } from '../../services/deckInfoSvc';
+import { CardInfo, DatabaseService } from '../../services/dbSvc';
+import * as Constants from '../../utilities/constants';
+import { shuffle } from '../../utilities/helpers';
 import { DragInfo } from './card';
 import { ZoneCardInfo } from './zone';
 import { StackZone } from './stackZone';
 import { BattlefieldZone } from './battlefieldZone';
 
-export const ZoneName = {
-    None: 'none',
-    Library: 'library',
-    Hand: 'hand',
-    Battlefield: 'battlefield',
+export enum ZoneName {
+    None = 'none',
+    Library = 'library',
+    Hand = 'hand',
+    Battlefield = 'battlefield',
 };
 
 interface GameLayoutState {

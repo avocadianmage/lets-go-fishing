@@ -1,5 +1,5 @@
 import { ForwardedRef, forwardRef, RefObject, useEffect, useState } from "react";
-import { CardInfo } from "../services/dbSvc";
+import { CardInfo } from "../../services/dbSvc";
 import { Card, CardDragStartEventHandler, CardDragStopEventHandler, DragInfo } from "./card";
 
 export interface ZoneCardInfo {

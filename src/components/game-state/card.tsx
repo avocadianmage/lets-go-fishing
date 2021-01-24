@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { CardInfoService } from '../services/cardInfoSvc';
+import { CardInfoService } from '../../services/cardInfoSvc';
 
-import cardBack from '../assets/mtg-card-back.png';
+import cardBack from '../../assets/mtg-card-back.png';
 import Draggable, { ControlPosition, DraggableData } from 'react-draggable';
-import { cancelablePromise } from '../utilities/helpers';
-import { CardInfo } from '../services/dbSvc';
+import { cancelablePromise } from '../../utilities/helpers';
+import { CardInfo } from '../../services/dbSvc';
 import { ZoneCardInfo } from './zone';
 
 export interface DragInfo {
@@ -41,10 +41,10 @@ export const Card = ({ info, faceDown, enablePreview, onDragStart, onDragStop }:
 
     const getStyling = () => {
         const imageUrlToUse = (isLoading || faceDown) ? cardBack : imageUrl;
-        const normalize = (n?: number) => n ? Math.round(n) : 0;
+        const round = (n?: number) => n ? Math.round(n) : 0;
         return {
             backgroundImage: `url(${imageUrlToUse})`,
-            transform: `translate(${normalize(x)}px, ${normalize(y)}px)`,
+            transform: `translate(${round(x)}px, ${round(y)}px)`,
         };
     };
 
