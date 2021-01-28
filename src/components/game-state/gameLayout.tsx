@@ -102,7 +102,7 @@ export default class GameLayout extends Component<{}, GameLayoutState> {
                 return true;
             }
             if (isIntrazoneDrag && isFromBattlefield) this.updateCardFromDrag(drag);
-            if (isTrueClick && isFromBattlefield) this.updateCardFromTap(drag);
+            else if (isTrueClick && isFromBattlefield) this.updateCardFromTap(drag);
             return false;
         }
 
@@ -114,7 +114,7 @@ export default class GameLayout extends Component<{}, GameLayoutState> {
     sliceCardFromZone(card: CardInfo, zone: string) {
         const cards = this.state.zones[zone];
         const index = cards.findIndex(zc => zc.card.id === card.id);
-        return cards.slice(0, index).concat(cards.slice(index + 1));
+        return [cards.slice(0, index), cards.slice(index + 1)];
     }
 
     findZoneCard(drag: DragInfo) {
@@ -138,15 +138,33 @@ export default class GameLayout extends Component<{}, GameLayoutState> {
         this.applyUpdatedCardToZones(this.getZoneCardAfterDrag(drag), drag);
     }
 
+    getIncrementedZIndex(zoneName: ZoneName) {
+        const zone = this.state.zones[zoneName];
+        const highestIndex = zone.some(() => true) ?
+            zone.map(zc => zc.zIndex ?? 0).reduce((prev, curr) => Math.max(prev, curr)) : 0;
+        return highestIndex + 1;
+    }
+
     applyUpdatedCardToZones(updatedZoneCard: ZoneCardInfo, drag: DragInfo) {
         const { zones } = this.state;
         const { card, sourceZone, targetZone } = drag;
-        const sourceZoneCards = this.sliceCardFromZone(card, sourceZone!);
+
+        if (
+            targetZone === ZoneName.Battlefield || 
+            (!targetZone && sourceZone === ZoneName.Battlefield)
+        ) {
+            updatedZoneCard = { 
+                ...updatedZoneCard, 
+                zIndex: this.getIncrementedZIndex(ZoneName.Battlefield) 
+            };
+        }
+
+        const [sourceSliceOne, sourceSliceTwo] = this.sliceCardFromZone(card, sourceZone!);
         if (!targetZone || sourceZone === targetZone) {
             this.setState({
                 zones: {
                     ...zones,
-                    [sourceZone!]: sourceZoneCards.concat(updatedZoneCard),
+                    [sourceZone!]: sourceSliceOne.concat(updatedZoneCard).concat(sourceSliceTwo),
                 }
             });
         }
@@ -154,7 +172,7 @@ export default class GameLayout extends Component<{}, GameLayoutState> {
             this.setState({
                 zones: {
                     ...zones,
-                    [sourceZone!]: sourceZoneCards,
+                    [sourceZone!]: sourceSliceOne.concat(sourceSliceTwo),
                     [targetZone]: zones[targetZone].concat(updatedZoneCard),
                 }
             });

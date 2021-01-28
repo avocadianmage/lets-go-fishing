@@ -7,6 +7,7 @@ export interface ZoneCardInfo {
     x?: number;
     y?: number;
     tapped?: boolean;
+    zIndex?: number;
 }
 
 export interface ZoneProps {
@@ -34,19 +35,14 @@ export const Zone = forwardRef((
     { name, contents, faceDown, enablePreview, drag, onCardDragStart, onCardDragStop }: ZoneProps,
     ref: ForwardedRef<HTMLDivElement>
 ) => {
+    const isSourceZone = drag?.sourceZone === name;
     const isTargetZone = drag?.targetZone === name;
     const classes = 'zone' + (isTargetZone ? ' highlight' : '');
 
-    const createCard = (zoneCard: ZoneCardInfo) => {
-        return <Card
-            key={zoneCard.card.id}
-            zoneCard={zoneCard}
-            faceDown={faceDown}
-            enablePreview={enablePreview}
-            onDragStart={drag => onCardDragStart({ ...drag, sourceZone: name })}
-            onDragStop={onCardDragStop}
-        />;
-    }
+    const isCardDragging = (card: CardInfo) => card.id === drag?.card.id;
+    const updatedContents = contents.map(zc => ({
+        ...zc, zIndex: isCardDragging(zc.card) ? Number.MAX_SAFE_INTEGER : zc.zIndex
+    }));
 
     return (
         <div
@@ -54,8 +50,18 @@ export const Zone = forwardRef((
             id={name}
             className={classes}
             data-name={name.toUpperCase()}
+            style={{ zIndex: isSourceZone ? 1 : 0 }}
         >
-            {contents.map(createCard)}
+            {updatedContents.map(zc => (
+                <Card
+                    key={zc.card.id}
+                    zoneCard={zc}
+                    faceDown={faceDown}
+                    enablePreview={enablePreview}
+                    onDragStart={drag => onCardDragStart({ ...drag, sourceZone: name })}
+                    onDragStop={onCardDragStop}
+                />
+            ))}
         </div>
     );
 });

@@ -25,9 +25,11 @@ export const StackZone = forwardRef((props: StackZoneProps, ref) => {
         return offset * index + ZONE_PADDING_PX;
     };
 
+    const isCardDragging = (card: CardInfo) => card.id === drag?.card.id;
+
     let nondraggedIndex = 0;
     const getCardX = (card: CardInfo, index: number) => {
-        const isDragging = card.id === drag?.card.id;
+        const isDragging = isCardDragging(card);
         const positioningCardCount = contents.length - (
             (drag?.sourceZone !== name || isDragging) ? 0 : 1
         );
@@ -37,10 +39,11 @@ export const StackZone = forwardRef((props: StackZoneProps, ref) => {
     };
 
     let updatedContents = maxToShow ? contents.slice(contents.length - maxToShow) : contents;
-    updatedContents = updatedContents.map((zc, i) => {
-        const { card } = zc;
-        return { card, x: getCardX(card, i), y: ZONE_PADDING_PX };
-    });
+    updatedContents = updatedContents.map((zc, i) => ({ 
+        ...zc, 
+        x: getCardX(zc.card, i), 
+        y: ZONE_PADDING_PX, 
+    }));
 
     return <Zone ref={divRef} {...props} contents={updatedContents} />;
 });

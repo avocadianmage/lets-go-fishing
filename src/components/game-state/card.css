@@ -8,10 +8,6 @@
     pointer-events: none;
 }
 
-.card-drag-layer.react-draggable-dragging {
-    z-index: 1;
-}
-
 .card-position-layer {
     width: inherit;
     height: inherit;

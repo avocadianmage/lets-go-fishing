@@ -26,7 +26,7 @@ export type CardDragStartEventHandler = (drag: DragInfo) => boolean;
 export type CardDragStopEventHandler = () => boolean;
 
 export const Card = ({ zoneCard, faceDown, enablePreview, onDragStart, onDragStop }: CardProps) => {
-    const { card, x, y, tapped } = zoneCard;
+    const { card, x, y, tapped, zIndex } = zoneCard;
 
     const [imageUrl, setImageUrl] = useState('');
     const [manualDragPos, setManualDragPos] = useState<ControlPosition>();
@@ -81,7 +81,7 @@ export const Card = ({ zoneCard, faceDown, enablePreview, onDragStart, onDragSto
             onStop={fireDragStop}
             position={manualDragPos}
         >
-            <div ref={nodeRef}>
+            <div ref={nodeRef} style={{ zIndex }}>
                 <div className='card-position-layer' style={getPositionTransform()}>
                     <div className={getClasses()} style={getStyles()}>
                         {isLoading ?
