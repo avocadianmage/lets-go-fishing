@@ -4,7 +4,7 @@ import { DeckInfoService } from '../../services/deckInfoSvc';
 import { CardInfo, DatabaseService } from '../../services/dbSvc';
 import * as Constants from '../../utilities/constants';
 import { shuffle } from '../../utilities/helpers';
-import { DragInfo } from './card';
+import { CardActionInfo } from './card';
 import { ZoneCardInfo } from './zone';
 import { StackZone } from './stackZone';
 import { BattlefieldZone } from './battlefieldZone';
@@ -19,7 +19,7 @@ export enum ZoneName {
 interface GameLayoutState {
     loading: boolean;
     zones: { [domId: string]: ZoneCardInfo[] };
-    drag?: DragInfo;
+    drag?: CardActionInfo;
 }
 
 export default class GameLayout extends Component<{}, GameLayoutState> {
@@ -31,6 +31,8 @@ export default class GameLayout extends Component<{}, GameLayoutState> {
             [ZoneName.Battlefield]: [],
         },
     }
+
+    isDragging = false;
 
     async componentDidMount() {
         const decklist = await DatabaseService.getDeck();
@@ -77,37 +79,43 @@ export default class GameLayout extends Component<{}, GameLayoutState> {
         this.setState({ loading: true });
     }
 
-    onCardDragStart = (drag: DragInfo) => {
-        this.setState({ drag });
+    onCardDrag = (drag: CardActionInfo) => {
+        this.isDragging = true;
+        if (!this.state.drag) this.setState({ drag });
         return true;
     }
 
     onCardDragStop = () => {
+        setTimeout(() => (this.isDragging = false));
         const { drag } = this.state;
         if (!drag) return false;
         const { sourceZone, targetZone } = drag;
         this.setState({ drag: undefined });
 
-        const isFromLibrary = sourceZone === ZoneName.Library;
-        const isFromBattlefield = sourceZone === ZoneName.Battlefield;
-        const isTrueClick = !targetZone;
-        const isIntrazoneDrag = targetZone && targetZone === sourceZone;
-
         if (!sourceZone) return false;
         if (targetZone === ZoneName.None) return false;
 
-        if (isTrueClick || isIntrazoneDrag) {
-            if (isFromLibrary) {
-                this.draw();
-                return true;
-            }
-            if (isIntrazoneDrag && isFromBattlefield) this.updateCardFromDrag(drag);
-            else if (isTrueClick && isFromBattlefield) this.updateCardFromTap(drag);
-            return false;
+        const isFromBattlefield = sourceZone === ZoneName.Battlefield;
+        const isInterzoneDrag = !!targetZone && targetZone !== sourceZone;
+        const isIntrazoneDrag = !!targetZone && targetZone === sourceZone;
+        if (isInterzoneDrag || (isIntrazoneDrag && isFromBattlefield)) {
+            this.updateCardFromDrag(drag);
         }
+        return isInterzoneDrag;
+    }
 
-        // This is interzone drag.
-        this.updateCardFromDrag(drag);
+    onCardClick = (drag: CardActionInfo) => {
+        // Don't process as a click if the card was dragged.
+        if (this.isDragging) return true;
+
+        switch (drag.sourceZone) {
+            case ZoneName.Library: 
+                this.draw();
+                break;
+            case ZoneName.Battlefield:
+                this.updateCardFromTap(drag);
+                break;
+        }
         return true;
     }
 
@@ -117,24 +125,24 @@ export default class GameLayout extends Component<{}, GameLayoutState> {
         return [cards.slice(0, index), cards.slice(index + 1)];
     }
 
-    findZoneCard(drag: DragInfo) {
+    findZoneCard(drag: CardActionInfo) {
         return this.state.zones[drag.sourceZone!].find(zc => zc.card.id === drag.card.id)!;
     }
 
-    getZoneCardAfterDrag(drag: DragInfo) {
+    getZoneCardAfterDrag(drag: CardActionInfo) {
         const { card, node, targetZone } = drag;
         if (targetZone !== ZoneName.Battlefield) return { card };
-        const { x, y } = node.getBoundingClientRect();
+        const { x, y } = node!.getBoundingClientRect();
         const zoneCard = this.findZoneCard(drag);
         return { ...zoneCard, x, y };
     }
 
-    updateCardFromTap(drag: DragInfo) {
+    updateCardFromTap(drag: CardActionInfo) {
         const zoneCard = this.findZoneCard(drag);
         this.applyUpdatedCardToZones({ ...zoneCard, tapped: !zoneCard.tapped }, drag);
     }
 
-    updateCardFromDrag(drag: DragInfo) {
+    updateCardFromDrag(drag: CardActionInfo) {
         this.applyUpdatedCardToZones(this.getZoneCardAfterDrag(drag), drag);
     }
 
@@ -145,14 +153,11 @@ export default class GameLayout extends Component<{}, GameLayoutState> {
         return highestIndex + 1;
     }
 
-    applyUpdatedCardToZones(updatedZoneCard: ZoneCardInfo, drag: DragInfo) {
+    applyUpdatedCardToZones(updatedZoneCard: ZoneCardInfo, drag: CardActionInfo) {
         const { zones } = this.state;
         const { card, sourceZone, targetZone } = drag;
 
-        if (
-            targetZone === ZoneName.Battlefield || 
-            (!targetZone && sourceZone === ZoneName.Battlefield)
-        ) {
+        if (targetZone === ZoneName.Battlefield) {
             updatedZoneCard = { 
                 ...updatedZoneCard, 
                 zIndex: this.getIncrementedZIndex(ZoneName.Battlefield) 
@@ -190,14 +195,15 @@ export default class GameLayout extends Component<{}, GameLayoutState> {
                 targetZone: targetElem ? targetElem.id : ZoneName.None,
             }
         });
-    }
+    } 
 
     render() {
         const { zones, drag } = this.state;
         const zoneProps = {
             drag,
-            onCardDragStart: this.onCardDragStart,
+            onCardDrag: this.onCardDrag,
             onCardDragStop: this.onCardDragStop,
+            onCardClick: this.onCardClick,
         };
         return (
             <>

@@ -1,6 +1,6 @@
 import { ForwardedRef, forwardRef, RefObject, useEffect, useState } from "react";
 import { CardInfo } from "../../services/dbSvc";
-import { Card, CardDragStartEventHandler, CardDragStopEventHandler, DragInfo } from "./card";
+import { Card, CardActionEventHandler, CardActionInfo } from "./card";
 
 export interface ZoneCardInfo {
     card: CardInfo;
@@ -15,9 +15,10 @@ export interface ZoneProps {
     contents: ZoneCardInfo[];
     faceDown?: boolean;
     enablePreview?: boolean;
-    drag?: DragInfo;
-    onCardDragStart: CardDragStartEventHandler;
-    onCardDragStop: CardDragStopEventHandler;
+    drag?: CardActionInfo;
+    onCardDrag: CardActionEventHandler;
+    onCardDragStop: CardActionEventHandler;
+    onCardClick: CardActionEventHandler;
 }
 
 export const useRect = (nodeRef: RefObject<HTMLElement>) => {
@@ -32,7 +33,10 @@ export const useRect = (nodeRef: RefObject<HTMLElement>) => {
 };
 
 export const Zone = forwardRef((
-    { name, contents, faceDown, enablePreview, drag, onCardDragStart, onCardDragStop }: ZoneProps,
+    { 
+        name, contents, faceDown, enablePreview, drag, 
+        onCardDrag, onCardDragStop, onCardClick 
+    }: ZoneProps,
     ref: ForwardedRef<HTMLDivElement>
 ) => {
     const isSourceZone = drag?.sourceZone === name;
@@ -58,8 +62,9 @@ export const Zone = forwardRef((
                     zoneCard={zc}
                     faceDown={faceDown}
                     enablePreview={enablePreview}
-                    onDragStart={drag => onCardDragStart({ ...drag, sourceZone: name })}
+                    onDrag={drag => onCardDrag({ ...drag, sourceZone: name })}
                     onDragStop={onCardDragStop}
+                    onClick={drag => onCardClick({ ...drag, sourceZone: name })}
                 />
             ))}
         </div>
