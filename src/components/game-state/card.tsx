@@ -1,15 +1,15 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { CardInfoService } from '../../services/cardInfoSvc';
 
 import cardBack from '../../assets/mtg-card-back.png';
-import Draggable, { ControlPosition, DraggableData } from 'react-draggable';
+import Draggable, { ControlPosition } from 'react-draggable';
 import { cancelablePromise } from '../../utilities/helpers';
 import { ZoneCardInfo } from './zone';
 import { CardInfo } from '../../services/dbSvc';
 
 export interface CardActionInfo {
     card: CardInfo;
-    node?: Element;
+    node: Element;
     sourceZone?: string;
     targetZone?: string;
 }
@@ -33,6 +33,8 @@ export const Card = (
     const [imageUrl, setImageUrl] = useState('');
     const [manualDragPos, setManualDragPos] = useState<ControlPosition>();
 
+    const nodeRef = useRef<HTMLDivElement>(null);
+
     const isLoading = !imageUrl && !faceDown;
 
     useEffect(() => {
@@ -41,17 +43,15 @@ export const Card = (
         return cancel;
     }, [card]);
 
-    const getCardStyles = () => {
-        const imageUrlToUse = (isLoading || faceDown) ? cardBack : imageUrl;
-        return { backgroundImage: `url(${imageUrlToUse})`, };
+    const getPositionTransform = () => {
+        const round = (n?: number) => n ? Math.round(n) : 0;
+        return { transform: `translate(${round(x)}px, ${round(y)}px)` };
     };
 
-    const getTransformStyles = () => {
-        const round = (n?: number) => n ? Math.round(n) : 0;
-        const translation = `translate(${round(x)}px, ${round(y)}px)`;
-        const rotation = tapped ? 'rotate(90deg)' : '';
-        return { transform: `${translation} ${rotation}` };
-    }
+    const getCardStyles = () => ({
+        backgroundImage: `url(${(isLoading || faceDown) ? cardBack : imageUrl})`,
+        transform: tapped ? 'rotate(90deg)' : undefined,
+    });
 
     const getClasses = () => {
         const faceUpAndLoaded = !isLoading && !faceDown;
@@ -61,26 +61,22 @@ export const Card = (
             (faceUpAndLoaded && card.foil ? ' foil' : '');
     };
 
-    const createDrag = (data?: DraggableData) => ({ card, node: data?.node.firstElementChild! });
+    const createDrag = () => ({ card, node: nodeRef.current!.firstElementChild! });
 
-    const fireDrag = (_: any, data: DraggableData) => {
+    const fireDrag = () => {
         setManualDragPos(undefined);
-        const success = onDrag(createDrag(data));
+        const success = onDrag(createDrag());
         if (!success) return false;
     };
 
-    const fireDragStop = (_: any, data: DraggableData) => {
-        if (!onDragStop(createDrag(data))) setManualDragPos({ x: 0, y: 0 });
+    const fireDragStop = () => {
+        if (!onDragStop(createDrag())) setManualDragPos({ x: 0, y: 0 });
         // Don't let react-draggable update since the card was dragged to a new zone.
         else return false;
     };
 
-    const fireClick = () => {
-        if (onClick) return onClick(createDrag());
-        return true;
-    }
+    const fireClick = () => onClick ? onClick(createDrag()) : true;
 
-    const nodeRef = React.useRef(null);
     return (
         <Draggable
             nodeRef={nodeRef}
@@ -90,7 +86,7 @@ export const Card = (
             position={manualDragPos}
         >
             <div ref={nodeRef} style={{ zIndex }} onClick={fireClick}>
-                <div className='card-position-layer' style={getTransformStyles()}>
+                <div className='card-position-layer' style={getPositionTransform()}>
                     <div className={getClasses()} style={getCardStyles()}>
                         {isLoading ?
                             <div className='loader' /> :
