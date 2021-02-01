@@ -20,7 +20,7 @@ export const BattlefieldZone = forwardRef((props: ZoneProps, ref) => {
             ...zc,
             x: clamp(zc.x! - left, tapMarginX, width - CARD_WIDTH_PX - tapMarginX),
             y: clamp(zc.y! - top, tapMarginY, height - CARD_HEIGHT_PX - tapMarginY)
-        }
+        };
     });
 
     return <Zone ref={divRef} {...props} contents={updatedContents} />;

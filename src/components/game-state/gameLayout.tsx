@@ -208,9 +208,7 @@ export default class GameLayout extends Component<{}, GameLayoutState> {
         return (
             <>
                 <div className="topPanel">
-                    <DeckLookup
-                        onImportClick={deckUrl => this.importDeck(deckUrl)}
-                    />
+                    <DeckLookup onImportClick={deckUrl => this.importDeck(deckUrl)} />
                 </div>
                 <div
                     className="gameLayout"

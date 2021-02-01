@@ -33,9 +33,9 @@ export const useRect = (nodeRef: RefObject<HTMLElement>) => {
 };
 
 export const Zone = forwardRef((
-    { 
-        name, contents, faceDown, enablePreview, drag, 
-        onCardDrag, onCardDragStop, onCardClick 
+    {
+        name, contents, faceDown, enablePreview, drag,
+        onCardDrag, onCardDragStop, onCardClick
     }: ZoneProps,
     ref: ForwardedRef<HTMLDivElement>
 ) => {
@@ -62,9 +62,9 @@ export const Zone = forwardRef((
                     zoneCard={zc}
                     faceDown={faceDown}
                     enablePreview={enablePreview}
-                    onDrag={drag => onCardDrag({ ...drag, sourceZone: name })}
-                    onDragStop={onCardDragStop}
-                    onClick={drag => onCardClick({ ...drag, sourceZone: name })}
+                    onDrag={info => onCardDrag({ ...info, sourceZone: name })}
+                    onDragStop={info => onCardDragStop({ ...info, sourceZone: name })}
+                    onClick={info => onCardClick({ ...info, sourceZone: name })}
                 />
             ))}
         </div>
