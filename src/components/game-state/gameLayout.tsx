@@ -99,7 +99,7 @@ export default class GameLayout extends Component<{}, GameLayoutState> {
         const isInterzoneDrag = !!targetZone && targetZone !== sourceZone;
         const isIntrazoneDrag = !!targetZone && targetZone === sourceZone;
         if (isInterzoneDrag || (isIntrazoneDrag && isFromBattlefield)) {
-            this.updateCardFromDrag(drag);
+            this.updateCardFromAction(drag);
         }
         return isInterzoneDrag;
     }
@@ -109,19 +109,19 @@ export default class GameLayout extends Component<{}, GameLayoutState> {
         if (this.isDragging) return true;
 
         switch (drag.sourceZone) {
-            case ZoneName.Library: 
+            case ZoneName.Library:
                 this.draw();
                 break;
             case ZoneName.Battlefield:
-                this.updateCardFromTap(drag);
+                this.updateCardFromAction(drag);
                 break;
         }
         return true;
     }
 
-    sliceCardFromZone(card: CardInfo, zone: string) {
+    sliceCardFromZone(zoneCard: ZoneCardInfo, zone: ZoneName) {
         const cards = this.state.zones[zone];
-        const index = cards.findIndex(zc => zc.card.id === card.id);
+        const index = cards.findIndex(zc => zc.card.id === zoneCard.card.id);
         return [cards.slice(0, index), cards.slice(index + 1)];
     }
 
@@ -129,22 +129,10 @@ export default class GameLayout extends Component<{}, GameLayoutState> {
         return this.state.zones[drag.sourceZone!].find(zc => zc.card.id === drag.card.id)!;
     }
 
-    getZoneCardAfterDrag(drag: CardActionInfo) {
-        const { card, node, targetZone } = drag;
-        if (targetZone !== ZoneName.Battlefield) return { card };
-        const { x, y } = node!.getBoundingClientRect();
-        const zoneCard = this.findZoneCard(drag);
-        return { ...zoneCard, x, y };
-    }
-
-    updateCardFromTap(drag: CardActionInfo) {
-        const zoneCard = this.findZoneCard(drag);
-        this.applyUpdatedCardToZones({ ...zoneCard, tapped: !zoneCard.tapped }, drag);
-    }
-
-    updateCardFromDrag(drag: CardActionInfo) {
-        this.applyUpdatedCardToZones(this.getZoneCardAfterDrag(drag), drag);
-    }
+    fromBattlefield = (action: CardActionInfo) => action.sourceZone === ZoneName.Battlefield;
+    toBattlefield = (action: CardActionInfo) => action.targetZone === ZoneName.Battlefield;
+    isClick = (action: CardActionInfo) => !action.targetZone;
+    isIntrazoneDrag = (action: CardActionInfo) => action.sourceZone === action.targetZone;
 
     getIncrementedZIndex(zoneName: ZoneName) {
         const zone = this.state.zones[zoneName];
@@ -153,35 +141,55 @@ export default class GameLayout extends Component<{}, GameLayoutState> {
         return highestIndex + 1;
     }
 
-    applyUpdatedCardToZones(updatedZoneCard: ZoneCardInfo, drag: CardActionInfo) {
+    updateCardFromAction(action: CardActionInfo) {
+        const zoneCard = this.getZoneCardAfterAction(action);
+        this.updateCard(zoneCard, action);
+    }
+
+    getZoneCardAfterAction(action: CardActionInfo) {
+        const { card, node } = action;
+        if (
+            this.toBattlefield(action) ||
+            (this.fromBattlefield(action) && this.isClick(action))
+        ) {
+            const { x, y } = node!.getBoundingClientRect();
+            const zoneCard = this.findZoneCard(action);
+            const tapped = this.isClick(action) ? !zoneCard.tapped : zoneCard.tapped;
+            return { ...zoneCard, x, y, tapped };
+        }
+        return { card };
+    }
+
+    updateCard(zoneCard: ZoneCardInfo, action: CardActionInfo) {
+        const { sourceZone, targetZone } = action;
+        if (this.toBattlefield(action)) {
+            const zIndex = this.getIncrementedZIndex(ZoneName.Battlefield);
+            zoneCard = { ...zoneCard, zIndex };
+        }
+
         const { zones } = this.state;
-        const { card, sourceZone, targetZone } = drag;
-
-        if (targetZone === ZoneName.Battlefield) {
-            updatedZoneCard = { 
-                ...updatedZoneCard, 
-                zIndex: this.getIncrementedZIndex(ZoneName.Battlefield) 
-            };
+        const [sourceSlice1, sourceSlice2] = this.sliceCardFromZone(zoneCard, sourceZone);
+        if (this.isClick(action) || this.isIntrazoneDrag(action)) {
+            const sourceZoneCards = sourceSlice1.concat(zoneCard).concat(sourceSlice2);
+            this.updateZonesState(action, sourceZoneCards);
+            return;
         }
 
-        const [sourceSliceOne, sourceSliceTwo] = this.sliceCardFromZone(card, sourceZone!);
-        if (!targetZone || sourceZone === targetZone) {
-            this.setState({
-                zones: {
-                    ...zones,
-                    [sourceZone!]: sourceSliceOne.concat(updatedZoneCard).concat(sourceSliceTwo),
-                }
-            });
-        }
-        else {
-            this.setState({
-                zones: {
-                    ...zones,
-                    [sourceZone!]: sourceSliceOne.concat(sourceSliceTwo),
-                    [targetZone]: zones[targetZone].concat(updatedZoneCard),
-                }
-            });
-        }
+        const sourceZoneCards = sourceSlice1.concat(sourceSlice2);
+        const targetZoneCards = zones[targetZone!].concat(zoneCard);
+        this.updateZonesState(action, sourceZoneCards, targetZoneCards);
+    }
+
+    updateZonesState(
+        action: CardActionInfo,
+        sourceZoneCards: ZoneCardInfo[],
+        targetZoneCards?: ZoneCardInfo[]
+    ) {
+        const { sourceZone, targetZone } = action;
+        let { zones } = this.state;
+        zones = { ...zones, [sourceZone]: sourceZoneCards };
+        if (targetZone && targetZoneCards) zones = { ...zones, [targetZone]: targetZoneCards! };
+        this.setState({ zones });
     }
 
     onMouseMove(e: React.MouseEvent) {
@@ -192,10 +200,10 @@ export default class GameLayout extends Component<{}, GameLayoutState> {
         this.setState({
             drag: {
                 ...drag,
-                targetZone: targetElem ? targetElem.id : ZoneName.None,
+                targetZone: (targetElem ? targetElem.id as ZoneName : ZoneName.None)
             }
         });
-    } 
+    }
 
     render() {
         const { zones, drag } = this.state;

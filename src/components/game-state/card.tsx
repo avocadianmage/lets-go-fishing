@@ -6,12 +6,13 @@ import Draggable, { ControlPosition } from 'react-draggable';
 import { cancelablePromise } from '../../utilities/helpers';
 import { ZoneCardInfo } from './zone';
 import { CardInfo } from '../../services/dbSvc';
+import { ZoneName } from './gameLayout';
 
 export interface CardActionInfo {
     card: CardInfo;
     node: Element;
-    sourceZone?: string;
-    targetZone?: string;
+    sourceZone: ZoneName;
+    targetZone?: ZoneName;
 }
 
 interface CardProps {
@@ -61,7 +62,11 @@ export const Card = (
             (faceUpAndLoaded && card.foil ? ' foil' : '');
     };
 
-    const createDrag = () => ({ card, node: nodeRef.current!.firstElementChild! });
+    const createDrag = () => ({ 
+        card, 
+        node: nodeRef.current!.firstElementChild!, 
+        sourceZone: ZoneName.None 
+    });
 
     const fireDrag = () => {
         setManualDragPos(undefined);

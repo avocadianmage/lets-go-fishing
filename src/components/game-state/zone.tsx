@@ -1,6 +1,7 @@
 import { ForwardedRef, forwardRef, RefObject, useEffect, useState } from "react";
 import { CardInfo } from "../../services/dbSvc";
 import { Card, CardActionEventHandler, CardActionInfo } from "./card";
+import { ZoneName } from "./gameLayout";
 
 export interface ZoneCardInfo {
     card: CardInfo;
@@ -11,7 +12,7 @@ export interface ZoneCardInfo {
 }
 
 export interface ZoneProps {
-    name: string;
+    name: ZoneName;
     contents: ZoneCardInfo[];
     faceDown?: boolean;
     enablePreview?: boolean;
