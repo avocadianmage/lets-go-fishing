@@ -1,4 +1,4 @@
-import { Component } from 'react';
+import { useEffect, useState } from 'react';
 import DeckLookup from '../other-components/deckLookup'
 import { DeckInfoService } from '../../services/deckInfoSvc';
 import { CardInfo, DatabaseService } from '../../services/dbSvc';
@@ -16,236 +16,204 @@ export enum ZoneName {
     Battlefield = 'battlefield',
 };
 
-interface GameLayoutState {
-    loading: boolean;
-    zones: { [domId: string]: ZoneCardInfo[] };
-    action?: CardActionInfo;
-}
+export const GameLayout = () => {
+    const [libraryCards, setLibraryCards] = useState<ZoneCardInfo[]>([]);
+    const [handCards, setHandCards] = useState<ZoneCardInfo[]>([]);
+    const [battlefieldCards, setBattlefieldCards] = useState<ZoneCardInfo[]>([]);
 
-export default class GameLayout extends Component<{}, GameLayoutState> {
-    state: GameLayoutState = {
-        loading: false,
-        zones: {
-            [ZoneName.Library]: [],
-            [ZoneName.Hand]: [],
-            [ZoneName.Battlefield]: [],
-        },
-    }
+    const zoneCards: { [zone: string]: { get: ZoneCardInfo[], set: any } } = {
+        [ZoneName.Library]: { get: libraryCards, set: setLibraryCards },
+        [ZoneName.Hand]: { get: handCards, set: setHandCards },
+        [ZoneName.Battlefield]: { get: battlefieldCards, set: setBattlefieldCards },
+    };
+    const getZoneCards = (zone: ZoneName) => zoneCards[zone].get;
+    const setZoneCards = (zone: ZoneName, cards: ZoneCardInfo[]) => zoneCards[zone].set(cards);
 
-    isDragging = false;
+    const [currentAction, setCurrentAction] = useState<CardActionInfo>();
 
-    async componentDidMount() {
-        const decklist = await DatabaseService.getDeck();
-        if (decklist) this.startGame(decklist);
-    }
+    const [isDragging, setIsDragging] = useState(false);
 
-    importDeck(deckUrl: string) {
-        this.showLoadingState();
-        DeckInfoService.getDecklist(deckUrl)
-            .then(decklist => this.startGame(decklist));
-    }
-
-    startGame(decklist: CardInfo[]) {
-        this.shuffleDeck(decklist);
-        this.draw(Constants.STARTING_HAND_SIZE);
-    }
-
-    shuffleDeck(decklist: CardInfo[]) {
-        this.setState({
-            loading: false,
-            zones: {
-                ...this.state.zones,
-                [ZoneName.Library]: shuffle(decklist).map(card => ({ card })),
-            },
-        });
-    }
-
-    draw(num = 1) {
-        const { loading, zones } = this.state;
-        if (loading) return;
-        const handCards = zones[ZoneName.Hand];
-        const libraryCards = zones[ZoneName.Library];
-        const cutIndex = libraryCards.length - num;
-        this.setState({
-            zones: {
-                ...zones,
-                [ZoneName.Hand]: handCards.concat(libraryCards.slice(cutIndex)),
-                [ZoneName.Library]: libraryCards.slice(0, cutIndex),
-            },
-        });
-    }
-
-    showLoadingState() {
-        this.setState({ loading: true });
-    }
-
-    onCardDrag = (action: CardActionInfo) => {
-        this.isDragging = true;
-        if (!this.state.action) this.setState({ action });
-        return true;
-    }
-
-    onCardDragStop = () => {
-        setTimeout(() => (this.isDragging = false));
-        const { action } = this.state;
-        if (!action) return false;
+    const fromBattlefield = (action: CardActionInfo) => action.sourceZone === ZoneName.Battlefield;
+    const toBattlefield = (action: CardActionInfo) => action.targetZone === ZoneName.Battlefield;
+    const isClick = (action: CardActionInfo) => !action.targetZone;
+    const isIntrazoneDrag = (action: CardActionInfo) => action.sourceZone === action.targetZone;
+    const isInterzoneDrag = (action: CardActionInfo) => {
         const { sourceZone, targetZone } = action;
-        this.setState({ action: undefined });
-
-        if (!sourceZone) return false;
-        if (targetZone === ZoneName.None) return false;
-
-        const isInterzoneDrag = this.isInterzoneDrag(action);
-        if (isInterzoneDrag || (this.isIntrazoneDrag(action) && this.fromBattlefield(action))) {
-            this.updateCardFromAction(action);
-        }
-        return isInterzoneDrag;
+        return !!targetZone && targetZone !== sourceZone;
     }
 
-    onCardClick = (action: CardActionInfo) => {
-        // Don't process as a click if the card was dragged.
-        if (this.isDragging) return true;
+    const startGame = (decklist: CardInfo[]) => {
+        const newLibraryCards = shuffle(decklist.map(card => ({ card })));
+        const { fromArray, toArray } = sliceEndElements(
+            newLibraryCards, [], Constants.STARTING_HAND_SIZE
+        );
+        setLibraryCards(fromArray);
+        setHandCards(toArray);
+    };
 
-        switch (action.sourceZone) {
-            case ZoneName.Library:
-                this.draw();
-                break;
-            case ZoneName.Battlefield:
-                this.updateCardFromAction(action);
-                break;
-        }
-        return true;
+    const importDeck = (deckUrl: string) => {
+        DeckInfoService.getDecklist(deckUrl).then(startGame);
     }
 
-    sliceCardFromZone(zoneCard: ZoneCardInfo, zone: ZoneName) {
-        const cards = this.state.zones[zone];
+    const draw = (num = 1) => {
+        const { fromArray, toArray } = sliceEndElements(libraryCards, handCards, num);
+        setLibraryCards(fromArray);
+        setHandCards(toArray);
+    }
+
+    const sliceEndElements = (fromArray: any[], toArray: any[], num: number) => {
+        const cutIndex = fromArray.length - num;
+        return {
+            fromArray: fromArray.slice(0, cutIndex),
+            toArray: toArray.concat(fromArray.slice(cutIndex))
+        };
+    }
+
+    const sliceCardFromZone = (zoneCard: ZoneCardInfo, zone: ZoneName) => {
+        const cards = getZoneCards(zone);
         const index = cards.findIndex(zc => zc.card.id === zoneCard.card.id);
         return [cards.slice(0, index), cards.slice(index + 1)];
     }
 
-    findZoneCard(action: CardActionInfo) {
-        return this.state.zones[action.sourceZone!].find(zc => zc.card.id === action.card.id)!;
+    const findZoneCard = (action: CardActionInfo) => {
+        return getZoneCards(action.sourceZone).find(zc => zc.card.id === action.card.id)!;
     }
 
-    fromBattlefield = (action: CardActionInfo) => action.sourceZone === ZoneName.Battlefield;
-    toBattlefield = (action: CardActionInfo) => action.targetZone === ZoneName.Battlefield;
-    isClick = (action: CardActionInfo) => !action.targetZone;
-    isIntrazoneDrag = (action: CardActionInfo) => action.sourceZone === action.targetZone;
-    isInterzoneDrag = (action: CardActionInfo) => {
-        const { sourceZone, targetZone } = action;
-        return !!targetZone && targetZone !== sourceZone;
-    };
-
-    getIncrementedZIndex(zoneName: ZoneName) {
-        const zone = this.state.zones[zoneName];
-        const highestIndex = zone.some(() => true) ?
-            zone.map(zc => zc.zIndex ?? 0).reduce((prev, curr) => Math.max(prev, curr)) : 0;
+    const getIncrementedZIndex = (zone: ZoneName) => {
+        const cards = getZoneCards(zone);
+        const highestIndex = cards.some(() => true) ?
+            cards.map(zc => zc.zIndex ?? 0).reduce((prev, curr) => Math.max(prev, curr)) : 0;
         return highestIndex + 1;
     }
 
-    updateCardFromAction(action: CardActionInfo) {
-        const zoneCard = this.getZoneCardAfterAction(action);
-        this.updateCard(zoneCard, action);
+    const updateCardFromAction = (action: CardActionInfo) => {
+        const zoneCard = getZoneCardAfterAction(action);
+        updateCard(zoneCard, action);
     }
 
-    getZoneCardAfterAction(action: CardActionInfo) {
+    const getZoneCardAfterAction = (action: CardActionInfo) => {
         const { card, node } = action;
-        if (
-            this.toBattlefield(action) ||
-            (this.fromBattlefield(action) && this.isClick(action))
-        ) {
+        if (toBattlefield(action) || (fromBattlefield(action) && isClick(action))) {
             const { x, y } = node!.getBoundingClientRect();
-            const zoneCard = this.findZoneCard(action);
-            const tapped = this.isClick(action) ? !zoneCard.tapped : zoneCard.tapped;
+            const zoneCard = findZoneCard(action);
+            const tapped = isClick(action) ? !zoneCard.tapped : zoneCard.tapped;
             return { ...zoneCard, x, y, tapped };
         }
         return { card };
     }
 
-    updateCard(zoneCard: ZoneCardInfo, action: CardActionInfo) {
+    const updateCard = (zoneCard: ZoneCardInfo, action: CardActionInfo) => {
         const { sourceZone, targetZone } = action;
-        if (this.toBattlefield(action)) {
-            const zIndex = this.getIncrementedZIndex(ZoneName.Battlefield);
+        if (toBattlefield(action)) {
+            const zIndex = getIncrementedZIndex(ZoneName.Battlefield);
             zoneCard = { ...zoneCard, zIndex };
         }
 
-        const { zones } = this.state;
-        const [sourceSlice1, sourceSlice2] = this.sliceCardFromZone(zoneCard, sourceZone);
-        if (this.isClick(action) || this.isIntrazoneDrag(action)) {
+        const [sourceSlice1, sourceSlice2] = sliceCardFromZone(zoneCard, sourceZone);
+        if (isClick(action) || isIntrazoneDrag(action)) {
             const sourceZoneCards = sourceSlice1.concat(zoneCard).concat(sourceSlice2);
-            this.updateZonesState(action, sourceZoneCards);
+            setZoneCards(sourceZone, sourceZoneCards);
             return;
         }
 
         const sourceZoneCards = sourceSlice1.concat(sourceSlice2);
-        const targetZoneCards = zones[targetZone!].concat(zoneCard);
-        this.updateZonesState(action, sourceZoneCards, targetZoneCards);
+        const targetZoneCards = getZoneCards(targetZone!).concat(zoneCard);
+        setZoneCards(sourceZone, sourceZoneCards);
+        setZoneCards(targetZone!, targetZoneCards);
     }
 
-    updateZonesState(
-        action: CardActionInfo,
-        sourceZoneCards: ZoneCardInfo[],
-        targetZoneCards?: ZoneCardInfo[]
-    ) {
-        const { sourceZone, targetZone } = action;
-        let { zones } = this.state;
-        zones = { ...zones, [sourceZone]: sourceZoneCards };
-        if (targetZone && targetZoneCards) zones = { ...zones, [targetZone]: targetZoneCards! };
-        this.setState({ zones });
-    }
+    const onCardDrag = (action: CardActionInfo) => {
+        setIsDragging(true);
+        if (!currentAction) setCurrentAction(action);
+        return true;
+    };
 
-    onMouseMove(e: React.MouseEvent) {
-        const { action } = this.state;
-        if (!action) return;
+    const onCardDragStop = () => {
+        setTimeout(() => setIsDragging(false));
+        if (!currentAction) return false;
+        const { sourceZone, targetZone } = currentAction;
+        setCurrentAction(undefined);
+
+        if (!sourceZone) return false;
+        if (targetZone === ZoneName.None) return false;
+
+        const interzoneDrag = isInterzoneDrag(currentAction);
+        if (interzoneDrag || (isIntrazoneDrag(currentAction) && fromBattlefield(currentAction))) {
+            updateCardFromAction(currentAction);
+        }
+        return interzoneDrag;
+    };
+
+    const onCardClick = (action: CardActionInfo) => {
+        // Don't process as a click if the card was dragged.
+        if (isDragging) return true;
+
+        switch (action.sourceZone) {
+            case ZoneName.Library:
+                draw();
+                break;
+            case ZoneName.Battlefield:
+                updateCardFromAction(action);
+                break;
+        }
+        return true;
+    };
+
+    const onMouseMove = (e: React.MouseEvent) => {
+        if (!currentAction) return;
         const mouseOverElems = document.elementsFromPoint(e.clientX, e.clientY);
         const targetElem = mouseOverElems.find(elem => elem.classList.contains('zone'));
-        this.setState({
-            action: {
-                ...action,
-                targetZone: (targetElem ? targetElem.id as ZoneName : ZoneName.None)
-            }
+        setCurrentAction({
+            ...currentAction,
+            targetZone: (targetElem ? targetElem.id as ZoneName : ZoneName.None)
         });
     }
 
-    render() {
-        const { zones, action } = this.state;
-        const zoneProps = {
-            action,
-            onCardDrag: this.onCardDrag,
-            onCardDragStop: this.onCardDragStop,
-            onCardClick: this.onCardClick,
-        };
-        return (
-            <>
-                <div className="topPanel">
-                    <DeckLookup onImportClick={deckUrl => this.importDeck(deckUrl)} />
-                </div>
-                <div
-                    className="gameLayout"
-                    onMouseMove={e => this.onMouseMove(e)}
-                >
-                    <BattlefieldZone
+    useEffect(() => {
+        (async () => {
+            const decklist = await DatabaseService.getDeck();
+            if (decklist) startGame(decklist);
+        })();
+
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    const zoneProps = {
+        action: currentAction,
+        onCardDrag,
+        onCardDragStop,
+        onCardClick,
+    };
+    return (
+        <>
+            <div className="topPanel">
+                <DeckLookup onImportClick={importDeck} />
+            </div>
+            <div
+                className="gameLayout"
+                onMouseMove={onMouseMove}
+            >
+                <BattlefieldZone
+                    {...zoneProps}
+                    name={ZoneName.Battlefield}
+                    contents={battlefieldCards}
+                />
+                <div className="bottomPanel">
+                    <StackZone
                         {...zoneProps}
-                        name={ZoneName.Battlefield}
-                        contents={zones[ZoneName.Battlefield]}
+                        name={ZoneName.Hand}
+                        contents={handCards}
+                        enablePreview={true}
                     />
-                    <div className="bottomPanel">
-                        <StackZone
-                            {...zoneProps}
-                            name={ZoneName.Hand}
-                            contents={zones[ZoneName.Hand]}
-                            enablePreview={true}
-                        />
-                        <StackZone
-                            {...zoneProps}
-                            name={ZoneName.Library}
-                            contents={zones[ZoneName.Library]}
-                            faceDown={true}
-                            maxToShow={2}
-                        />
-                    </div>
+                    <StackZone
+                        {...zoneProps}
+                        name={ZoneName.Library}
+                        contents={libraryCards}
+                        faceDown={true}
+                        maxToShow={2}
+                    />
                 </div>
-            </>
-        );
-    }
-}
+            </div>
+        </>
+    );
+};

@@ -62,7 +62,7 @@ export const Card = (
             (faceUpAndLoaded && card.foil ? ' foil' : '');
     };
 
-    const createDrag = () => ({ 
+    const createAction = () => ({ 
         card, 
         node: nodeRef.current!.firstElementChild!, 
         sourceZone: ZoneName.None 
@@ -70,17 +70,17 @@ export const Card = (
 
     const fireDrag = () => {
         setManualDragPos(undefined);
-        const success = onDrag(createDrag());
+        const success = onDrag(createAction());
         if (!success) return false;
     };
 
     const fireDragStop = () => {
-        if (!onDragStop(createDrag())) setManualDragPos({ x: 0, y: 0 });
+        if (!onDragStop(createAction())) setManualDragPos({ x: 0, y: 0 });
         // Don't let react-draggable update since the card was dragged to a new zone.
         else return false;
     };
 
-    const fireClick = () => onClick ? onClick(createDrag()) : true;
+    const fireClick = () => onClick ? onClick(createAction()) : true;
 
     return (
         <Draggable
