@@ -16,7 +16,7 @@ export interface ZoneProps {
     contents: ZoneCardInfo[];
     faceDown?: boolean;
     enablePreview?: boolean;
-    drag?: CardActionInfo;
+    action?: CardActionInfo;
     onCardDrag: CardActionEventHandler;
     onCardDragStop: CardActionEventHandler;
     onCardClick: CardActionEventHandler;
@@ -35,16 +35,16 @@ export const useRect = (nodeRef: RefObject<HTMLElement>) => {
 
 export const Zone = forwardRef((
     {
-        name, contents, faceDown, enablePreview, drag,
+        name, contents, faceDown, enablePreview, action,
         onCardDrag, onCardDragStop, onCardClick
     }: ZoneProps,
     ref: ForwardedRef<HTMLDivElement>
 ) => {
-    const isSourceZone = drag?.sourceZone === name;
-    const isTargetZone = drag?.targetZone === name;
+    const isSourceZone = action?.sourceZone === name;
+    const isTargetZone = action?.targetZone === name;
     const classes = 'zone' + (isTargetZone ? ' highlight' : '');
 
-    const isCardDragging = (card: CardInfo) => card.id === drag?.card.id;
+    const isCardDragging = (card: CardInfo) => card.id === action?.card.id;
     const updatedContents = contents.map(zc => ({
         ...zc, zIndex: isCardDragging(zc.card) ? Number.MAX_SAFE_INTEGER : zc.zIndex
     }));

@@ -24,7 +24,7 @@ interface CardProps {
     onClick: CardActionEventHandler;
 }
 
-export type CardActionEventHandler = (drag: CardActionInfo) => boolean;
+export type CardActionEventHandler = (action: CardActionInfo) => boolean;
 
 export const Card = (
     { zoneCard, faceDown, enablePreview, onDrag, onDragStop, onClick }: CardProps

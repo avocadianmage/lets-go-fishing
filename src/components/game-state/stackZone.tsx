@@ -8,7 +8,7 @@ interface StackZoneProps extends ZoneProps {
 }
 
 export const StackZone = forwardRef((props: StackZoneProps, ref) => {
-    const { name, contents, drag, maxToShow } = props;
+    const { name, contents, action, maxToShow } = props;
 
     const divRef = useRef<HTMLDivElement>(null);
     useImperativeHandle(ref, () => ({
@@ -25,13 +25,13 @@ export const StackZone = forwardRef((props: StackZoneProps, ref) => {
         return offset * index + ZONE_PADDING_PX;
     };
 
-    const isCardDragging = (card: CardInfo) => card.id === drag?.card.id;
+    const isCardDragging = (card: CardInfo) => card.id === action?.card.id;
 
     let nondraggedIndex = 0;
     const getCardX = (card: CardInfo, index: number) => {
         const isDragging = isCardDragging(card);
         const positioningCardCount = contents.length - (
-            (drag?.sourceZone !== name || isDragging) ? 0 : 1
+            (action?.sourceZone !== name || isDragging) ? 0 : 1
         );
         const positioningIndex = isDragging ? index : nondraggedIndex++;
         const left = getXForIndex(positioningCardCount, positioningIndex);
