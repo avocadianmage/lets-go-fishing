@@ -43,14 +43,13 @@ export const Card = (
         return cancel;
     }, [card]);
 
-    const getPositionTransform = () => {
+    const getPositionStyles = () => {
         const round = (n?: number) => n ? Math.round(n) : 0;
         return { transform: `translate(${round(x)}px, ${round(y)}px)` };
     };
 
-    const getCardStyles = () => ({
-        backgroundImage: `url(${(isLoading || faceDown) ? cardBack : imageUrl})`,
-        transform: tapped ? 'rotate(90deg)' : undefined,
+    const getCardImageStyles = () => ({
+        backgroundImage: `url(${(isLoading || faceDown) ? cardBack : imageUrl})`
     });
 
     const getClasses = () => {
@@ -58,7 +57,8 @@ export const Card = (
         return 'card' +
             (isLoading ? ' loading' : '') +
             (faceUpAndLoaded && enablePreview ? ' enable-preview' : '') +
-            (faceUpAndLoaded && card.foil ? ' foil' : '');
+            (faceUpAndLoaded && card.foil ? ' foil' : '') +
+            (tapped ? ' tapped' : '');
     };
 
     const createAction = () => ({ 
@@ -88,8 +88,8 @@ export const Card = (
             position={manualDragPos}
         >
             <div ref={nodeRef} style={{ zIndex }}>
-                <div className='card-position-layer' style={getPositionTransform()}>
-                    <div className={getClasses()} style={getCardStyles()}>
+                <div className='card-position-layer' style={getPositionStyles()}>
+                    <div className={getClasses()} style={getCardImageStyles()}>
                         {isLoading ?
                             <div className='loader' /> :
                             <div className='card-face' />

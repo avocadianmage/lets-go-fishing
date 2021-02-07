@@ -38,10 +38,13 @@
     background-color: rgba(0, 0, 0, 0.5);
 }
 
+.card.tapped {
+    transform: rotate(90deg);
+}
+
 .card.foil .card-face::after {
     position: absolute;
     content: "";
-    overflow: hidden;
     border-radius: 4.75% / 3.5%;
     background-image: linear-gradient(
         to bottom, 
@@ -58,6 +61,11 @@
     animation-timing-function: ease-out;
     animation-duration: 7s;
     animation-iteration-count: infinite;
+}
+
+.card.tapped.foil .card-face::after {
+    transform: rotate(45deg);
+    animation-direction: reverse;
 }
 
 .card .card-face {
