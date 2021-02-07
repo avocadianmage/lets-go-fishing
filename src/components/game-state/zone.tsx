@@ -19,7 +19,6 @@ export interface ZoneProps {
     action?: CardActionInfo;
     onCardDrag: CardActionEventHandler;
     onCardDragStop: CardActionEventHandler;
-    onCardClick: CardActionEventHandler;
 }
 
 export const useRect = (nodeRef: RefObject<HTMLElement>) => {
@@ -36,7 +35,7 @@ export const useRect = (nodeRef: RefObject<HTMLElement>) => {
 export const Zone = forwardRef((
     {
         name, contents, faceDown, enablePreview, action,
-        onCardDrag, onCardDragStop, onCardClick
+        onCardDrag, onCardDragStop
     }: ZoneProps,
     ref: ForwardedRef<HTMLDivElement>
 ) => {
@@ -65,7 +64,6 @@ export const Zone = forwardRef((
                     enablePreview={enablePreview}
                     onDrag={info => onCardDrag({ ...info, sourceZone: name })}
                     onDragStop={info => onCardDragStop({ ...info, sourceZone: name })}
-                    onClick={info => onCardClick({ ...info, sourceZone: name })}
                 />
             ))}
         </div>

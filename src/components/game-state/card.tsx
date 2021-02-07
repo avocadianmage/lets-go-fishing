@@ -21,13 +21,12 @@ interface CardProps {
     enablePreview?: boolean;
     onDrag: CardActionEventHandler;
     onDragStop: CardActionEventHandler;
-    onClick: CardActionEventHandler;
 }
 
 export type CardActionEventHandler = (action: CardActionInfo) => boolean;
 
 export const Card = (
-    { zoneCard, faceDown, enablePreview, onDrag, onDragStop, onClick }: CardProps
+    { zoneCard, faceDown, enablePreview, onDrag, onDragStop }: CardProps
 ) => {
     const { card, x, y, tapped, zIndex } = zoneCard;
 
@@ -80,8 +79,6 @@ export const Card = (
         else return false;
     };
 
-    const fireClick = () => onClick ? onClick(createAction()) : true;
-
     return (
         <Draggable
             nodeRef={nodeRef}
@@ -90,7 +87,7 @@ export const Card = (
             onStop={fireDragStop}
             position={manualDragPos}
         >
-            <div ref={nodeRef} style={{ zIndex }} onClick={fireClick}>
+            <div ref={nodeRef} style={{ zIndex }}>
                 <div className='card-position-layer' style={getPositionTransform()}>
                     <div className={getClasses()} style={getCardStyles()}>
                         {isLoading ?

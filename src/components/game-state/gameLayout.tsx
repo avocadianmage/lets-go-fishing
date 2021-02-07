@@ -31,8 +31,7 @@ export const GameLayout = () => {
 
     const [currentAction, setCurrentAction] = useState<CardActionInfo>();
 
-    const [isDragging, setIsDragging] = useState(false);
-
+    const fromLibrary = (action: CardActionInfo) => action.sourceZone === ZoneName.Library;
     const fromBattlefield = (action: CardActionInfo) => action.sourceZone === ZoneName.Battlefield;
     const toBattlefield = (action: CardActionInfo) => action.targetZone === ZoneName.Battlefield;
     const isClick = (action: CardActionInfo) => !action.targetZone;
@@ -124,40 +123,34 @@ export const GameLayout = () => {
     }
 
     const onCardDrag = (action: CardActionInfo) => {
-        setIsDragging(true);
         if (!currentAction) setCurrentAction(action);
         return true;
     };
 
-    const onCardDragStop = () => {
-        setTimeout(() => setIsDragging(false));
-        if (!currentAction) return false;
-        const { sourceZone, targetZone } = currentAction;
-        setCurrentAction(undefined);
+    const onCardDragStop = (action: CardActionInfo) => {
+        try {
+            action = currentAction ?? action;
 
-        if (!sourceZone) return false;
-        if (targetZone === ZoneName.None) return false;
+            if (action.targetZone === ZoneName.None) return false;
 
-        const interzoneDrag = isInterzoneDrag(currentAction);
-        if (interzoneDrag || (isIntrazoneDrag(currentAction) && fromBattlefield(currentAction))) {
-            updateCardFromAction(currentAction);
-        }
-        return interzoneDrag;
-    };
+            if (isClick(action)) {
+                if (fromLibrary(action)) {
+                    draw();
+                    return true;
+                }
+                else if (fromBattlefield(action)) {
+                    updateCardFromAction(action);
+                }
+                return false;
+            }
 
-    const onCardClick = (action: CardActionInfo) => {
-        // Don't process as a click if the card was dragged.
-        if (isDragging) return true;
-
-        switch (action.sourceZone) {
-            case ZoneName.Library:
-                draw();
-                break;
-            case ZoneName.Battlefield:
+            const interzoneDrag = isInterzoneDrag(action);
+            if (interzoneDrag || (isIntrazoneDrag(action) && fromBattlefield(action))) {
                 updateCardFromAction(action);
-                break;
+            }
+            return interzoneDrag;
         }
-        return true;
+        finally { setCurrentAction(undefined); }
     };
 
     const onMouseMove = (e: React.MouseEvent) => {
@@ -179,12 +172,7 @@ export const GameLayout = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    const zoneProps = {
-        action: currentAction,
-        onCardDrag,
-        onCardDragStop,
-        onCardClick,
-    };
+    const zoneProps = { action: currentAction, onCardDrag, onCardDragStop };
     return (
         <>
             <div className="topPanel">
