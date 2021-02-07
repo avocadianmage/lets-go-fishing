@@ -95,6 +95,10 @@
     transform: translate(0, -100%);
 }
 
+.vertical-orientation .card-drag-layer:not(.react-draggable-dragging) .card.enable-preview:hover .card-face {
+    transform: translate(-100%, 0);
+}
+
 .loader {
     position: absolute;
     top: 50%;
