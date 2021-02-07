@@ -30,7 +30,7 @@
     column-gap: 6px;
 }
 
-.zone:empty::after {
+.zone::after {
     content: attr(data-name);
     color: var(--nord3);
     width: 100%;
