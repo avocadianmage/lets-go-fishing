@@ -82,12 +82,12 @@
     pointer-events: none;
 }
 
-#hand .card-position-layer {
+.stack-zone .card-position-layer {
     transition: transform 0.1s;
     animation: fadeIn 0.15s;
 }
 
-#hand .card .card-face {
+.stack-zone:not(#library) .card .card-face {
     animation: slideIn 0.15s;
 }
 

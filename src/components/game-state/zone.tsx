@@ -14,6 +14,7 @@ export interface ZoneCardInfo {
 export interface ZoneProps {
     name: ZoneName;
     contents: ZoneCardInfo[];
+    extraClassName?: string;
     faceDown?: boolean;
     enablePreview?: boolean;
     action?: CardActionInfo;
@@ -34,14 +35,18 @@ export const useRect = (nodeRef: RefObject<HTMLElement>) => {
 
 export const Zone = forwardRef((
     {
-        name, contents, faceDown, enablePreview, action,
+        name, contents, extraClassName, faceDown, enablePreview, action,
         onCardDrag, onCardDragStop
     }: ZoneProps,
     ref: ForwardedRef<HTMLDivElement>
 ) => {
     const isSourceZone = action?.sourceZone === name;
     const isTargetZone = action?.targetZone === name;
-    const classes = 'zone' + (isTargetZone ? ' highlight' : '');
+    const className = (
+        'zone' + 
+        (extraClassName ? ' ' + extraClassName : '') + 
+        (isTargetZone ? ' highlight' : '')
+    );
 
     const isCardDragging = (card: CardInfo) => card.id === action?.card.id;
     const updatedContents = contents.map(zc => ({
@@ -52,7 +57,7 @@ export const Zone = forwardRef((
         <div
             ref={ref}
             id={name}
-            className={classes}
+            className={className}
             data-name={name.toUpperCase()}
             style={{ zIndex: isSourceZone ? 1 : 0 }}
         >

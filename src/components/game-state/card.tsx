@@ -62,11 +62,11 @@ export const Card = (
     };
 
     const round = (n?: number) => n ? Math.round(n) : 0;
-    const positionStyles = { transform: `translate(${round(x)}px, ${round(y)}px)` };
-    const imageStyles = { 
+    const positionStyle = { transform: `translate(${round(x)}px, ${round(y)}px)` };
+    const imageStyle = { 
         backgroundImage: `url(${(isLoading || faceDown) ? cardBack : imageUrl})` 
     };
-    const classes = (
+    const className = (
         'card' +
         (isLoading ? ' loading' : '') +
         (faceUpAndLoaded && enablePreview ? ' enable-preview' : '') +
@@ -82,8 +82,8 @@ export const Card = (
             position={manualDragPos}
         >
             <div ref={nodeRef} style={{ zIndex }}>
-                <div className='card-position-layer' style={positionStyles}>
-                    <div className={classes} style={imageStyles}>
+                <div className='card-position-layer' style={positionStyle}>
+                    <div className={className} style={imageStyle}>
                         {isLoading ?
                             <div className='loader' /> :
                             <div className='card-face' />

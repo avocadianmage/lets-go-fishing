@@ -52,5 +52,5 @@ export const StackZone = forwardRef((props: StackZoneProps, ref) => {
         return { ...zc, x, y };
     });
 
-    return <Zone ref={divRef} {...props} contents={updatedContents} />;
+    return <Zone ref={divRef} {...props} contents={updatedContents} extraClassName="stack-zone" />;
 });
