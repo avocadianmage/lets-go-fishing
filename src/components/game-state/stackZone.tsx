@@ -1,6 +1,6 @@
 import { forwardRef, useImperativeHandle, useRef } from "react";
 import { CardInfo } from "../../services/dbSvc";
-import { CARD_HEIGHT_PX, CARD_WIDTH_PX, ZONE_PADDING_PX } from "../../utilities/constants";
+import { CARD_HEIGHT_PX, CARD_WIDTH_PX, ZONE_BORDER_PX, ZONE_PADDING_PX } from "../../utilities/constants";
 import { useRect, Zone, ZoneProps } from "./zone";
 
 interface StackZoneProps extends ZoneProps {
@@ -21,7 +21,7 @@ export const StackZone = forwardRef((props: StackZoneProps, ref) => {
             { length: height, cardLength: CARD_HEIGHT_PX } :
             { length: width, cardLength: CARD_WIDTH_PX };
     const { length, cardLength } = lengths;
-    const lengthSansPadding = length - ZONE_PADDING_PX * 2;
+    const lengthSansPadding = length - ZONE_PADDING_PX * 2 - ZONE_BORDER_PX * 2;
 
     const getOffsetForIndex = (cardCount: number, index: number) => {
         const offset = Math.min(
@@ -45,7 +45,6 @@ export const StackZone = forwardRef((props: StackZoneProps, ref) => {
             { x: ZONE_PADDING_PX, y: offset } : 
             { x: offset, y: ZONE_PADDING_PX };
     };
-
     
     const className = (
         'stack-zone' + 
