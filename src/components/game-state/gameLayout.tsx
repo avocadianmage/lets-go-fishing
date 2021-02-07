@@ -51,8 +51,9 @@ export const GameLayout = () => {
         setHandCards(toArray);
     };
 
-    const importDeck = (deckUrl: string) => {
-        DeckInfoService.getDecklist(deckUrl).then(startGame);
+    const importDeck = async (deckUrl: string) => {
+        const decklist = await DeckInfoService.getDecklist(deckUrl);
+        startGame(decklist);
     }
 
     const draw = (num = 1) => {
@@ -189,10 +190,7 @@ export const GameLayout = () => {
             <div className="topPanel">
                 <DeckLookup onImportClick={importDeck} />
             </div>
-            <div
-                className="gameLayout"
-                onMouseMove={onMouseMove}
-            >
+            <div className="gameLayout" onMouseMove={onMouseMove}>
                 <BattlefieldZone
                     {...zoneProps}
                     name={ZoneName.Battlefield}
