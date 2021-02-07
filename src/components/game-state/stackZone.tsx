@@ -4,12 +4,12 @@ import { CARD_HEIGHT_PX, CARD_WIDTH_PX, ZONE_PADDING_PX } from "../../utilities/
 import { useRect, Zone, ZoneProps } from "./zone";
 
 interface StackZoneProps extends ZoneProps {
-    maxToShow?: number;
+    showTopOnly?: boolean;
     verticalOrientation?: boolean;
 }
 
 export const StackZone = forwardRef((props: StackZoneProps, ref) => {
-    const { name, contents, action, maxToShow, verticalOrientation } = props;
+    const { name, contents, action, showTopOnly, verticalOrientation } = props;
 
     const divRef = useRef<HTMLDivElement>(null);
     useImperativeHandle(ref, () => ({
@@ -46,7 +46,9 @@ export const StackZone = forwardRef((props: StackZoneProps, ref) => {
             { x: offset, y: ZONE_PADDING_PX };
     };
 
-    let updatedContents = maxToShow ? contents.slice(contents.length - maxToShow) : contents;
+    // When only showing the top card, still need to load two in case the user drags the top card.
+    let updatedContents = showTopOnly ? contents.slice(contents.length - 2) : contents;
+    
     updatedContents = updatedContents.map((zc, i) => { 
         const { x, y } = getCardOffset(zc.card, i);
         return { ...zc, x, y };

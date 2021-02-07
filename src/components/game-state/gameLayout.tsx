@@ -208,7 +208,7 @@ export const GameLayout = () => {
                         name={ZoneName.Library}
                         contents={libraryCards}
                         faceDown={true}
-                        maxToShow={2}
+                        showTopOnly={true}
                     />
                 </div>
             </div>
