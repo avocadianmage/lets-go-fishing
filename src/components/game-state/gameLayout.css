@@ -8,8 +8,8 @@
 
 .zone {
     background-color: var(--nord1);
-    padding: 6px;
-    border: 4px solid transparent;
+    padding: var(--zone-padding);
+    border: var(--zone-border-width) solid transparent;
     border-radius: 3px;
     font-family: 'Bahnschrift Condensed', 'Arial Narrow Bold', sans-serif;
     font-size: 60px;
@@ -18,9 +18,8 @@
 }
 
 .zone.highlight {
-    padding: 6px;
-    border: 4px solid var(--nord3);
-    transition: border 0.15s;
+    box-shadow: 0 0 0 var(--zone-border-width) var(--nord3);
+    transition: box-shadow 0.15s;
 }
 
 .toolbar {
