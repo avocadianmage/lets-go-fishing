@@ -46,13 +46,15 @@ export const StackZone = forwardRef((props: StackZoneProps, ref) => {
             { x: offset, y: ZONE_PADDING_PX };
     };
 
+    
+    const className = 'stack-zone' + (showTopOnly ? ' show-top-only' : '');
+
     // When only showing the top card, still need to load two in case the user drags the top card.
     let updatedContents = showTopOnly ? contents.slice(contents.length - 2) : contents;
-    
     updatedContents = updatedContents.map((zc, i) => { 
         const { x, y } = getCardOffset(zc.card, i);
         return { ...zc, x, y };
     });
 
-    return <Zone ref={divRef} {...props} contents={updatedContents} extraClassName="stack-zone" />;
+    return <Zone ref={divRef} {...props} contents={updatedContents} classesToAppend={className} />;
 });

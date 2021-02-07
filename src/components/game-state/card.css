@@ -87,7 +87,7 @@
     animation: fadeIn 0.15s;
 }
 
-.stack-zone:not(#library) .card .card-face {
+.stack-zone:not(.show-top-only) .card .card-face {
     animation: slideIn 0.15s;
 }
 
