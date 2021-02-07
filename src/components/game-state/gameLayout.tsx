@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import DeckLookup from '../other-components/deckLookup'
 import { DeckInfoService } from '../../services/deckInfoSvc';
 import { CardInfo, DatabaseService } from '../../services/dbSvc';
-import * as Constants from '../../utilities/constants';
+import { STARTING_HAND_SIZE, ZONE_BORDER_PX } from '../../utilities/constants';
 import { shuffle } from '../../utilities/helpers';
 import { CardActionInfo } from './card';
 import { ZoneCardInfo } from './zone';
@@ -47,7 +47,7 @@ export const GameLayout = () => {
     const startGame = (decklist: CardInfo[]) => {
         const newLibraryCards = shuffle(decklist.map(card => ({ card })));
         const { fromArray, toArray } = sliceEndElements(
-            newLibraryCards, [], Constants.STARTING_HAND_SIZE
+            newLibraryCards, [], STARTING_HAND_SIZE
         );
         setLibraryCards(fromArray);
         setHandCards(toArray);
@@ -100,7 +100,7 @@ export const GameLayout = () => {
             const { x, y } = node!.getBoundingClientRect();
             const zoneCard = findZoneCard(action);
             const tapped = isClick(action) ? !zoneCard.tapped : zoneCard.tapped;
-            return { ...zoneCard, x, y, tapped };
+            return { ...zoneCard, x: x - ZONE_BORDER_PX, y: y - ZONE_BORDER_PX, tapped };
         }
         return { card };
     }
