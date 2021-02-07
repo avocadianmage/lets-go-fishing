@@ -14,17 +14,20 @@ export enum ZoneName {
     Library = 'library',
     Hand = 'hand',
     Battlefield = 'battlefield',
+    Graveyard = 'graveyard',
 };
 
 export const GameLayout = () => {
     const [libraryCards, setLibraryCards] = useState<ZoneCardInfo[]>([]);
     const [handCards, setHandCards] = useState<ZoneCardInfo[]>([]);
     const [battlefieldCards, setBattlefieldCards] = useState<ZoneCardInfo[]>([]);
+    const [graveyardCards, setGraveyardCards] = useState<ZoneCardInfo[]>([]);
 
     const zoneCards: { [zone: string]: { get: ZoneCardInfo[], set: any } } = {
         [ZoneName.Library]: { get: libraryCards, set: setLibraryCards },
         [ZoneName.Hand]: { get: handCards, set: setHandCards },
         [ZoneName.Battlefield]: { get: battlefieldCards, set: setBattlefieldCards },
+        [ZoneName.Graveyard]: { get: graveyardCards, set: setGraveyardCards },
     };
     const getZoneCards = (zone: ZoneName) => zoneCards[zone].get;
     const setZoneCards = (zone: ZoneName, cards: ZoneCardInfo[]) => zoneCards[zone].set(cards);
@@ -175,15 +178,24 @@ export const GameLayout = () => {
     const zoneProps = { action: currentAction, onCardDrag, onCardDragStop };
     return (
         <>
-            <div className="topPanel">
+            <div className="toolbar">
                 <DeckLookup onImportClick={importDeck} />
             </div>
             <div className="gameLayout" onMouseMove={onMouseMove}>
-                <BattlefieldZone
-                    {...zoneProps}
-                    name={ZoneName.Battlefield}
-                    contents={battlefieldCards}
-                />
+                <div className="topPanel">
+                    <BattlefieldZone
+                        {...zoneProps}
+                        name={ZoneName.Battlefield}
+                        contents={battlefieldCards}
+                    />
+                    <StackZone
+                        {...zoneProps}
+                        name={ZoneName.Graveyard}
+                        contents={graveyardCards}
+                        enablePreview={true}
+                        verticalOrientation={true}
+                    />
+                </div>
                 <div className="bottomPanel">
                     <StackZone
                         {...zoneProps}

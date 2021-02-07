@@ -13,6 +13,7 @@
     font-family: 'Bahnschrift Condensed', 'Arial Narrow Bold', sans-serif;
     font-size: 60px;
     position: relative;
+    writing-mode: vertical-lr;
 }
 
 .zone.highlight {
@@ -20,7 +21,7 @@
     transition: background-color 0.2s;
 }
 
-.topPanel {
+.toolbar {
     box-shadow: 0 1px 8px 0 rgba(0,0,0,0.5);
 }
 
@@ -32,10 +33,10 @@
 .zone:empty::after {
     content: attr(data-name);
     color: var(--nord3);
+    width: 100%;
     height: 100%;
     display: flex;
     flex-direction: column;
-    justify-content: center;
     text-align: center;
 }
 
@@ -47,6 +48,16 @@
 #library {
     width: var(--card-width);
     height: var(--card-height);
+}
+
+#graveyard {
+    width: var(--card-width);
+}
+
+.topPanel {
+    display: flex;
+    column-gap: 6px;
+    flex: 1;
 }
 
 #battlefield {
