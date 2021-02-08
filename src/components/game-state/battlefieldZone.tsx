@@ -1,5 +1,6 @@
 import { forwardRef, useImperativeHandle, useRef } from "react";
-import { CARD_HEIGHT_PX, CARD_WIDTH_PX } from "../../utilities/constants";
+import { CARD_HEIGHT_PX, CARD_WIDTH_PX, ZONE_BORDER_PX } from "../../utilities/constants";
+import { clamp } from "../../utilities/helpers";
 import { useRect, Zone, ZoneProps } from "./zone";
 
 export const BattlefieldZone = forwardRef((props: ZoneProps, ref) => {
@@ -11,16 +12,17 @@ export const BattlefieldZone = forwardRef((props: ZoneProps, ref) => {
     }));
     const { left, top, width, height } = useRect(divRef);
 
-    const clamp = (num: number, min: number, max: number) => Math.min(Math.max(num, min), max);
     const updatedContents = contents.map(zc => {
-        const getTapMargin = (dim1: number, dim2: number) => zc.tapped ? (dim1 - dim2) / 2 : 0;
-        const tapMarginX = getTapMargin(CARD_HEIGHT_PX, CARD_WIDTH_PX);
-        const tapMarginY = getTapMargin(CARD_WIDTH_PX, CARD_HEIGHT_PX);
-        return {
-            ...zc,
-            x: clamp(zc.x! - left, tapMarginX, width - CARD_WIDTH_PX - tapMarginX),
-            y: clamp(zc.y! - top, tapMarginY, height - CARD_HEIGHT_PX - tapMarginY)
+        const snapToBounds = (horizontal: boolean) => {
+            const [cardLen, cardOrthoLen, cardPos, zoneLen, zoneMin] = horizontal ? 
+                [CARD_WIDTH_PX, CARD_HEIGHT_PX, zc.x!, width, left] :
+                [CARD_HEIGHT_PX, CARD_WIDTH_PX, zc.y!, height, top];
+            const tapMargin = zc.tapped ? (cardOrthoLen - cardLen) / 2: 0;
+            const min = tapMargin - ZONE_BORDER_PX;
+            const max = zoneLen - cardLen - tapMargin - ZONE_BORDER_PX;
+            return clamp(cardPos - zoneMin, min, max);
         };
+        return { ...zc, x: snapToBounds(true), y: snapToBounds(false) };
     });
 
     return <Zone ref={divRef} {...props} contents={updatedContents} />;

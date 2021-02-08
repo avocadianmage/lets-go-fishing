@@ -35,3 +35,5 @@ export const cancelablePromise = (promise: Promise<any>) => {
         },
     };
 };
+
+export const clamp = (num: number, min: number, max: number) => Math.min(Math.max(num, min), max);
