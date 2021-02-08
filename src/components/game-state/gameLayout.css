@@ -46,7 +46,7 @@
     height: var(--card-height);
 }
 
-#library {
+#library, #exile {
     width: var(--card-width);
     height: var(--card-height);
 }

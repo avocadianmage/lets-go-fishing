@@ -1,6 +1,7 @@
 import { forwardRef, useImperativeHandle, useRef } from "react";
 import { CardInfo } from "../../services/dbSvc";
 import { CARD_HEIGHT_PX, CARD_WIDTH_PX, ZONE_BORDER_PX, ZONE_PADDING_PX } from "../../utilities/constants";
+import { ZoneName } from "./gameLayout";
 import { useRect, Zone, ZoneProps } from "./zone";
 
 interface StackZoneProps extends ZoneProps {
@@ -23,12 +24,10 @@ export const StackZone = forwardRef((props: StackZoneProps, ref) => {
     const { length, cardLength } = lengths;
     const lengthSansPadding = length - ZONE_PADDING_PX * 2 - ZONE_BORDER_PX * 2;
 
-    const getOffsetForIndex = (cardCount: number, index: number) => {
-        const offset = Math.min(
-            cardLength,
-            (lengthSansPadding - cardLength) / (cardCount - 1)
-        );
-        return offset * index + ZONE_PADDING_PX;
+    const getOffsetsForIndex = (cardCount: number, index: number) => {
+        const offset = cardCount === 1 ? 
+            0 : Math.min(cardLength, (lengthSansPadding - cardLength) / (cardCount - 1));
+        return [offset * index + ZONE_PADDING_PX, ZONE_PADDING_PX];
     };
 
     const isCardDragging = (card: CardInfo) => card.id === action?.card.id;
@@ -40,10 +39,10 @@ export const StackZone = forwardRef((props: StackZoneProps, ref) => {
             (action?.sourceZone !== name || isDragging) ? 0 : 1
         );
         const positioningIndex = isDragging ? index : nondraggedIndex++;
-        const offset = getOffsetForIndex(positioningCardCount, positioningIndex);
+        const [offsetDim, constantDim] = getOffsetsForIndex(positioningCardCount, positioningIndex);
+        if (name === ZoneName.Exile) console.log({offsetDim, constantDim});
         return verticalOrientation ? 
-            { x: ZONE_PADDING_PX, y: offset } : 
-            { x: offset, y: ZONE_PADDING_PX };
+            { x: constantDim, y: offsetDim } : { x: offsetDim, y: constantDim };
     };
     
     const className = (

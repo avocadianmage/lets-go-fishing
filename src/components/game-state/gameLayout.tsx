@@ -15,6 +15,7 @@ export enum ZoneName {
     Hand = 'hand',
     Battlefield = 'battlefield',
     Graveyard = 'graveyard',
+    Exile = 'exile',
 };
 
 export const GameLayout = () => {
@@ -22,12 +23,14 @@ export const GameLayout = () => {
     const [handCards, setHandCards] = useState<ZoneCardInfo[]>([]);
     const [battlefieldCards, setBattlefieldCards] = useState<ZoneCardInfo[]>([]);
     const [graveyardCards, setGraveyardCards] = useState<ZoneCardInfo[]>([]);
+    const [exileCards, setExileCards] = useState<ZoneCardInfo[]>([]);
 
     const zoneCards: { [zone: string]: { get: ZoneCardInfo[], set: any } } = {
         [ZoneName.Library]: { get: libraryCards, set: setLibraryCards },
         [ZoneName.Hand]: { get: handCards, set: setHandCards },
         [ZoneName.Battlefield]: { get: battlefieldCards, set: setBattlefieldCards },
         [ZoneName.Graveyard]: { get: graveyardCards, set: setGraveyardCards },
+        [ZoneName.Exile]: { get: exileCards, set: setExileCards },
     };
     const getZoneCards = (zone: ZoneName) => zoneCards[zone].get;
     const setZoneCards = (zone: ZoneName, cards: ZoneCardInfo[]) => zoneCards[zone].set(cards);
@@ -208,6 +211,12 @@ export const GameLayout = () => {
                         name={ZoneName.Library}
                         contents={libraryCards}
                         faceDown={true}
+                        showTopOnly={true}
+                    />
+                    <StackZone
+                        {...zoneProps}
+                        name={ZoneName.Exile}
+                        contents={exileCards}
                         showTopOnly={true}
                     />
                 </div>
