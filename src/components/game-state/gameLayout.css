@@ -10,6 +10,7 @@
     background-color: var(--nord1);
     padding: var(--zone-padding);
     border: var(--zone-border-width) solid transparent;
+    box-shadow: 0 0 0 var(--zone-border-width) transparent;
     border-radius: 3px;
     font-family: 'Bahnschrift Condensed', 'Arial Narrow Bold', sans-serif;
     font-size: 60px;
