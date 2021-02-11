@@ -7,6 +7,8 @@
 }
 
 .zone {
+    min-width: var(--card-width);
+    min-height: var(--card-height);
     background-color: var(--nord1);
     padding: var(--zone-padding);
     border: var(--zone-border-width) solid transparent;
@@ -42,26 +44,12 @@
     text-align: center;
 }
 
-#hand {
+#hand, #battlefield {
     flex: 1;
-    height: var(--card-height);
-}
-
-#library, #exile {
-    width: var(--card-width);
-    height: var(--card-height);
-}
-
-#graveyard {
-    width: var(--card-width);
 }
 
 .topPanel {
     display: flex;
     column-gap: 6px;
-    flex: 1;
-}
-
-#battlefield {
     flex: 1;
 }
