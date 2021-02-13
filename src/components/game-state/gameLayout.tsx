@@ -196,7 +196,7 @@ export const GameLayout = () => {
                         name={ZoneName.Graveyard}
                         contents={graveyardCards}
                         enablePreview={true}
-                        verticalOrientation={true}
+                        vertical={true}
                     />
                 </div>
                 <div className="bottomPanel">

@@ -1,16 +1,15 @@
 import { forwardRef, useImperativeHandle, useRef } from "react";
 import { CardInfo } from "../../services/dbSvc";
 import { CARD_HEIGHT_PX, CARD_WIDTH_PX, ZONE_BORDER_PX, ZONE_PADDING_PX } from "../../utilities/constants";
-import { ZoneName } from "./gameLayout";
 import { useRect, Zone, ZoneProps } from "./zone";
 
 interface StackZoneProps extends ZoneProps {
     showTopOnly?: boolean;
-    verticalOrientation?: boolean;
+    vertical?: boolean;
 }
 
 export const StackZone = forwardRef((props: StackZoneProps, ref) => {
-    const { name, contents, action, showTopOnly, verticalOrientation } = props;
+    const { name, contents, action, showTopOnly, vertical } = props;
 
     const divRef = useRef<HTMLDivElement>(null);
     useImperativeHandle(ref, () => ({
@@ -18,7 +17,7 @@ export const StackZone = forwardRef((props: StackZoneProps, ref) => {
     }));
     const { width, height } = useRect(divRef);
 
-    const lengths = verticalOrientation ? 
+    const lengths = vertical ? 
             { length: height, cardLength: CARD_HEIGHT_PX } :
             { length: width, cardLength: CARD_WIDTH_PX };
     const { length, cardLength } = lengths;
@@ -40,15 +39,13 @@ export const StackZone = forwardRef((props: StackZoneProps, ref) => {
         );
         const positioningIndex = isDragging ? index : nondraggedIndex++;
         const [offsetDim, constantDim] = getOffsetsForIndex(positioningCardCount, positioningIndex);
-        if (name === ZoneName.Exile) console.log({offsetDim, constantDim});
-        return verticalOrientation ? 
-            { x: constantDim, y: offsetDim } : { x: offsetDim, y: constantDim };
+        return vertical ? { x: constantDim, y: offsetDim } : { x: offsetDim, y: constantDim };
     };
     
     const className = (
         'stack-zone' + 
         (showTopOnly ? ' show-top-only' : '') +
-        (verticalOrientation ? ' vertical-orientation' : '')
+        (vertical ? ' vertical' : '')
     );
 
     // When only showing the top card, still need to load two in case the user drags the top card.
