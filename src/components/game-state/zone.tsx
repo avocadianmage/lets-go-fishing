@@ -34,7 +34,7 @@ export const Zone = forwardRef((
     const isSourceZone = action?.sourceZone === name;
     const isTargetZone = action?.targetZone === name;
     const className = (
-        'gutter zone' + 
+        'pane zone' + 
         (classesToAppend ? ' ' + classesToAppend : '') + 
         (isTargetZone ? ' highlight' : '')
     );

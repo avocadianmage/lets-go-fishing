@@ -192,7 +192,7 @@ export const GameLayout = () => {
             </div>
             <div className="gameLayout" onMouseMove={onMouseMove}>
                 <div className="topPanel">
-                    <div className="gutter"></div>
+                    <div className="pane"></div>
                     <BattlefieldZone
                         {...zoneProps}
                         name={ZoneName.Battlefield}

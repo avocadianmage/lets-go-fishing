@@ -6,7 +6,7 @@
     margin: 6px;
 }
 
-.gutter {
+.pane {
     min-width: var(--card-width);
     min-height: var(--card-height);
     background-color: var(--nord1);
