@@ -9,13 +9,10 @@ import { Zone, ZoneProps } from "./zone";
 interface StackZoneProps extends ZoneProps {
     showTopOnly?: boolean;
     vertical?: boolean;
-    enablePreview?: boolean;
 }
 
 export const StackZone = forwardRef((props: StackZoneProps, ref) => {
-    const {
-        name, contents, action, showTopOnly, vertical, enablePreview, onCardMouseEnter
-    } = props;
+    const { name, contents, action, showTopOnly, vertical, onCardMouseEnter } = props;
 
     const [previewingCard, setPreviewingCard] = useDebouncedValue<CardInfo>(undefined, 100);
 
@@ -53,8 +50,7 @@ export const StackZone = forwardRef((props: StackZoneProps, ref) => {
     const className = (
         'stack-zone' +
         (showTopOnly ? ' show-top-only' : '') +
-        (vertical ? ' vertical' : '') + 
-        (enablePreview ? ' enable-preview' : '')
+        (vertical ? ' vertical' : '')
     );
 
     // When only showing the top card, still need to load two in case the user drags the top card.
@@ -66,7 +62,7 @@ export const StackZone = forwardRef((props: StackZoneProps, ref) => {
     });
 
     const fireCardMouseEnter = (action: CardActionInfo) => {
-        if (enablePreview) setPreviewingCard(action.card);
+        if (!showTopOnly) setPreviewingCard(action.card);
         return onCardMouseEnter ? onCardMouseEnter(action) : true;
     };
 

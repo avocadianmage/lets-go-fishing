@@ -202,7 +202,6 @@ export const GameLayout = () => {
                         {...zoneProps}
                         name={ZoneName.Graveyard}
                         contents={graveyardCards}
-                        enablePreview={true}
                         vertical={true}
                     />
                 </div>
@@ -217,7 +216,6 @@ export const GameLayout = () => {
                         {...zoneProps}
                         name={ZoneName.Hand}
                         contents={handCards}
-                        enablePreview={true}
                     />
                     <StackZone
                         {...zoneProps}

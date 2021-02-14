@@ -32,7 +32,8 @@
 }
 
 .card, 
-.zone:not(.enable-preview) .card-drag-layer:not(.react-draggable-dragging) .card:hover .card-face
+.zone:not(.stack-zone) .card-drag-layer:not(.react-draggable-dragging) .card:hover .card-face,
+.stack-zone.show-top-only .card-drag-layer:not(.react-draggable-dragging) .card:hover .card-face
 {
     background-color: rgba(0, 0, 0, 0.5);
 }
