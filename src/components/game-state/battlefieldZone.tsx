@@ -1,6 +1,6 @@
+import clamp from 'lodash/clamp';
 import { forwardRef, useImperativeHandle, useRef } from "react";
 import { CARD_HEIGHT_PX, CARD_WIDTH_PX, ZONE_BORDER_PX } from "../../utilities/constants";
-import { clamp } from "../../utilities/helpers";
 import { useRect } from "../hooks/useRect";
 import { Zone, ZoneProps } from "./zone";
 

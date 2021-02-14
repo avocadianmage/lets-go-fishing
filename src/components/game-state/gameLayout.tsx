@@ -1,9 +1,9 @@
+import shuffle from 'lodash/shuffle';
 import { useEffect, useState } from 'react';
 import DeckLookup from '../other-components/deckLookup'
 import { DeckInfoService } from '../../services/deckInfoSvc';
 import { CardInfo, DatabaseService } from '../../services/dbSvc';
 import { STARTING_HAND_SIZE, ZONE_BORDER_PX } from '../../utilities/constants';
-import { shuffle } from '../../utilities/helpers';
 import { CardActionInfo } from './card';
 import { ZoneCardInfo } from './zone';
 import { StackZone } from './stackZone';
