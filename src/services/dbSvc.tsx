@@ -5,6 +5,7 @@ export interface CardInfo {
     name: string;
     set: string;
     foil: boolean;
+    commander: boolean;
 }
 
 export interface DeckInfo {

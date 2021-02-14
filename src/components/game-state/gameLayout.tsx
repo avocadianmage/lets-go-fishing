@@ -43,6 +43,7 @@ export const GameLayout = () => {
     const fromLibrary = (action: CardActionInfo) => action.sourceZone === ZoneName.Library;
     const fromBattlefield = (action: CardActionInfo) => action.sourceZone === ZoneName.Battlefield;
     const toBattlefield = (action: CardActionInfo) => action.targetZone === ZoneName.Battlefield;
+    const toCommand = (action: CardActionInfo) => action.targetZone === ZoneName.Command;
     const isClick = (action: CardActionInfo) => !action.targetZone;
     const isIntrazoneDrag = (action: CardActionInfo) => action.sourceZone === action.targetZone;
     const isInterzoneDrag = (action: CardActionInfo) => {
@@ -155,6 +156,8 @@ export const GameLayout = () => {
 
             const interzoneDrag = isInterzoneDrag(action);
             if (interzoneDrag || (isIntrazoneDrag(action) && fromBattlefield(action))) {
+                // Only allow commanders to be moved to the command zone.
+                if (toCommand(action) && !action.card.commander) return false;
                 updateCardFromAction(action);
             }
             return interzoneDrag;
