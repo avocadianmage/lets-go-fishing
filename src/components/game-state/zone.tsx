@@ -1,4 +1,4 @@
-import { ForwardedRef, forwardRef, RefObject, useEffect, useState } from "react";
+import { ForwardedRef, forwardRef } from "react";
 import { CardInfo } from "../../services/dbSvc";
 import { Card, CardActionEventHandler, CardActionInfo } from "./card";
 import { ZoneName } from "./gameLayout";
@@ -9,6 +9,7 @@ export interface ZoneCardInfo {
     y?: number;
     tapped?: boolean;
     zIndex?: number;
+    previewing?: boolean;
 }
 
 export interface ZoneProps {
@@ -16,27 +17,17 @@ export interface ZoneProps {
     contents: ZoneCardInfo[];
     classesToAppend?: string;
     faceDown?: boolean;
-    enablePreview?: boolean;
     action?: CardActionInfo;
-    onCardDrag: CardActionEventHandler;
-    onCardDragStop: CardActionEventHandler;
+    onCardDrag?: CardActionEventHandler;
+    onCardDragStop?: CardActionEventHandler;
+    onCardMouseEnter?: CardActionEventHandler;
+    onCardMouseLeave?: CardActionEventHandler;
 }
-
-export const useRect = (nodeRef: RefObject<HTMLElement>) => {
-    const [rect, setRect] = useState<DOMRect>(new DOMRect());
-    useEffect(() => {
-        const updateRect = () => setRect(nodeRef.current!.getBoundingClientRect());
-        window.addEventListener('resize', updateRect);
-        updateRect();
-        return () => window.removeEventListener('resize', updateRect);
-    }, [nodeRef]);
-    return rect;
-};
 
 export const Zone = forwardRef((
     {
-        name, contents, classesToAppend, faceDown, enablePreview, action,
-        onCardDrag, onCardDragStop
+        name, contents, classesToAppend, faceDown, action,
+        onCardDrag, onCardDragStop, onCardMouseEnter, onCardMouseLeave
     }: ZoneProps,
     ref: ForwardedRef<HTMLDivElement>
 ) => {
@@ -53,6 +44,9 @@ export const Zone = forwardRef((
         ...zc, zIndex: isCardDragging(zc.card) ? Number.MAX_SAFE_INTEGER : zc.zIndex
     }));
 
+    const fireAction = (action: CardActionInfo, handler?: CardActionEventHandler) => (
+        handler ? handler({ ...action, sourceZone: name }) : true
+    );
     return (
         <div
             ref={ref}
@@ -66,9 +60,10 @@ export const Zone = forwardRef((
                     key={zc.card.id}
                     zoneCard={zc}
                     faceDown={faceDown}
-                    enablePreview={enablePreview}
-                    onDrag={info => onCardDrag({ ...info, sourceZone: name })}
-                    onDragStop={info => onCardDragStop({ ...info, sourceZone: name })}
+                    onDrag={action => fireAction(action, onCardDrag)}
+                    onDragStop={action => fireAction(action, onCardDragStop)}
+                    onMouseEnter={action => fireAction(action, onCardMouseEnter)}
+                    onMouseLeave={action => fireAction(action, onCardMouseLeave)}
                 />
             ))}
         </div>

@@ -18,22 +18,23 @@ export interface CardActionInfo {
 interface CardProps {
     zoneCard: ZoneCardInfo;
     faceDown?: boolean;
-    enablePreview?: boolean;
     onDrag: CardActionEventHandler;
     onDragStop: CardActionEventHandler;
+    onMouseEnter: CardActionEventHandler;
+    onMouseLeave: CardActionEventHandler;
 }
 
 export type CardActionEventHandler = (action: CardActionInfo) => boolean;
 
-export const Card = (
-    { zoneCard, faceDown, enablePreview, onDrag, onDragStop }: CardProps
-) => {
+export const Card = ({ 
+    zoneCard, faceDown, onDrag, onDragStop, onMouseEnter, onMouseLeave 
+}: CardProps) => {
     const [imageUrl, setImageUrl] = useState('');
     const [manualDragPos, setManualDragPos] = useState<ControlPosition>();
 
     const nodeRef = useRef<HTMLDivElement>(null);
 
-    const { card, x, y, tapped, zIndex } = zoneCard;
+    const { card, x, y, tapped, zIndex, previewing } = zoneCard;
     const isLoading = !imageUrl && !faceDown;
     const faceUpAndLoaded = !isLoading && !faceDown;
 
@@ -69,7 +70,7 @@ export const Card = (
     const className = (
         'card' +
         (isLoading ? ' loading' : '') +
-        (faceUpAndLoaded && enablePreview ? ' enable-preview' : '') +
+        (faceUpAndLoaded && previewing ? ' previewing' : '') +
         (faceUpAndLoaded && card.foil ? ' foil' : '') +
         (tapped ? ' tapped' : '')
     );
@@ -83,7 +84,12 @@ export const Card = (
         >
             <div ref={nodeRef} style={{ zIndex }}>
                 <div className='card-position-layer' style={positionStyle}>
-                    <div className={className} style={imageStyle}>
+                    <div 
+                        className={className} 
+                        style={imageStyle}
+                        onMouseEnter={() => onMouseEnter(createAction())}
+                        onMouseLeave={() => onMouseLeave(createAction())}
+                    >
                         {isLoading ?
                             <div className='loader' /> :
                             <div className='card-face' />

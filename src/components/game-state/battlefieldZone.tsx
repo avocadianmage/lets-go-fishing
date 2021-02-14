@@ -1,7 +1,8 @@
 import { forwardRef, useImperativeHandle, useRef } from "react";
 import { CARD_HEIGHT_PX, CARD_WIDTH_PX, ZONE_BORDER_PX } from "../../utilities/constants";
 import { clamp } from "../../utilities/helpers";
-import { useRect, Zone, ZoneProps } from "./zone";
+import { useRect } from "../hooks/useRect";
+import { Zone, ZoneProps } from "./zone";
 
 export const BattlefieldZone = forwardRef((props: ZoneProps, ref) => {
     const { contents } = props;

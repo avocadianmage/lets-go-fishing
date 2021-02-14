@@ -33,7 +33,7 @@
 
 .card.loading, 
 .card-drag-layer:not(.react-draggable-dragging) .card:hover, 
-.card-drag-layer:not(.react-draggable-dragging) .card:not(.enable-preview):hover .card-face
+.card-drag-layer:not(.react-draggable-dragging) .card:not(.previewing):hover .card-face
 {
     background-color: rgba(0, 0, 0, 0.5);
 }
@@ -78,7 +78,7 @@
     background-blend-mode: inherit;
     border-radius: inherit;
     overflow: hidden;
-    transition: background-color 0.2s, transform 0.15s;
+    transition: background-color 0.2s, transform 0.2s;
     pointer-events: none;
 }
 
@@ -91,11 +91,11 @@
     animation: slideIn 0.15s;
 }
 
-.card-drag-layer:not(.react-draggable-dragging) .card.enable-preview:hover .card-face {
+.card-drag-layer:not(.react-draggable-dragging) .card.previewing:hover .card-face {
     transform: translate(0, -100%);
 }
 
-.stack-zone.vertical .card-drag-layer:not(.react-draggable-dragging) .card.enable-preview:hover .card-face {
+.stack-zone.vertical .card-drag-layer:not(.react-draggable-dragging) .card.previewing:hover .card-face {
     transform: translate(-100%, 0);
 }
 
