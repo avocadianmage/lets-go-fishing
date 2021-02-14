@@ -31,9 +31,8 @@
     pointer-events: all;
 }
 
-.card.loading, 
-.card-drag-layer:not(.react-draggable-dragging) .card:hover, 
-.card-drag-layer:not(.react-draggable-dragging) .card:not(.previewing):hover .card-face
+.card, 
+.zone:not(.enable-preview) .card-drag-layer:not(.react-draggable-dragging) .card:hover .card-face
 {
     background-color: rgba(0, 0, 0, 0.5);
 }

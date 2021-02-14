@@ -53,7 +53,8 @@ export const StackZone = forwardRef((props: StackZoneProps, ref) => {
     const className = (
         'stack-zone' +
         (showTopOnly ? ' show-top-only' : '') +
-        (vertical ? ' vertical' : '')
+        (vertical ? ' vertical' : '') + 
+        (enablePreview ? ' enable-preview' : '')
     );
 
     // When only showing the top card, still need to load two in case the user drags the top card.
