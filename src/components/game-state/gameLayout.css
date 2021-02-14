@@ -51,6 +51,10 @@
     flex: 1;
 }
 
+#status-bar, #command {
+    min-width: calc(var(--card-width) * 1.5);
+}
+
 .topPanel {
     display: flex;
     column-gap: 6px;

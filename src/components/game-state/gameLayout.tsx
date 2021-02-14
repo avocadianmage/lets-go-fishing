@@ -187,12 +187,12 @@ export const GameLayout = () => {
     const zoneProps = { action: currentAction, onCardDrag, onCardDragStop };
     return (
         <>
-            <div className="toolbar">
+            <div className='toolbar'>
                 <DeckLookup onImportClick={importDeck} />
             </div>
-            <div className="gameLayout" onMouseMove={onMouseMove}>
-                <div className="topPanel">
-                    <div className="pane"></div>
+            <div className='gameLayout' onMouseMove={onMouseMove}>
+                <div className='topPanel'>
+                    <div id='status-bar' className='pane'></div>
                     <BattlefieldZone
                         {...zoneProps}
                         name={ZoneName.Battlefield}
@@ -205,12 +205,11 @@ export const GameLayout = () => {
                         vertical={true}
                     />
                 </div>
-                <div className="bottomPanel">
+                <div className='bottomPanel'>
                     <StackZone
                         {...zoneProps}
                         name={ZoneName.Command}
                         contents={commandCards}
-                        showTopOnly={true}
                     />
                     <StackZone
                         {...zoneProps}
