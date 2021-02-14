@@ -2,7 +2,7 @@ import shuffle from 'lodash/shuffle';
 import { useEffect, useState } from 'react';
 import DeckLookup from '../other-components/deckLookup'
 import { DeckInfoService } from '../../services/deckInfoSvc';
-import { CardInfo, DatabaseService } from '../../services/dbSvc';
+import { DatabaseService, DeckInfo } from '../../services/dbSvc';
 import { STARTING_HAND_SIZE, ZONE_BORDER_PX } from '../../utilities/constants';
 import { CardActionInfo } from './card';
 import { ZoneCardInfo } from './zone';
@@ -16,6 +16,7 @@ export enum ZoneName {
     Battlefield = 'battlefield',
     Graveyard = 'graveyard',
     Exile = 'exile',
+    Command = 'command',
 };
 
 export const GameLayout = () => {
@@ -24,6 +25,7 @@ export const GameLayout = () => {
     const [battlefieldCards, setBattlefieldCards] = useState<ZoneCardInfo[]>([]);
     const [graveyardCards, setGraveyardCards] = useState<ZoneCardInfo[]>([]);
     const [exileCards, setExileCards] = useState<ZoneCardInfo[]>([]);
+    const [commandCards, setCommandCards] = useState<ZoneCardInfo[]>([]);
 
     const zoneCards: { [zone: string]: { get: ZoneCardInfo[], set: any } } = {
         [ZoneName.Library]: { get: libraryCards, set: setLibraryCards },
@@ -31,6 +33,7 @@ export const GameLayout = () => {
         [ZoneName.Battlefield]: { get: battlefieldCards, set: setBattlefieldCards },
         [ZoneName.Graveyard]: { get: graveyardCards, set: setGraveyardCards },
         [ZoneName.Exile]: { get: exileCards, set: setExileCards },
+        [ZoneName.Command]: { get: commandCards, set: setCommandCards },
     };
     const getZoneCards = (zone: ZoneName) => zoneCards[zone].get;
     const setZoneCards = (zone: ZoneName, cards: ZoneCardInfo[]) => zoneCards[zone].set(cards);
@@ -47,18 +50,18 @@ export const GameLayout = () => {
         return !!targetZone && targetZone !== sourceZone;
     }
 
-    const startGame = (decklist: CardInfo[]) => {
-        const newLibraryCards = shuffle(decklist.map(card => ({ card })));
+    const startGame = ({ mainboard, commanders }: DeckInfo) => {
+        const newLibraryCards = shuffle(mainboard.map(card => ({ card })));
         const { fromArray, toArray } = sliceEndElements(
             newLibraryCards, [], STARTING_HAND_SIZE
         );
         setLibraryCards(fromArray);
         setHandCards(toArray);
+        setCommandCards(commanders.map(card => ({ card })));
     };
 
     const importDeck = async (deckUrl: string) => {
-        const decklist = await DeckInfoService.getDecklist(deckUrl);
-        startGame(decklist);
+        startGame(await DeckInfoService.getDecklist(deckUrl));
     }
 
     const draw = (num = 1) => {
@@ -186,6 +189,7 @@ export const GameLayout = () => {
             </div>
             <div className="gameLayout" onMouseMove={onMouseMove}>
                 <div className="topPanel">
+                    <div className="gutter"></div>
                     <BattlefieldZone
                         {...zoneProps}
                         name={ZoneName.Battlefield}
@@ -200,6 +204,12 @@ export const GameLayout = () => {
                     />
                 </div>
                 <div className="bottomPanel">
+                    <StackZone
+                        {...zoneProps}
+                        name={ZoneName.Command}
+                        contents={commandCards}
+                        showTopOnly={true}
+                    />
                     <StackZone
                         {...zoneProps}
                         name={ZoneName.Hand}

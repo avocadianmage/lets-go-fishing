@@ -6,7 +6,7 @@
     margin: 6px;
 }
 
-.zone {
+.gutter {
     min-width: var(--card-width);
     min-height: var(--card-height);
     background-color: var(--nord1);
@@ -14,9 +14,12 @@
     border: var(--zone-border-width) solid transparent;
     box-shadow: 0 0 0 var(--zone-border-width) transparent;
     border-radius: 3px;
+    position: relative;
+}
+
+.zone {
     font-family: 'Bahnschrift Condensed', 'Arial Narrow Bold', sans-serif;
     font-size: 60px;
-    position: relative;
     writing-mode: vertical-lr;
 }
 

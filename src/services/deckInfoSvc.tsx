@@ -2,7 +2,12 @@ import { DatabaseService } from "./dbSvc";
 
 interface MoxfieldDeck {
     name: string;
-    mainboard: { [cardName: string]: MoxfieldDeckEntry }
+    mainboard: MoxfieldCardList;
+    commanders: MoxfieldCardList;
+}
+
+interface MoxfieldCardList {
+    [cardName: string]: MoxfieldDeckEntry;
 }
 
 interface MoxfieldDeckEntry {
@@ -16,13 +21,11 @@ interface MoxfieldCardInfo {
 }
 
 class DeckInfoSvc {
-    private static readonly apiUrlPrefix = 
-        'https://api.moxfield.com/v2/decks/all/';
-    private static readonly corsProxyPrefix = 
-        'https://cors-anywhere.herokuapp.com/';
-    private static readonly fetchOptions: RequestInit = {
+    private static readonly apiUrlPrefix = 'https://api.moxfield.com/v2/decks/all/';
+    private static readonly corsProxyPrefix = 'https://cors-anywhere.herokuapp.com/';
+    private static readonly fetchOptions = {
         headers: { 'content-type': 'application/x-www-form-urlencoded' },
-    }
+    };
 
     private createApiUrl(deckUrl: string) {
         const deckUrlPieces = deckUrl.split('/');
@@ -30,28 +33,30 @@ class DeckInfoSvc {
             deckUrlPieces[deckUrlPieces.length - 1];
     }
 
-    private parseAndSaveDeck({ name, mainboard }: MoxfieldDeck) {
-        const cardList = [];
+    private parseAndSaveDeck({ name, commanders, mainboard }: MoxfieldDeck) {
         let id = 0;
-        for (let [cardName, entry] of Object.entries(mainboard)) {
-            for (let i = 0; i < entry.quantity; i++) {
-                cardList[id] = {
-                    id: id++,
-                    name: cardName,
-                    set: entry.card.set,
-                    foil: entry.isFoil,
-                };
+        const toCardList = (moxfieldCardList: MoxfieldCardList) => {
+            const cardList = [];
+            for (let [cardName, entry] of Object.entries(moxfieldCardList)) {
+                for (let i = 0; i < entry.quantity; i++) {
+                    cardList[id] = {
+                        id: id++,
+                        name: cardName,
+                        set: entry.card.set,
+                        foil: entry.isFoil,
+                    };
+                }
             }
-        }
-        
-        DatabaseService.putDeck(cardList, name);
-        return cardList;
+            return cardList.filter(card => card !== undefined);
+        };
+
+        const deckInfo = { mainboard: toCardList(mainboard), commanders: toCardList(commanders) };
+        DatabaseService.putDeck(deckInfo, name);
+        return deckInfo;
     }
 
     async getDecklist(deckUrl: string) {
-        const result = await fetch(
-            this.createApiUrl(deckUrl), DeckInfoSvc.fetchOptions
-        );
+        const result = await fetch(this.createApiUrl(deckUrl), DeckInfoSvc.fetchOptions);
         const json = await result.json();
         return this.parseAndSaveDeck(json);
     }
