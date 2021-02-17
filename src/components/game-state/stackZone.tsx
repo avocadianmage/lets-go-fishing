@@ -31,7 +31,8 @@ export const StackZone = forwardRef((props: StackZoneProps, ref) => {
     const getOffsetsForIndex = (cardCount: number, index: number) => {
         const offset = cardCount === 1 ?
             0 : Math.min(cardLength, (lengthSansPadding - cardLength) / (cardCount - 1));
-        return [offset * index + ZONE_PADDING_PX, ZONE_PADDING_PX];
+        const centeringOffset = Math.max(0, (lengthSansPadding - cardLength * cardCount) / 2);
+        return [offset * index + ZONE_PADDING_PX + centeringOffset, ZONE_PADDING_PX];
     };
 
     const isCardDragging = (card: CardInfo) => card.id === action?.card.id;
