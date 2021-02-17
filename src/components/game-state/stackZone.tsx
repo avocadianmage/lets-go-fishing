@@ -31,7 +31,7 @@ export const StackZone = forwardRef((props: StackZoneProps, ref) => {
     const getOffsetsForIndex = (cardCount: number, index: number) => {
         const offset = cardCount === 1 ?
             0 : Math.min(cardLength, (lengthSansPadding - cardLength) / (cardCount - 1));
-        const centeringOffset = Math.max(0, (lengthSansPadding - cardLength * cardCount) / 2);
+        const centeringOffset = Math.max(0, lengthSansPadding - cardLength * cardCount) / 2;
         return [offset * index + ZONE_PADDING_PX + centeringOffset, ZONE_PADDING_PX];
     };
 
