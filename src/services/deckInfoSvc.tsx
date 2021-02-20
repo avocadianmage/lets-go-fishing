@@ -35,7 +35,7 @@ class DeckInfoSvc {
 
     private parseAndSaveDeck({ name, commanders, mainboard }: MoxfieldDeck) {
         let id = 0;
-        const toCardList = (moxfieldCardList: MoxfieldCardList, areCommanders?: boolean) => {
+        const toCardList = (moxfieldCardList: MoxfieldCardList, areCommanders: boolean) => {
             const cardList = [];
             for (let [cardName, entry] of Object.entries(moxfieldCardList)) {
                 for (let i = 0; i < entry.quantity; i++) {
@@ -44,7 +44,7 @@ class DeckInfoSvc {
                         name: cardName,
                         set: entry.card.set,
                         foil: entry.isFoil,
-                        commander: !!areCommanders
+                        commander: areCommanders
                     };
                 }
             }
@@ -52,7 +52,7 @@ class DeckInfoSvc {
         };
 
         const deckInfo = { 
-            mainboard: toCardList(mainboard), 
+            mainboard: toCardList(mainboard, false), 
             commanders: toCardList(commanders, true) 
         };
         DatabaseService.putDeck(deckInfo, name);
