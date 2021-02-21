@@ -21,18 +21,6 @@ interface MoxfieldCardInfo {
 }
 
 class DeckInfoSvc {
-    private static readonly apiUrlPrefix = 'https://api.moxfield.com/v2/decks/all/';
-    private static readonly corsProxyPrefix = 'https://cors-anywhere.herokuapp.com/';
-    private static readonly fetchOptions = {
-        headers: { 'content-type': 'application/x-www-form-urlencoded' },
-    };
-
-    private createApiUrl(deckUrl: string) {
-        const deckUrlPieces = deckUrl.split('/');
-        return DeckInfoSvc.corsProxyPrefix + DeckInfoSvc.apiUrlPrefix +
-            deckUrlPieces[deckUrlPieces.length - 1];
-    }
-
     private parseAndSaveDeck({ name, commanders, mainboard }: MoxfieldDeck) {
         let id = 0;
         const toCardList = (moxfieldCardList: MoxfieldCardList, areCommanders: boolean) => {
@@ -59,9 +47,13 @@ class DeckInfoSvc {
         return deckInfo;
     }
 
-    async getDecklist(deckUrl: string) {
-        const result = await fetch(this.createApiUrl(deckUrl), DeckInfoSvc.fetchOptions);
-        const json = await result.json();
+    async getDecklist(moxfieldDeckUrl: string) {
+        const response = await fetch('/api/get-deck', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ moxfieldDeckUrl })
+        });
+        const json = await response.json();
         return this.parseAndSaveDeck(json);
     }
 }
