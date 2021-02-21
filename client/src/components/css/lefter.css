@@ -3,7 +3,7 @@
     font-size: 15px;
     width: 100%;
     box-sizing: border-box;
-    padding: 10px;
+    padding: 10px 42px 10px 10px;
     border-radius: 2px;
     background-color: var(--nord0);
     color: var(--nord6);
@@ -19,4 +19,30 @@
 
 .textfield:focus {
     border-color: var(--nord8);
+}
+
+.textfield-button {
+    background-image: url('../../assets/download.svg');
+    background-size: 24px 24px;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-color: inherit;
+    width: 36px;
+    height: 36px;
+    border: none;
+    outline: none;
+    position: absolute;
+    top: 3px;
+    right: 3px;
+    padding: 0;
+    border-radius: 2px;
+    transition: opacity 0.25s, background-color 0.5s;
+}
+
+.textfield-button:disabled {
+    opacity: 0.4;
+}
+
+.textfield-button:not(:disabled):hover {
+    background-color: var(--nord3);
 }

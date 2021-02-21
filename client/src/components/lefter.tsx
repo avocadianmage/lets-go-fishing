@@ -8,27 +8,42 @@ interface LefterProps {
 export const Lefter = ({ onImport }: LefterProps) => {
     const [importValue, setImportValue] = useState('');
 
+    const doImport = () => {
+        onImport(importValue);
+        setImportValue('');
+    };
+
     const fireKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
         switch (e.key) {
             case 'Enter':
-                onImport(importValue);
+                doImport();
                 break;
             case 'Escape':
-                setImportValue('');
+                setImportValue('')
                 break;
         }
     };
 
     return (
         <div id='lefter' className='pane'>
-            <input 
-                className='textfield' 
-                type='text' 
-                placeholder='Enter Moxfield deck address'
-                value={importValue}
-                onChange={(e) => setImportValue(e.target.value)}
-                onKeyDown={fireKeyDown}
-            />
+
+            {/* Deck import control */}
+            <div style={{ position: 'relative' }}>
+                <input
+                    className='textfield'
+                    type='text'
+                    placeholder='Enter Moxfield deck address'
+                    value={importValue}
+                    onChange={(e) => setImportValue(e.target.value)}
+                    onKeyDown={fireKeyDown}
+                />
+                <button
+                    className='textfield-button'
+                    disabled={!importValue.startsWith('https://www.moxfield.com/decks/')}
+                    onClick={doImport}
+                />
+            </div>
+
         </div>
     );
 };
