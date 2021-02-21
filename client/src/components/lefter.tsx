@@ -7,8 +7,10 @@ interface LefterProps {
 
 export const Lefter = ({ onImport }: LefterProps) => {
     const [importValue, setImportValue] = useState('');
+    const isInvalidUrlFormat = !importValue.startsWith('https://www.moxfield.com/decks/');
 
     const doImport = () => {
+        if (isInvalidUrlFormat) return;
         onImport(importValue);
         setImportValue('');
     };
@@ -39,7 +41,7 @@ export const Lefter = ({ onImport }: LefterProps) => {
                 />
                 <button
                     className='textfield-button'
-                    disabled={!importValue.startsWith('https://www.moxfield.com/decks/')}
+                    disabled={isInvalidUrlFormat}
                     onClick={doImport}
                 />
             </div>
