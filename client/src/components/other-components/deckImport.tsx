@@ -1,3 +1,4 @@
+import './flatButton.css';
 import { MouseEventHandler } from "react";
 
 interface DeckImportProps {

@@ -1,0 +1,22 @@
+.textfield {
+    font-family: inherit;
+    font-size: 15px;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 10px;
+    border-radius: 2px;
+    background-color: var(--nord0);
+    color: var(--nord6);
+    caret-color: var(--nord4);
+    outline: none;
+    border: transparent solid 1px;
+    transition: border-color 0.15s
+}
+
+.textfield:hover {
+    border-color: #9a9fad;
+}
+
+.textfield:focus {
+    border-color: var(--nord8);
+}

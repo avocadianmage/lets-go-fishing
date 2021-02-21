@@ -1,11 +1,12 @@
-import { useEffect, useRef, useState } from 'react';
-import { CardInfoService } from '../../services/cardInfoSvc';
+import cardBack from '../assets/mtg-card-back.png';
+import './css/card.css';
 
-import cardBack from '../../assets/mtg-card-back.png';
+import { useEffect, useRef, useState } from 'react';
+import { CardInfoService } from '../services/cardInfoSvc';
 import Draggable, { ControlPosition } from 'react-draggable';
-import { cancelablePromise } from '../../utilities/helpers';
+import { cancelablePromise } from '../utilities/helpers';
 import { ZoneCardInfo } from './zone';
-import { CardInfo } from '../../services/dbSvc';
+import { CardInfo } from '../services/dbSvc';
 import { ZoneName } from './gameLayout';
 
 export interface CardActionInfo {

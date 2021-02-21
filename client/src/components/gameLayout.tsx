@@ -1,13 +1,15 @@
+import './css/gameLayout.css';
+
 import shuffle from 'lodash/shuffle';
 import { useEffect, useState } from 'react';
-import DeckLookup from '../other-components/deckLookup'
-import { DeckInfoService } from '../../services/deckInfoSvc';
-import { DatabaseService, DeckInfo } from '../../services/dbSvc';
-import { STARTING_HAND_SIZE, ZONE_BORDER_PX } from '../../utilities/constants';
+import { DeckInfoService } from './../services/deckInfoSvc';
+import { DatabaseService, DeckInfo } from './../services/dbSvc';
+import { STARTING_HAND_SIZE, ZONE_BORDER_PX } from './../utilities/constants';
 import { CardActionInfo } from './card';
 import { ZoneCardInfo } from './zone';
 import { StackZone } from './stackZone';
 import { BattlefieldZone } from './battlefieldZone';
+import { Lefter } from './lefter';
 
 export enum ZoneName {
     None = 'none',
@@ -186,51 +188,46 @@ export const GameLayout = () => {
 
     const zoneProps = { action: currentAction, onCardDrag, onCardDragStop };
     return (
-        <>
-            <div className='toolbar'>
-                <DeckLookup onImportClick={importDeck} />
+        <div className='gameLayout' onMouseMove={onMouseMove}>
+            <div className='topPanel'>
+                <Lefter onImport={importDeck} />
+                <BattlefieldZone
+                    {...zoneProps}
+                    name={ZoneName.Battlefield}
+                    contents={battlefieldCards}
+                />
+                <StackZone
+                    {...zoneProps}
+                    name={ZoneName.Graveyard}
+                    contents={graveyardCards}
+                    vertical={true}
+                />
             </div>
-            <div className='gameLayout' onMouseMove={onMouseMove}>
-                <div className='topPanel'>
-                    <div id='status-bar' className='pane'></div>
-                    <BattlefieldZone
-                        {...zoneProps}
-                        name={ZoneName.Battlefield}
-                        contents={battlefieldCards}
-                    />
-                    <StackZone
-                        {...zoneProps}
-                        name={ZoneName.Graveyard}
-                        contents={graveyardCards}
-                        vertical={true}
-                    />
-                </div>
-                <div className='bottomPanel'>
-                    <StackZone
-                        {...zoneProps}
-                        name={ZoneName.Command}
-                        contents={commandCards}
-                    />
-                    <StackZone
-                        {...zoneProps}
-                        name={ZoneName.Hand}
-                        contents={handCards}
-                    />
-                    <StackZone
-                        {...zoneProps}
-                        name={ZoneName.Library}
-                        contents={libraryCards}
-                        faceDown={true}
-                        showTopOnly={true}
-                    />
-                    <StackZone
-                        {...zoneProps}
-                        name={ZoneName.Exile}
-                        contents={exileCards}
-                        showTopOnly={true}
-                    />
-                </div>
+            <div className='bottomPanel'>
+                <StackZone
+                    {...zoneProps}
+                    name={ZoneName.Command}
+                    contents={commandCards}
+                />
+                <StackZone
+                    {...zoneProps}
+                    name={ZoneName.Hand}
+                    contents={handCards}
+                />
+                <StackZone
+                    {...zoneProps}
+                    name={ZoneName.Library}
+                    contents={libraryCards}
+                    faceDown={true}
+                    showTopOnly={true}
+                />
+                <StackZone
+                    {...zoneProps}
+                    name={ZoneName.Exile}
+                    contents={exileCards}
+                    showTopOnly={true}
+                />
             </div>
-        </>
+        </div>
     );
 };

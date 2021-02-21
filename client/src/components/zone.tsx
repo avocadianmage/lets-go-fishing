@@ -1,5 +1,5 @@
 import { ForwardedRef, forwardRef } from "react";
-import { CardInfo } from "../../services/dbSvc";
+import { CardInfo } from "../services/dbSvc";
 import { Card, CardActionEventHandler, CardActionInfo } from "./card";
 import { ZoneName } from "./gameLayout";
 
