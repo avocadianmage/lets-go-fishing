@@ -28,6 +28,7 @@ export const Lefter = ({ onImport }: LefterProps) => {
 
     return (
         <div id='lefter' className='pane'>
+            <div id='logo'>LET'S GO FISHING</div>
 
             {/* Deck import control */}
             <div style={{ position: 'relative' }}>

@@ -1,3 +1,10 @@
+#logo {
+    font-weight: bold;
+    font-size: 20px;
+    color: var(--nord13);
+    margin: 6px 6px 16px 6px;
+}
+
 .textfield {
     font-family: inherit;
     font-size: 15px;
