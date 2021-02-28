@@ -40,6 +40,7 @@ export const Card = ({
     const faceUpAndLoaded = !isLoading && !faceDown;
 
     useEffect(() => {
+        setImageUrl('');
         const { promise, cancel } = cancelablePromise(CardInfoService.getCardImageUrl(card));
         promise.then(url => setImageUrl(url)).catch(() => { });
         return cancel;

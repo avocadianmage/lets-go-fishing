@@ -9,6 +9,7 @@ export interface CardInfo {
 }
 
 export interface DeckInfo {
+    name: string;
     mainboard: CardInfo[];
     commanders: CardInfo[];
 }
@@ -16,27 +17,27 @@ export interface DeckInfo {
 const dbName = 'lets-go-fishing-db';
 const dbVersion = 1;
 
-interface FishingSchema extends DBSchema {
-    'cards-os': {
-        key: string;
-        value: Blob;
-    };
-
-    'decks-os': {
-        key: string;
-        value: DeckInfo;
-    };
-}
-
 enum StoreNames {
     Card = 'cards-os',
     Deck = 'decks-os',
 }
 
+interface FishingSchema extends DBSchema {
+    [StoreNames.Card]: {
+        key: string;
+        value: Blob;
+    };
+
+    [StoreNames.Deck]: {
+        key: number;
+        value: DeckInfo;
+    };
+}
+
 const dbPromise = openDB<FishingSchema>(dbName, dbVersion, {
     upgrade(db) {
         db.createObjectStore(StoreNames.Card);
-        db.createObjectStore(StoreNames.Deck);
+        db.createObjectStore(StoreNames.Deck, { keyPath: 'id', autoIncrement: true });
     },
 });
 
@@ -46,17 +47,15 @@ class DbSvc {
     }
 
     async putCardBlob(blob: Blob, name: string) {
-        return (await dbPromise).put(StoreNames.Card, blob, name);
+        (await dbPromise).put(StoreNames.Card, blob, name);
     }
 
-    // Retrieve the first deck for now.
-    async getDeck() {
-        const decks = await (await dbPromise).getAll(StoreNames.Deck);
-        return decks.length ? decks[0] : null;
+    async getDecks() {
+        return (await dbPromise).getAll(StoreNames.Deck)
     }
 
-    async putDeck(deckInfo: DeckInfo, name: string) {
-        return (await dbPromise).put(StoreNames.Deck, deckInfo, name);
+    async putDeck(deckInfo: DeckInfo) {
+        (await dbPromise).put(StoreNames.Deck, deckInfo);
     }
 }
 

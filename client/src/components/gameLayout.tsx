@@ -21,25 +21,27 @@ export enum ZoneName {
     Command = 'command',
 };
 
+interface GameState {
+    [ZoneName.None]: ZoneCardInfo[];
+    [ZoneName.Library]: ZoneCardInfo[];
+    [ZoneName.Hand]: ZoneCardInfo[];
+    [ZoneName.Battlefield]: ZoneCardInfo[];
+    [ZoneName.Graveyard]: ZoneCardInfo[];
+    [ZoneName.Exile]: ZoneCardInfo[];
+    [ZoneName.Command]: ZoneCardInfo[];
+};
+
 export const GameLayout = () => {
-    const [libraryCards, setLibraryCards] = useState<ZoneCardInfo[]>([]);
-    const [handCards, setHandCards] = useState<ZoneCardInfo[]>([]);
-    const [battlefieldCards, setBattlefieldCards] = useState<ZoneCardInfo[]>([]);
-    const [graveyardCards, setGraveyardCards] = useState<ZoneCardInfo[]>([]);
-    const [exileCards, setExileCards] = useState<ZoneCardInfo[]>([]);
-    const [commandCards, setCommandCards] = useState<ZoneCardInfo[]>([]);
-
-    const zoneCards: { [zone: string]: { get: ZoneCardInfo[], set: any } } = {
-        [ZoneName.Library]: { get: libraryCards, set: setLibraryCards },
-        [ZoneName.Hand]: { get: handCards, set: setHandCards },
-        [ZoneName.Battlefield]: { get: battlefieldCards, set: setBattlefieldCards },
-        [ZoneName.Graveyard]: { get: graveyardCards, set: setGraveyardCards },
-        [ZoneName.Exile]: { get: exileCards, set: setExileCards },
-        [ZoneName.Command]: { get: commandCards, set: setCommandCards },
-    };
-    const getZoneCards = (zone: ZoneName) => zoneCards[zone].get;
-    const setZoneCards = (zone: ZoneName, cards: ZoneCardInfo[]) => zoneCards[zone].set(cards);
-
+    const [decks, setDecks] = useState<DeckInfo[]>([]);
+    const [gameState, setGameState] = useState<GameState>({
+        [ZoneName.None]: [],
+        [ZoneName.Library]: [],
+        [ZoneName.Hand]: [],
+        [ZoneName.Battlefield]: [],
+        [ZoneName.Graveyard]: [],
+        [ZoneName.Exile]: [],
+        [ZoneName.Command]: [],
+    });
     const [currentAction, setCurrentAction] = useState<CardActionInfo>();
 
     const fromLibrary = (action: CardActionInfo) => action.sourceZone === ZoneName.Library;
@@ -58,19 +60,34 @@ export const GameLayout = () => {
         const { fromArray, toArray } = sliceEndElements(
             newLibraryCards, [], STARTING_HAND_SIZE
         );
-        setLibraryCards(fromArray);
-        setHandCards(toArray);
-        setCommandCards(commanders.map(card => ({ card })));
+        setGameState({ 
+            ...gameState, 
+            [ZoneName.Library]: fromArray,
+            [ZoneName.Hand]: toArray,
+            [ZoneName.Battlefield]: [],
+            [ZoneName.Graveyard]: [],
+            [ZoneName.Exile]: [],
+            [ZoneName.Command]: commanders.map(card => ({ card })),
+        });
     };
 
     const importDeck = async (deckUrl: string) => {
-        startGame(await DeckInfoService.getDecklist(deckUrl));
+        const deckInfo = await DeckInfoService.getDecklist(deckUrl);
+        setDecks(decks.concat(deckInfo));
+        startGame(deckInfo);
     }
 
     const draw = (num = 1) => {
-        const { fromArray, toArray } = sliceEndElements(libraryCards, handCards, num);
-        setLibraryCards(fromArray);
-        setHandCards(toArray);
+        const { fromArray, toArray } = sliceEndElements(
+            gameState[ZoneName.Library], 
+            gameState[ZoneName.Hand], 
+            num
+        );
+        setGameState({ 
+            ...gameState, 
+            [ZoneName.Library]: fromArray,
+            [ZoneName.Hand]: toArray,
+        });
     }
 
     const sliceEndElements = (fromArray: any[], toArray: any[], num: number) => {
@@ -82,17 +99,17 @@ export const GameLayout = () => {
     }
 
     const sliceCardFromZone = (zoneCard: ZoneCardInfo, zone: ZoneName) => {
-        const cards = getZoneCards(zone);
+        const cards = gameState[zone];
         const index = cards.findIndex(zc => zc.card.id === zoneCard.card.id);
         return [cards.slice(0, index), cards.slice(index + 1)];
     }
 
     const findZoneCard = (action: CardActionInfo) => {
-        return getZoneCards(action.sourceZone).find(zc => zc.card.id === action.card.id)!;
+        return gameState[action.sourceZone].find(zc => zc.card.id === action.card.id)!;
     }
 
     const getIncrementedZIndex = (zone: ZoneName) => {
-        const cards = getZoneCards(zone);
+        const cards = gameState[zone];
         const highestIndex = cards.some(() => true) ?
             cards.map(zc => zc.zIndex ?? 0).reduce((prev, curr) => Math.max(prev, curr)) : 0;
         return highestIndex + 1;
@@ -124,14 +141,17 @@ export const GameLayout = () => {
         const [sourceSlice1, sourceSlice2] = sliceCardFromZone(zoneCard, sourceZone);
         if (isClick(action) || isIntrazoneDrag(action)) {
             const sourceZoneCards = sourceSlice1.concat(zoneCard).concat(sourceSlice2);
-            setZoneCards(sourceZone, sourceZoneCards);
+            setGameState({ ...gameState, [sourceZone]: sourceZoneCards, });
             return;
         }
 
         const sourceZoneCards = sourceSlice1.concat(sourceSlice2);
-        const targetZoneCards = getZoneCards(targetZone!).concat(zoneCard);
-        setZoneCards(sourceZone, sourceZoneCards);
-        setZoneCards(targetZone!, targetZoneCards);
+        const targetZoneCards = gameState[targetZone!].concat(zoneCard);
+        setGameState({ 
+            ...gameState, 
+            [sourceZone]: sourceZoneCards, 
+            [targetZone!]: targetZoneCards,
+        });
     }
 
     const onCardDrag = (action: CardActionInfo) => {
@@ -175,31 +195,35 @@ export const GameLayout = () => {
             ...currentAction,
             targetZone: (targetElem ? targetElem.id as ZoneName : ZoneName.None)
         });
-    }
+    };
 
-    useEffect(() => {
-        (async () => {
-            const decklist = await DatabaseService.getDeck();
-            if (decklist) startGame(decklist);
-        })();
+    const loadDecks = async () => {
+        const decks = await DatabaseService.getDecks();
+        setDecks(decks);
+        if (decks.length > 0) startGame(decks[0]); // Load the first deck for now.
+    };
 
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    useEffect(() => { loadDecks() }, []);
 
     const zoneProps = { action: currentAction, onCardDrag, onCardDragStop };
     return (
         <div className='gameLayout' onMouseMove={onMouseMove}>
             <div className='topPanel'>
-                <Lefter onImport={importDeck} />
+                <Lefter 
+                    decks={decks} 
+                    onDeckImport={importDeck} 
+                    onDeckSelect={(deck) => startGame(deck)} 
+                />
                 <BattlefieldZone
                     {...zoneProps}
                     name={ZoneName.Battlefield}
-                    contents={battlefieldCards}
+                    contents={gameState[ZoneName.Battlefield]}
                 />
                 <StackZone
                     {...zoneProps}
                     name={ZoneName.Graveyard}
-                    contents={graveyardCards}
+                    contents={gameState[ZoneName.Graveyard]}
                     vertical={true}
                 />
             </div>
@@ -207,24 +231,24 @@ export const GameLayout = () => {
                 <StackZone
                     {...zoneProps}
                     name={ZoneName.Command}
-                    contents={commandCards}
+                    contents={gameState[ZoneName.Command]}
                 />
                 <StackZone
                     {...zoneProps}
                     name={ZoneName.Hand}
-                    contents={handCards}
+                    contents={gameState[ZoneName.Hand]}
                 />
                 <StackZone
                     {...zoneProps}
                     name={ZoneName.Library}
-                    contents={libraryCards}
+                    contents={gameState[ZoneName.Library]}
                     faceDown={true}
                     showTopOnly={true}
                 />
                 <StackZone
                     {...zoneProps}
                     name={ZoneName.Exile}
-                    contents={exileCards}
+                    contents={gameState[ZoneName.Exile]}
                     showTopOnly={true}
                 />
             </div>

@@ -40,10 +40,11 @@ class DeckInfoSvc {
         };
 
         const deckInfo = { 
+            name,
             mainboard: toCardList(mainboard, false), 
             commanders: toCardList(commanders, true) 
         };
-        DatabaseService.putDeck(deckInfo, name);
+        DatabaseService.putDeck(deckInfo);
         return deckInfo;
     }
 

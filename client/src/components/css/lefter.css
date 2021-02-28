@@ -1,31 +1,30 @@
-#logo {
+.heading {
     font-weight: bold;
     font-size: 20px;
     color: var(--nord13);
     margin: 6px 6px 16px 6px;
 }
 
-.textfield {
-    font-family: inherit;
+.control {
     font-size: 15px;
-    width: 100%;
-    box-sizing: border-box;
-    padding: 10px 42px 10px 10px;
-    border-radius: 2px;
     background-color: var(--nord0);
     color: var(--nord6);
     caret-color: var(--nord4);
-    outline: none;
+    border-radius: 2px;
     border: transparent solid 1px;
-    transition: border-color 0.15s
+    transition: border-color 0.15s;
 }
 
-.textfield:hover {
+.control:hover {
     border-color: #9a9fad;
 }
 
-.textfield:focus {
+.control:focus {
     border-color: var(--nord8);
+}
+
+.textfield {
+    padding: 10px 42px 10px 10px;
 }
 
 .textfield-button {
@@ -52,4 +51,20 @@
 
 .textfield-button:not(:disabled):hover {
     background-color: var(--nord3);
+}
+
+.select {
+    width: 100%;
+    margin-top: 8px;
+    background-color: var(--nord0);
+    color: var(--nord6);
+}
+
+.select > option {
+    padding: 10px;
+    transition: background-color 0.2s;
+}
+
+.select > option:hover {
+    background-color: var(--nord2);
 }

@@ -1,44 +1,53 @@
 import { useState } from 'react';
+import { DeckInfo } from '../services/dbSvc';
 import './css/lefter.css';
 
 interface LefterProps {
-    onImport(importValue: string): void;
+    decks: DeckInfo[];
+    onDeckImport(importValue: string): void;
+    onDeckSelect(deck: DeckInfo): void;
 }
 
-export const Lefter = ({ onImport }: LefterProps) => {
+export const Lefter = ({ decks, onDeckImport, onDeckSelect }: LefterProps) => {
     const [importValue, setImportValue] = useState('');
     const isInvalidUrlFormat = !importValue.startsWith('https://www.moxfield.com/decks/');
 
     const doImport = () => {
         if (isInvalidUrlFormat) return;
-        onImport(importValue);
+        onDeckImport(importValue);
         setImportValue('');
     };
 
-    const fireKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    const fireDeckImportKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
         switch (e.key) {
             case 'Enter':
                 doImport();
                 break;
             case 'Escape':
-                setImportValue('')
+                setImportValue('');
                 break;
         }
     };
 
+    const fireDeckSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const deckName = e.currentTarget.selectedOptions.item(0)!.value;
+        const deckInfo = decks.find(di => di.name === deckName)!;
+        onDeckSelect(deckInfo);
+    }
+
     return (
         <div id='lefter' className='pane'>
-            <div id='logo'>LET'S GO FISHING</div>
+            <div className='heading'>LET'S GO FISHING</div>
 
             {/* Deck import control */}
             <div style={{ position: 'relative' }}>
                 <input
-                    className='textfield'
+                    className='control textfield'
                     type='text'
                     placeholder='Enter Moxfield deck address'
                     value={importValue}
                     onChange={(e) => setImportValue(e.target.value)}
-                    onKeyDown={fireKeyDown}
+                    onKeyDown={fireDeckImportKeyDown}
                 />
                 <button
                     className='textfield-button'
@@ -46,6 +55,12 @@ export const Lefter = ({ onImport }: LefterProps) => {
                     onClick={doImport}
                 />
             </div>
+
+            <select className='control select' multiple onChange={fireDeckSelectChange}>
+                {decks.map(di => (
+                    <option key={di.name} value={di.name}>{di.name}</option>
+                ))}
+            </select>
 
         </div>
     );

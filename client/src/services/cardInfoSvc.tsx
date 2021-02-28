@@ -12,18 +12,18 @@ function getQueryUrl(name: string, set: string) {
 
 class CardInfoSvc {
     private outgoingThrottle: Promise<any> = Promise.resolve();
-    private cache: string[] = [];
+    private cache: any = {};
 
-    processBlob(id: number, blob: Blob) {
+    processBlob(name: string, blob: Blob) {
         const url = URL.createObjectURL(blob);
-        this.cache[id] = url;
+        this.cache[name] = url;
         return url;
     }
 
-    getCardImageUrl({ id, name, set }: CardInfo) {
+    getCardImageUrl({ name, set }: CardInfo) {
         return new Promise(async (resolve) => {
             // Check if the URL is already stored in the local cache.
-            const cachedUrl = this.cache[id];
+            const cachedUrl = this.cache[name];
             if (cachedUrl) {
                 resolve(cachedUrl);
                 return;
@@ -32,7 +32,7 @@ class CardInfoSvc {
             // Check if the blob is already stored in the IndexedDB.
             const blobFromIDB = await DatabaseService.getCardBlob(name);
             if (blobFromIDB) {
-                resolve(this.processBlob(id, blobFromIDB));
+                resolve(this.processBlob(name, blobFromIDB));
                 return;
             }
 
@@ -50,7 +50,7 @@ class CardInfoSvc {
                         .then(response => response.blob())
                         .then(blob => {
                             DatabaseService.putCardBlob(blob, name);
-                            resolve(this.processBlob(id, blob));
+                            resolve(this.processBlob(name, blob));
                         });
                 })
                 // Ensure the next request is throttled.
