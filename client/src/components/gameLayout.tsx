@@ -1,9 +1,8 @@
 import './css/gameLayout.css';
 
 import shuffle from 'lodash/shuffle';
-import { useEffect, useState } from 'react';
-import { DeckInfoService } from './../services/deckInfoSvc';
-import { DatabaseService, DeckInfo } from './../services/dbSvc';
+import { useState } from 'react';
+import { DeckInfo } from './../services/dbSvc';
 import { STARTING_HAND_SIZE, ZONE_BORDER_PX } from './../utilities/constants';
 import { CardActionInfo } from './card';
 import { ZoneCardInfo } from './zone';
@@ -32,7 +31,6 @@ interface GameState {
 };
 
 export const GameLayout = () => {
-    const [decks, setDecks] = useState<DeckInfo[]>([]);
     const [gameState, setGameState] = useState<GameState>({
         [ZoneName.None]: [],
         [ZoneName.Library]: [],
@@ -70,12 +68,6 @@ export const GameLayout = () => {
             [ZoneName.Command]: commanders.map(card => ({ card })),
         });
     };
-
-    const importDeck = async (deckUrl: string) => {
-        const deckInfo = await DeckInfoService.getDecklist(deckUrl);
-        setDecks(decks.concat(deckInfo));
-        startGame(deckInfo);
-    }
 
     const draw = (num = 1) => {
         const { fromArray, toArray } = sliceEndElements(
@@ -197,24 +189,11 @@ export const GameLayout = () => {
         });
     };
 
-    const loadDecks = async () => {
-        const decks = await DatabaseService.getDecks();
-        setDecks(decks);
-        if (decks.length > 0) startGame(decks[0]); // Load the first deck for now.
-    };
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    useEffect(() => { loadDecks() }, []);
-
     const zoneProps = { action: currentAction, onCardDrag, onCardDragStop };
     return (
         <div className='gameLayout' onMouseMove={onMouseMove}>
             <div className='topPanel'>
-                <Lefter 
-                    decks={decks} 
-                    onDeckImport={importDeck} 
-                    onDeckSelect={(deck) => startGame(deck)} 
-                />
+                <Lefter onDeckSelect={startGame} />
                 <BattlefieldZone
                     {...zoneProps}
                     name={ZoneName.Battlefield}

@@ -1,20 +1,24 @@
-import { useState } from 'react';
-import { DeckInfo } from '../services/dbSvc';
+import { useEffect, useState } from 'react';
+import { DatabaseService, DeckInfo } from '../services/dbSvc';
+import { DeckInfoService } from '../services/deckInfoSvc';
 import './css/lefter.css';
 
 interface LefterProps {
-    decks: DeckInfo[];
-    onDeckImport(importValue: string): void;
-    onDeckSelect(deck: DeckInfo): void;
+    onDeckSelect(deckInfo: DeckInfo): void;
 }
 
-export const Lefter = ({ decks, onDeckImport, onDeckSelect }: LefterProps) => {
+export const Lefter = ({ onDeckSelect }: LefterProps) => {
     const [importValue, setImportValue] = useState('');
+    const [deckInfos, setDeckInfos] = useState<DeckInfo[]>([]);
+    const [selectedDeck, setSelectedDeck] = useState<string>('');
+
     const isInvalidUrlFormat = !importValue.startsWith('https://www.moxfield.com/decks/');
 
-    const doImport = () => {
+    const doImport = async () => {
         if (isInvalidUrlFormat) return;
-        onDeckImport(importValue);
+        const deckInfo = await DeckInfoService.getDecklist(importValue);
+        setDeckInfos(deckInfos.concat(deckInfo));
+        updateDeckSelection(deckInfo);
         setImportValue('');
     };
 
@@ -31,9 +35,23 @@ export const Lefter = ({ decks, onDeckImport, onDeckSelect }: LefterProps) => {
 
     const fireDeckSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const deckName = e.currentTarget.selectedOptions.item(0)!.value;
-        const deckInfo = decks.find(di => di.name === deckName)!;
-        onDeckSelect(deckInfo);
+        const deckInfo = deckInfos.find(di => di.name === deckName)!;
+        updateDeckSelection(deckInfo);
     }
+
+    const loadDecks = async () => {
+        const decks = await DatabaseService.getDecks();
+        setDeckInfos(decks);
+        if (decks.length > 0) updateDeckSelection(decks[0]); // Load the first deck for now.
+    };
+
+    const updateDeckSelection = (deckInfo: DeckInfo) => {
+        setSelectedDeck(deckInfo.name);
+        onDeckSelect(deckInfo);
+    };
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    useEffect(() => { loadDecks() }, []);
 
     return (
         <div id='lefter' className='pane'>
@@ -56,8 +74,13 @@ export const Lefter = ({ decks, onDeckImport, onDeckSelect }: LefterProps) => {
                 />
             </div>
 
-            <select className='control select' multiple onChange={fireDeckSelectChange}>
-                {decks.map(di => (
+            <select 
+                className='control select' 
+                multiple 
+                value={[selectedDeck]}
+                onChange={fireDeckSelectChange}
+            >
+                {deckInfos.map(di => (
                     <option key={di.name} value={di.name}>{di.name}</option>
                 ))}
             </select>
