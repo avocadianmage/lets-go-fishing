@@ -12,8 +12,12 @@ export const Lefter = ({ onDeckSelect }: LefterProps) => {
     const [deckInfos, setDeckInfos] = useState<DeckInfo[]>([]);
     const [selectedDeck, setSelectedDeck] = useState<string>('');
 
-    const isInvalidUrlFormat = !importValue.startsWith('https://www.moxfield.com/decks/');
+    const updateDeckSelection = (deckInfo: DeckInfo) => {
+        setSelectedDeck(deckInfo.name);
+        onDeckSelect(deckInfo);
+    };
 
+    const isInvalidUrlFormat = !importValue.startsWith('https://www.moxfield.com/decks/');
     const doImport = async () => {
         if (isInvalidUrlFormat) return;
         const deckInfo = await DeckInfoService.getDecklist(importValue);
@@ -45,11 +49,6 @@ export const Lefter = ({ onDeckSelect }: LefterProps) => {
         if (decks.length > 0) updateDeckSelection(decks[0]); // Load the first deck for now.
     };
 
-    const updateDeckSelection = (deckInfo: DeckInfo) => {
-        setSelectedDeck(deckInfo.name);
-        onDeckSelect(deckInfo);
-    };
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
     useEffect(() => { loadDecks() }, []);
 
@@ -76,7 +75,7 @@ export const Lefter = ({ onDeckSelect }: LefterProps) => {
 
             <select 
                 className='control select' 
-                multiple 
+                size={4}
                 value={[selectedDeck]}
                 onChange={fireDeckSelectChange}
             >
