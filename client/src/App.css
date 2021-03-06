@@ -4,6 +4,7 @@
     --card-height: 340px;
     --zone-padding: 6px;
     --zone-border-width: 4px;
+    --middle-gray: #9a9fad;
 }
 
 html, body, #root {
@@ -32,20 +33,13 @@ input, select {
 }
 
 ::-webkit-scrollbar {
-    width: 0px;
+    width: 4px;
 }
-
 
 ::-webkit-scrollbar-track {
-    background: #f1f1f1;
+    background: var(--nord1);
 }
-
 
 ::-webkit-scrollbar-thumb {
-    background: #888;
-}
-
-
-::-webkit-scrollbar-thumb:hover {
-    background: #555;
+    background: var(--middle-gray);
 }

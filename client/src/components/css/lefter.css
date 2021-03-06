@@ -16,7 +16,7 @@
 }
 
 .control:hover {
-    border-color: #9a9fad;
+    border-color: var(--middle-gray);
 }
 
 .control:focus {
