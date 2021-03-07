@@ -76,7 +76,7 @@ export const Lefter = ({ onDeckSelect }: LefterProps) => {
             <select 
                 className='control select' 
                 size={4}
-                value={[selectedDeck]}
+                value={selectedDeck}
                 onChange={fireDeckSelectChange}
             >
                 {deckInfos.map(di => (
