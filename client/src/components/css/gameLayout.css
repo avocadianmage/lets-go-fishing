@@ -46,8 +46,12 @@
     flex: 1;
 }
 
+#graveyard, #exile, #library {
+    width: var(--card-width);
+}
+
 #lefter, #command {
-    min-width: calc(var(--card-width) * 1.5);
+    width: calc(var(--card-width) * 1.5);
 }
 
 .topPanel {
