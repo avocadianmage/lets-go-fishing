@@ -17,6 +17,7 @@ export const Lefter = ({ onDeckSelect }: LefterProps) => {
 
     const [selectedDeck, setSelectedDeck] = useState<DeckInfo>();
     const updateSelectedDeck = (value: DeckInfo) => {
+        DatabaseService.putSelectedDeckName(value.name);
         setSelectedDeck(value);
         onDeckSelect(value);
     };
@@ -50,7 +51,10 @@ export const Lefter = ({ onDeckSelect }: LefterProps) => {
     const loadDecks = async () => {
         let decks = (await DatabaseService.getDecks());
         updateDeckInfos(decks);
-        if (decks.length > 0) updateSelectedDeck(decks[0]); // Load the first deck for now.
+
+        const savedSelectedDeckName = DatabaseService.getSelectedDeckName();
+        const deckToSelect = decks.find(di => di.name === savedSelectedDeckName) ?? decks[0];
+        if (deckToSelect) updateSelectedDeck(deckToSelect);
     };
 
     // eslint-disable-next-line react-hooks/exhaustive-deps

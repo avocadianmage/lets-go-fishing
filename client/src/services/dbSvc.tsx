@@ -14,6 +14,10 @@ export interface DeckInfo {
     commanders: CardInfo[];
 }
 
+enum LocalStorageKeys {
+    SelectedDeckName = 'selected-deck-name',
+}
+
 const dbName = 'lets-go-fishing-db';
 const dbVersion = 1;
 
@@ -57,6 +61,14 @@ class DbSvc {
     async putDeck(deckInfo: DeckInfo) {
         (await dbPromise).put(StoreNames.Deck, deckInfo);
     }
+
+    getSelectedDeckName() { 
+        return localStorage.getItem(LocalStorageKeys.SelectedDeckName);
+    }
+    
+    putSelectedDeckName(value: string) {
+        localStorage.setItem(LocalStorageKeys.SelectedDeckName, value);
+    };
 }
 
 export const DatabaseService = new DbSvc();
