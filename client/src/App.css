@@ -30,6 +30,7 @@ input, select {
     cursor: inherit;
     line-height: inherit;
     outline: none;
+    overflow-y: auto;
 }
 
 ::-webkit-scrollbar {
