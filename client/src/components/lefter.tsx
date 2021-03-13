@@ -13,7 +13,7 @@ export const Lefter = ({ onDeckSelect }: LefterProps) => {
     const [deckInfos, setDeckInfos] = useState<DeckInfo[]>([]);
     const updateDeckInfos = (value: DeckInfo[]) => {
         setDeckInfos(value.sort((a, b) => a.name.localeCompare(b.name)));
-    }
+    };
 
     const [selectedDeck, setSelectedDeck] = useState<DeckInfo>();
     const updateSelectedDeck = (value: DeckInfo) => {
@@ -44,27 +44,29 @@ export const Lefter = ({ onDeckSelect }: LefterProps) => {
 
     const fireDeckSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const deckName = e.currentTarget.selectedOptions.item(0)!.value;
-        const deckInfo = deckInfos.find(di => di.name === deckName)!;
+        const deckInfo = deckInfos.find((di) => di.name === deckName)!;
         updateSelectedDeck(deckInfo);
-    }
+    };
 
     const loadDecks = async () => {
-        let decks = (await DatabaseService.getDecks());
+        let decks = await DatabaseService.getDecks();
         updateDeckInfos(decks);
 
         const savedSelectedDeckName = DatabaseService.getSelectedDeckName();
-        const deckToSelect = decks.find(di => di.name === savedSelectedDeckName) ?? decks[0];
+        const deckToSelect = decks.find((di) => di.name === savedSelectedDeckName) ?? decks[0];
         if (deckToSelect) updateSelectedDeck(deckToSelect);
     };
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    useEffect(() => { loadDecks() }, []);
+    
+    useEffect(() => {
+        loadDecks();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     return (
         <div id='lefter' className='pane'>
             <div className='heading'>LET'S GO FISHING</div>
 
-            {/* Deck import control */}
             <div style={{ position: 'relative' }}>
                 <input
                     className='control textfield'
@@ -75,23 +77,24 @@ export const Lefter = ({ onDeckSelect }: LefterProps) => {
                     onKeyDown={fireDeckImportKeyDown}
                 />
                 <button
-                    className='textfield-button'
+                    className='textfield-button add-icon'
                     disabled={isInvalidUrlFormat}
                     onClick={doImport}
                 />
             </div>
 
-            <select 
-                className='control select' 
+            <select
+                className='control select'
                 size={4}
                 value={selectedDeck?.name}
                 onChange={fireDeckSelectChange}
             >
-                {deckInfos.map(di => (
-                    <option key={di.name} value={di.name}>{di.name}</option>
+                {deckInfos.map((di) => (
+                    <option key={di.name} value={di.name}>
+                        {di.name}
+                    </option>
                 ))}
             </select>
-
         </div>
     );
 };

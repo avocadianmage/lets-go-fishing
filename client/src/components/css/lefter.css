@@ -27,8 +27,11 @@
     padding: 10px 42px 10px 10px;
 }
 
-.textfield-button {
+.add-icon {
     background-image: url('../../assets/add.svg');
+}
+
+.textfield-button {
     background-size: 24px 24px;
     background-repeat: no-repeat;
     background-position: center;
