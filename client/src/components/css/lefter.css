@@ -63,6 +63,7 @@
 
 .select {
     width: 100%;
+    height: calc(4em + 94px);
     color: var(--nord6);
     overflow-y: scroll;
 }
