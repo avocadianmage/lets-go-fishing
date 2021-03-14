@@ -23,11 +23,6 @@ export const Lefter = ({ onDeckSelect }: LefterProps) => {
 
     const [selectControlFocused, setSelectControlFocused] = useState<boolean>(false);
 
-    const doImport = (deckInfo: DeckInfo) => {
-        updateDeckInfos(deckInfos.concat(deckInfo));
-        updateSelectedDeck(deckInfo);
-    };
-
     const fireDeckSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const deckName = e.currentTarget.selectedOptions.item(0)?.value;
         const deckInfo = deckInfos.find((di) => di.name === deckName);
@@ -44,6 +39,11 @@ export const Lefter = ({ onDeckSelect }: LefterProps) => {
             selectedIndex <= updatedDeckInfos.length - 1 ? selectedIndex : selectedIndex - 1;
         updateDeckInfos(updatedDeckInfos);
         updateSelectedDeck(updatedDeckInfos[updatedSelectedIndex]);
+    };
+
+    const doImport = (deckInfo: DeckInfo) => {
+        updateDeckInfos(deckInfos.concat(deckInfo));
+        updateSelectedDeck(deckInfo);
     };
 
     const loadDecks = async () => {
