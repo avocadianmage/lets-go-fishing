@@ -10,16 +10,19 @@
     background-color: var(--nord0);
     color: var(--nord6);
     caret-color: var(--nord4);
+}
+
+.outline {
     border-radius: 2px;
     border: transparent solid 1px;
     transition: border-color 0.15s;
 }
 
-.control:hover {
+.outline:hover {
     border-color: var(--middle-gray);
 }
 
-.control:focus {
+.outline:focus, .outline.focused {
     border-color: var(--nord8);
 }
 
@@ -31,18 +34,19 @@
     background-image: url('../../assets/add.svg');
 }
 
+.remove-icon {
+    background-image: url('../../assets/remove.svg');
+}
+
 .textfield-button {
     background-size: 24px 24px;
     background-repeat: no-repeat;
     background-position: center;
-    background-color: inherit;
+    background-color: transparent;
     width: 36px;
     height: 36px;
     border: none;
     outline: none;
-    position: absolute;
-    top: 3px;
-    right: 3px;
     padding: 0;
     border-radius: 2px;
     transition: opacity 0.25s, background-color 0.5s;
@@ -58,13 +62,13 @@
 
 .select {
     width: 100%;
-    margin-top: 8px;
-    background-color: var(--nord0);
     color: var(--nord6);
+    overflow-y: scroll;
 }
 
 .select > option {
     padding: 10px;
+    border-radius: 2px;
     transition: background-color 0.2s;
 }
 

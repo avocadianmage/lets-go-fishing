@@ -1,4 +1,4 @@
-import { DBSchema, openDB } from 'idb';
+import { openDB } from 'idb';
 
 export interface CardInfo {
     id: number;
@@ -8,8 +8,12 @@ export interface CardInfo {
     commander: boolean;
 }
 
+enum IndexNames {
+    Name = 'name',
+}
+
 export interface DeckInfo {
-    name: string;
+    [IndexNames.Name]: string;
     mainboard: CardInfo[];
     commanders: CardInfo[];
 }
@@ -26,22 +30,11 @@ enum StoreNames {
     Deck = 'decks-os',
 }
 
-interface FishingSchema extends DBSchema {
-    [StoreNames.Card]: {
-        key: string;
-        value: Blob;
-    };
-
-    [StoreNames.Deck]: {
-        key: number;
-        value: DeckInfo;
-    };
-}
-
-const dbPromise = openDB<FishingSchema>(dbName, dbVersion, {
+const dbPromise = openDB(dbName, dbVersion, {
     upgrade(db) {
         db.createObjectStore(StoreNames.Card);
-        db.createObjectStore(StoreNames.Deck, { keyPath: 'id', autoIncrement: true });
+        const deckStore = db.createObjectStore(StoreNames.Deck, { keyPath: 'id', autoIncrement: true });
+        deckStore.createIndex(IndexNames.Name, IndexNames.Name);
     },
 });
 
@@ -55,20 +48,26 @@ class DbSvc {
     }
 
     async getDecks() {
-        return (await dbPromise).getAll(StoreNames.Deck)
+        return (await dbPromise).getAll(StoreNames.Deck);
     }
 
     async putDeck(deckInfo: DeckInfo) {
         (await dbPromise).put(StoreNames.Deck, deckInfo);
     }
 
-    getSelectedDeckName() { 
+    async deleteDeck(name: string) {
+        const db = await dbPromise;
+        const key = await db.getKeyFromIndex(StoreNames.Deck, IndexNames.Name, name);
+        db.delete(StoreNames.Deck, key!);
+    }
+
+    getSelectedDeckName() {
         return localStorage.getItem(LocalStorageKeys.SelectedDeckName);
     }
-    
+
     putSelectedDeckName(value: string) {
         localStorage.setItem(LocalStorageKeys.SelectedDeckName, value);
-    };
+    }
 }
 
 export const DatabaseService = new DbSvc();

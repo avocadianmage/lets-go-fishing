@@ -4,7 +4,7 @@ import { DeckInfoService } from '../services/deckInfoSvc';
 import './css/lefter.css';
 
 interface LefterProps {
-    onDeckSelect(deckInfo: DeckInfo): void;
+    onDeckSelect(deckInfo?: DeckInfo): void;
 }
 
 export const Lefter = ({ onDeckSelect }: LefterProps) => {
@@ -16,11 +16,13 @@ export const Lefter = ({ onDeckSelect }: LefterProps) => {
     };
 
     const [selectedDeck, setSelectedDeck] = useState<DeckInfo>();
-    const updateSelectedDeck = (value: DeckInfo) => {
-        DatabaseService.putSelectedDeckName(value.name);
+    const updateSelectedDeck = (value?: DeckInfo) => {
+        if (value) DatabaseService.putSelectedDeckName(value.name);
         setSelectedDeck(value);
         onDeckSelect(value);
     };
+
+    const [selectControlFocused, setSelectControlFocused] = useState<boolean>(false);
 
     const isInvalidUrlFormat = !importValue.startsWith('https://www.moxfield.com/decks/');
     const doImport = async () => {
@@ -43,9 +45,21 @@ export const Lefter = ({ onDeckSelect }: LefterProps) => {
     };
 
     const fireDeckSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        const deckName = e.currentTarget.selectedOptions.item(0)!.value;
+        const deckName = e.currentTarget.selectedOptions.item(0)?.value;
         const deckInfo = deckInfos.find((di) => di.name === deckName)!;
         updateSelectedDeck(deckInfo);
+    };
+
+    const fireDeckRemoveClick = () => {
+        const deckToRemove = selectedDeck!.name;
+        DatabaseService.deleteDeck(deckToRemove);
+
+        const selectedIndex = deckInfos.findIndex((di: DeckInfo) => di.name === deckToRemove);
+        const updatedDeckInfos = deckInfos.filter((di: DeckInfo) => di.name !== deckToRemove);
+        const updatedSelectedIndex =
+            selectedIndex <= updatedDeckInfos.length - 1 ? selectedIndex : selectedIndex - 1;
+        updateDeckInfos(updatedDeckInfos);
+        updateSelectedDeck(updatedDeckInfos[updatedSelectedIndex]);
     };
 
     const loadDecks = async () => {
@@ -57,7 +71,6 @@ export const Lefter = ({ onDeckSelect }: LefterProps) => {
         if (deckToSelect) updateSelectedDeck(deckToSelect);
     };
 
-    
     useEffect(() => {
         loadDecks();
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -69,7 +82,7 @@ export const Lefter = ({ onDeckSelect }: LefterProps) => {
 
             <div style={{ position: 'relative' }}>
                 <input
-                    className='control textfield'
+                    className='control outline textfield'
                     type='text'
                     placeholder='Enter Moxfield deck address'
                     value={importValue}
@@ -78,23 +91,41 @@ export const Lefter = ({ onDeckSelect }: LefterProps) => {
                 />
                 <button
                     className='textfield-button add-icon'
+                    style={{ position: 'absolute', top: '3px', right: '3px' }}
                     disabled={isInvalidUrlFormat}
                     onClick={doImport}
                 />
             </div>
 
-            <select
-                className='control select'
-                size={4}
-                value={selectedDeck?.name}
-                onChange={fireDeckSelectChange}
+            <div
+                className={`control outline ${selectControlFocused ? 'focused' : ''}`}
+                style={{ display: 'flex', marginTop: '8px' }}
             >
-                {deckInfos.map((di) => (
-                    <option key={di.name} value={di.name}>
-                        {di.name}
-                    </option>
-                ))}
-            </select>
+                <select
+                    className='control select'
+                    style={{ flex: 1 }}
+                    size={4}
+                    value={selectedDeck?.name}
+                    onChange={fireDeckSelectChange}
+                    onFocus={() => setSelectControlFocused(true)}
+                    onBlur={() => setSelectControlFocused(false)}
+                >
+                    {deckInfos.map((di) => (
+                        <option key={di.name} value={di.name}>
+                            {di.name}
+                        </option>
+                    ))}
+                </select>
+                <div>
+                    <div style={{ padding: '2px' }}>
+                        <button
+                            className='textfield-button remove-icon'
+                            disabled={!selectedDeck}
+                            onClick={fireDeckRemoveClick}
+                        />
+                    </div>
+                </div>
+            </div>
         </div>
     );
 };

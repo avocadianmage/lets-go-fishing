@@ -22,6 +22,7 @@ input, select {
     box-sizing: border-box;
     background-color: transparent;
     border: none;
+    border-radius: 0;
     padding: 0;
     margin: 0;
     width: 100%;
