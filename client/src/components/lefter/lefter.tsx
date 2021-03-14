@@ -1,15 +1,14 @@
 import { useEffect, useState } from 'react';
-import { DatabaseService, DeckInfo } from '../services/dbSvc';
-import { DeckInfoService } from '../services/deckInfoSvc';
-import './css/lefter.css';
+import { DatabaseService, DeckInfo } from '../../services/dbSvc';
+import { DeckImport } from './deckImport';
+
+import '../css/lefter.css';
 
 interface LefterProps {
     onDeckSelect(deckInfo?: DeckInfo): void;
 }
 
 export const Lefter = ({ onDeckSelect }: LefterProps) => {
-    const [importValue, setImportValue] = useState('');
-
     const [deckInfos, setDeckInfos] = useState<DeckInfo[]>([]);
     const updateDeckInfos = (value: DeckInfo[]) => {
         setDeckInfos(value.sort((a, b) => a.name.localeCompare(b.name)));
@@ -24,24 +23,9 @@ export const Lefter = ({ onDeckSelect }: LefterProps) => {
 
     const [selectControlFocused, setSelectControlFocused] = useState<boolean>(false);
 
-    const isInvalidUrlFormat = !importValue.startsWith('https://www.moxfield.com/decks/');
-    const doImport = async () => {
-        if (isInvalidUrlFormat) return;
-        const deckInfo = await DeckInfoService.getDecklist(importValue);
+    const doImport = (deckInfo: DeckInfo) => {
         updateDeckInfos(deckInfos.concat(deckInfo));
         updateSelectedDeck(deckInfo);
-        setImportValue('');
-    };
-
-    const fireDeckImportKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-        switch (e.key) {
-            case 'Enter':
-                doImport();
-                break;
-            case 'Escape':
-                setImportValue('');
-                break;
-        }
     };
 
     const fireDeckSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -79,22 +63,7 @@ export const Lefter = ({ onDeckSelect }: LefterProps) => {
         <div id='lefter' className='pane'>
             <div className='heading'>LET'S GO FISHING</div>
 
-            <div style={{ position: 'relative' }}>
-                <input
-                    className='control outline textfield'
-                    type='text'
-                    placeholder='Enter Moxfield deck address'
-                    value={importValue}
-                    onChange={(e) => setImportValue(e.target.value)}
-                    onKeyDown={fireDeckImportKeyDown}
-                />
-                <button
-                    className='textfield-button add-icon'
-                    style={{ position: 'absolute', top: '3px', right: '3px' }}
-                    disabled={isInvalidUrlFormat}
-                    onClick={doImport}
-                />
-            </div>
+            <DeckImport onImport={doImport} />
 
             <div
                 className={`control outline ${selectControlFocused ? 'focused' : ''}`}

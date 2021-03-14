@@ -33,7 +33,10 @@ enum StoreNames {
 const dbPromise = openDB(dbName, dbVersion, {
     upgrade(db) {
         db.createObjectStore(StoreNames.Card);
-        const deckStore = db.createObjectStore(StoreNames.Deck, { keyPath: 'id', autoIncrement: true });
+        const deckStore = db.createObjectStore(StoreNames.Deck, {
+            keyPath: 'id',
+            autoIncrement: true,
+        });
         deckStore.createIndex(IndexNames.Name, IndexNames.Name);
     },
 });

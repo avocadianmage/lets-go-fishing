@@ -1,12 +1,12 @@
-import cardBack from '../assets/mtg-card-back.png';
-import './css/card.css';
+import cardBack from '../../assets/mtg-card-back.png';
+import '../css/card.css';
 
 import { useEffect, useRef, useState } from 'react';
-import { CardInfoService } from '../services/cardInfoSvc';
+import { CardInfoService } from '../../services/cardInfoSvc';
 import Draggable, { ControlPosition } from 'react-draggable';
-import { cancelablePromise } from '../utilities/helpers';
+import { cancelablePromise } from '../../utilities/helpers';
 import { ZoneCardInfo } from './zone';
-import { CardInfo } from '../services/dbSvc';
+import { CardInfo } from '../../services/dbSvc';
 import { ZoneName } from './gameLayout';
 
 export interface CardActionInfo {
@@ -27,8 +27,13 @@ interface CardProps {
 
 export type CardActionEventHandler = (action: CardActionInfo) => boolean;
 
-export const Card = ({ 
-    zoneCard, faceDown, onDrag, onDragStop, onMouseEnter, onMouseLeave 
+export const Card = ({
+    zoneCard,
+    faceDown,
+    onDrag,
+    onDragStop,
+    onMouseEnter,
+    onMouseLeave,
 }: CardProps) => {
     const [imageUrl, setImageUrl] = useState('');
     const [manualDragPos, setManualDragPos] = useState<ControlPosition>();
@@ -42,14 +47,14 @@ export const Card = ({
     useEffect(() => {
         setImageUrl('');
         const { promise, cancel } = cancelablePromise(CardInfoService.getCardImageUrl(card));
-        promise.then(url => setImageUrl(url)).catch(() => { });
+        promise.then((url) => setImageUrl(url)).catch(() => {});
         return cancel;
     }, [card]);
 
-    const createAction = () => ({ 
-        card, 
-        node: nodeRef.current!.firstElementChild!, 
-        sourceZone: ZoneName.None 
+    const createAction = () => ({
+        card,
+        node: nodeRef.current!.firstElementChild!,
+        sourceZone: ZoneName.None,
     });
 
     const fireDrag = () => {
@@ -64,18 +69,17 @@ export const Card = ({
         else return false;
     };
 
-    const round = (n?: number) => n ? Math.round(n) : 0;
+    const round = (n?: number) => (n ? Math.round(n) : 0);
     const positionStyle = { transform: `translate(${round(x)}px, ${round(y)}px)` };
-    const imageStyle = { 
-        backgroundImage: `url(${(isLoading || faceDown) ? cardBack : imageUrl})` 
+    const imageStyle = {
+        backgroundImage: `url(${isLoading || faceDown ? cardBack : imageUrl})`,
     };
-    const className = (
+    const className =
         'card' +
         (isLoading ? ' loading' : '') +
         (faceUpAndLoaded && previewing ? ' previewing' : '') +
         (faceUpAndLoaded && card.foil ? ' foil' : '') +
-        (tapped ? ' tapped' : '')
-    );
+        (tapped ? ' tapped' : '');
     return (
         <Draggable
             nodeRef={nodeRef}
@@ -86,16 +90,13 @@ export const Card = ({
         >
             <div ref={nodeRef} style={{ zIndex }}>
                 <div className='card-position-layer' style={positionStyle}>
-                    <div 
-                        className={className} 
+                    <div
+                        className={className}
                         style={imageStyle}
                         onMouseEnter={() => onMouseEnter(createAction())}
                         onMouseLeave={() => onMouseLeave(createAction())}
                     >
-                        {isLoading ?
-                            <div className='loader' /> :
-                            <div className='card-face' />
-                        }
+                        {isLoading ? <div className='loader' /> : <div className='card-face' />}
                     </div>
                 </div>
             </div>

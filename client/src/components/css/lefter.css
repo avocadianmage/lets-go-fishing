@@ -22,7 +22,8 @@
     border-color: var(--middle-gray);
 }
 
-.outline:focus, .outline.focused {
+.outline:focus,
+.outline.focused {
     border-color: var(--nord8);
 }
 

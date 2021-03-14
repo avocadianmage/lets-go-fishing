@@ -1,14 +1,14 @@
-import './css/gameLayout.css';
+import '../css/gameLayout.css';
 
 import shuffle from 'lodash/shuffle';
 import { useState } from 'react';
-import { DeckInfo } from './../services/dbSvc';
-import { STARTING_HAND_SIZE, ZONE_BORDER_PX } from './../utilities/constants';
+import { DeckInfo } from '../../services/dbSvc';
+import { STARTING_HAND_SIZE, ZONE_BORDER_PX } from '../../utilities/constants';
 import { CardActionInfo } from './card';
 import { ZoneCardInfo } from './zone';
 import { StackZone } from './stackZone';
 import { BattlefieldZone } from './battlefieldZone';
-import { Lefter } from './lefter';
+import { Lefter } from '../lefter/lefter';
 
 export enum ZoneName {
     None = 'none',
