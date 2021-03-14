@@ -17,7 +17,7 @@ export const Lefter = ({ onDeckSelect }: LefterProps) => {
 
     const [selectedDeck, setSelectedDeck] = useState<DeckInfo>();
     const updateSelectedDeck = (value?: DeckInfo) => {
-        if (value) DatabaseService.putSelectedDeckName(value.name);
+        DatabaseService.putSelectedDeckName(value?.name ?? '');
         setSelectedDeck(value);
         onDeckSelect(value);
     };
@@ -46,7 +46,7 @@ export const Lefter = ({ onDeckSelect }: LefterProps) => {
 
     const fireDeckSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const deckName = e.currentTarget.selectedOptions.item(0)?.value;
-        const deckInfo = deckInfos.find((di) => di.name === deckName)!;
+        const deckInfo = deckInfos.find((di) => di.name === deckName);
         updateSelectedDeck(deckInfo);
     };
 
@@ -63,12 +63,11 @@ export const Lefter = ({ onDeckSelect }: LefterProps) => {
     };
 
     const loadDecks = async () => {
-        let decks = await DatabaseService.getDecks();
-        updateDeckInfos(decks);
-
+        const decks = await DatabaseService.getDecks();
         const savedSelectedDeckName = DatabaseService.getSelectedDeckName();
         const deckToSelect = decks.find((di) => di.name === savedSelectedDeckName) ?? decks[0];
-        if (deckToSelect) updateSelectedDeck(deckToSelect);
+        updateDeckInfos(decks);
+        updateSelectedDeck(deckToSelect);
     };
 
     useEffect(() => {
