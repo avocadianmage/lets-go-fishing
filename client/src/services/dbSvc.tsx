@@ -43,33 +43,33 @@ const dbPromise = openDB(dbName, dbVersion, {
 });
 
 class DbSvc {
-    async getCardBlob(name: string) {
+    async getCardBlob(name: string): Promise<Blob> {
         return (await dbPromise).get(StoreNames.Card, name);
     }
 
-    async putCardBlob(blob: Blob, name: string) {
+    async putCardBlob(blob: Blob, name: string): Promise<void> {
         (await dbPromise).put(StoreNames.Card, blob, name);
     }
 
-    async getDecks() {
+    async getDecks(): Promise<DeckInfo[]> {
         return (await dbPromise).getAll(StoreNames.Deck);
     }
 
-    async putDeck(deckInfo: DeckInfo) {
+    async putDeck(deckInfo: DeckInfo): Promise<void> {
         (await dbPromise).put(StoreNames.Deck, deckInfo);
     }
 
-    async deleteDeck(name: string) {
+    async deleteDeck(name: string): Promise<void> {
         const db = await dbPromise;
         const key = await db.getKeyFromIndex(StoreNames.Deck, IndexNames.Name, name);
         db.delete(StoreNames.Deck, key!);
     }
 
-    getSelectedDeckName() {
-        return localStorage.getItem(LocalStorageKeys.SelectedDeckName);
+    getSelectedDeckName(): string | undefined  {
+        return localStorage.getItem(LocalStorageKeys.SelectedDeckName) ?? undefined;
     }
 
-    putSelectedDeckName(value: string) {
+    putSelectedDeckName(value: string): void {
         localStorage.setItem(LocalStorageKeys.SelectedDeckName, value);
     }
 }
