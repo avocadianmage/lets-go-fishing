@@ -41,6 +41,10 @@ export const Lefter = ({ onDeckSelect }: LefterProps) => {
         updateSelectedDeck(updatedDeckInfos[updatedSelectedIndex]);
     };
 
+    const fireDeckEditClick = () => {
+        window.open(selectedDeck?.url, '_blank');
+    }
+
     const doImport = (deckInfo: DeckInfo) => {
         updateDeckInfos(deckInfos.concat(deckInfo));
         updateSelectedDeck(deckInfo);
@@ -85,13 +89,16 @@ export const Lefter = ({ onDeckSelect }: LefterProps) => {
                     ))}
                 </select>
                 <div>
-                    <div style={{ padding: '2px' }}>
-                        <button
-                            className='textfield-button remove-icon'
-                            disabled={!selectedDeck}
-                            onClick={fireDeckRemoveClick}
-                        />
-                    </div>
+                    <button
+                        className='textfield-button deck-selection-button remove-icon'
+                        disabled={!selectedDeck}
+                        onClick={fireDeckRemoveClick}
+                    />
+                    <button
+                        className='textfield-button deck-selection-button edit-icon'
+                        disabled={!selectedDeck}
+                        onClick={fireDeckEditClick}
+                    />
                 </div>
             </div>
         </div>

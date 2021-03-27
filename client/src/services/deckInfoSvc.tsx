@@ -21,7 +21,7 @@ interface MoxfieldCardInfo {
 }
 
 class DeckInfoSvc {
-    private parseAndSaveDeck({ name, commanders, mainboard }: MoxfieldDeck) {
+    private parseAndSaveDeck(url: string, { name, commanders, mainboard }: MoxfieldDeck) {
         let id = 0;
         const toCardList = (moxfieldCardList: MoxfieldCardList, areCommanders: boolean) => {
             const cardList = [];
@@ -40,6 +40,7 @@ class DeckInfoSvc {
         };
 
         const deckInfo = { 
+            url,
             name,
             mainboard: toCardList(mainboard, false), 
             commanders: toCardList(commanders, true) 
@@ -55,7 +56,7 @@ class DeckInfoSvc {
             body: JSON.stringify({ moxfieldDeckUrl })
         });
         const json = await response.json();
-        return this.parseAndSaveDeck(json);
+        return this.parseAndSaveDeck(moxfieldDeckUrl, json);
     }
 }
 

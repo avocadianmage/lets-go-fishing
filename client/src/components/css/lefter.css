@@ -39,6 +39,10 @@
     background-image: url('../../assets/remove.svg');
 }
 
+.edit-icon {
+    background-image: url('../../assets/edit.svg');
+}
+
 .textfield-button {
     background-size: 24px 24px;
     background-repeat: no-repeat;
@@ -59,6 +63,11 @@
 
 .textfield-button:not(:disabled):hover {
     background-color: var(--nord3);
+}
+
+.deck-selection-button {
+    display: block;
+    margin: 2px;
 }
 
 .select {
