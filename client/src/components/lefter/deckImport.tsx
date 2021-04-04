@@ -8,7 +8,7 @@ interface DeckImportProps {
 
 export const DeckImport = ({ onImport }: DeckImportProps) => {
     const [value, setValue] = useState('');
-    const isDisabled = value == '';
+    const isDisabled = value === '';
     const doImport = async () => {
         if (isDisabled) return;
         onImport(await DeckInfoService.getDecklist(value));
