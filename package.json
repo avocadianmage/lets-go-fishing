@@ -12,7 +12,8 @@
         "node-fetch": "^2.6.1"
     },
     "devDependencies": {
-        "concurrently": "^6.0.0"
+        "concurrently": "^6.0.0",
+        "nodemon": "^2.0.14"
     },
     "type": "module"
 }
