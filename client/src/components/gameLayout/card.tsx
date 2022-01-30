@@ -96,7 +96,8 @@ export const Card = ({
                         onMouseEnter={() => onMouseEnter(createAction())}
                         onMouseLeave={() => onMouseLeave(createAction())}
                     >
-                        {isLoading ? <div className='loader' /> : <div className='card-face' />}
+                        <div className='loader' style={isLoading ? {} : { display: 'none' }} />
+                        <div className='card-face' style={isLoading ? { display: 'none' } : {}} />
                     </div>
                 </div>
             </div>

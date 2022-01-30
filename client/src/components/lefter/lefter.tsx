@@ -90,14 +90,14 @@ export const Lefter = ({ onDeckSelect }: LefterProps) => {
                 </select>
                 <div>
                     <button
-                        className='textfield-button deck-selection-button remove-icon'
-                        disabled={!selectedDeck}
-                        onClick={fireDeckRemoveClick}
-                    />
-                    <button
                         className='textfield-button deck-selection-button edit-icon'
                         disabled={!selectedDeck}
                         onClick={fireDeckEditClick}
+                    />
+                    <button
+                        className='textfield-button deck-selection-button remove-icon'
+                        disabled={!selectedDeck}
+                        onClick={fireDeckRemoveClick}
                     />
                 </div>
             </div>
