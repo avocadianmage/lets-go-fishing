@@ -6,7 +6,6 @@
 }
 
 .control {
-    position: relative;
     font-size: 15px;
     background-color: var(--nord0);
     color: var(--nord6);

@@ -24,8 +24,7 @@ export const Lefter = ({ onDeckSelect }: LefterProps) => {
     const [selectControlFocused, setSelectControlFocused] = useState<boolean>(false);
 
     const fireDeckSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        const deckName = e.currentTarget.selectedOptions.item(0)?.value;
-        const deckInfo = deckInfos.find((di) => di.name === deckName);
+        const deckInfo = deckInfos.find((di) => di.name === e.target.value);
         updateSelectedDeck(deckInfo);
     };
 
