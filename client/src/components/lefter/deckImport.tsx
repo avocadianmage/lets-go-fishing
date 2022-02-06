@@ -27,9 +27,9 @@ export const DeckImport = ({ onImport }: DeckImportProps) => {
     };
 
     return (
-        <div style={{ position: 'relative' }}>
+        <div className='control outline'>
             <input
-                className='control outline textfield'
+                className='control textfield'
                 type='text'
                 placeholder='Enter Moxfield deck address'
                 value={value}
@@ -38,7 +38,7 @@ export const DeckImport = ({ onImport }: DeckImportProps) => {
             />
             <button
                 className='textfield-button add-icon'
-                style={{ position: 'absolute', top: '3px', right: '3px' }}
+                style={{ position: 'absolute', top: '2px', right: '2px' }}
                 disabled={isDisabled}
                 onClick={doImport}
             />

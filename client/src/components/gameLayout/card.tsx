@@ -96,6 +96,8 @@ export const Card = ({
                         onMouseEnter={() => onMouseEnter(createAction())}
                         onMouseLeave={() => onMouseLeave(createAction())}
                     >
+                        {/* Separate divs needed to prevent React from replacing one with the other 
+                            during CSS animations. */}
                         <div className='loader' style={isLoading ? {} : { display: 'none' }} />
                         <div className='card-face' style={isLoading ? { display: 'none' } : {}} />
                     </div>
