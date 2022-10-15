@@ -81,13 +81,16 @@
     transition: transform 0.1s;
 }
 
-.stack-zone:not(.vertical) .card-drag-layer:not(.react-draggable-dragging) .card.previewing:hover {
-    transform: translate(0, -12.5%);
+.stack-zone .card-drag-layer:not(.react-draggable-dragging) .card.previewing:hover .card-face {
+    animation: fadeIn 0.2s;
+}
+
+.stack-zone:not(.vertical) .card-drag-layer:not(.react-draggable-dragging) .card.previewing:hover .card-face {
+    top: -100%;
 }
 
 .stack-zone.vertical .card-drag-layer:not(.react-draggable-dragging) .card.previewing:hover .card-face {
     left: -100%;
-    animation: fadeIn 0.2s;
 }
 
 .loader {
