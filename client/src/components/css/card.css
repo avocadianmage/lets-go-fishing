@@ -27,15 +27,9 @@
     border-top-right-radius: 4.75% 3.5%;
     background-size: contain;
     background-blend-mode: darken;
+    background-color: rgba(0, 0, 0, 0.01);
     transition: background-color 0.2s, transform 0.15s;
     pointer-events: all;
-}
-
-.card, 
-.zone:not(.stack-zone) .card-drag-layer:not(.react-draggable-dragging) .card:hover .card-face,
-.stack-zone.show-top-only .card-drag-layer:not(.react-draggable-dragging) .card:hover .card-face
-{
-    background-color: rgba(0, 0, 0, 0.5);
 }
 
 .card.tapped {
@@ -47,9 +41,9 @@
     content: "";
     border-radius: 4.75% / 3.5%;
     background-image: linear-gradient(
-        to bottom, 
-        transparent 0%, 
-        rgba(255, 255, 255, 0.2) 50%, 
+        to bottom,
+        transparent 0%,
+        rgba(255, 255, 255, 0.2) 50%,
         transparent 100%
     );
     top: -90%;
@@ -76,23 +70,27 @@
     background-image: inherit;
     background-size: inherit;
     background-blend-mode: inherit;
+    background-color: rgba(0, 0, 0, 0.01);
     border-radius: inherit;
     overflow: hidden;
-    transition: background-color 0.2s, transform 0.2s;
+    transition: transform 0.2s;
     pointer-events: none;
+}
+
+.stack-zone.vertical .card .card-face {
+    transition: transform 0s;
 }
 
 .stack-zone .card-position-layer {
     transition: transform 0.1s;
-    animation: fadeIn 0.15s;
 }
 
 .stack-zone:not(.show-top-only) .card .card-face {
     animation: slideIn 0.15s;
 }
 
-.card-drag-layer:not(.react-draggable-dragging) .card.previewing:hover .card-face {
-    transform: translate(0, -100%);
+.stack-zone:not(.vertical) .card-drag-layer:not(.react-draggable-dragging) .card.previewing:hover {
+    transform: translate(0, -12.5%);
 }
 
 .stack-zone.vertical .card-drag-layer:not(.react-draggable-dragging) .card.previewing:hover .card-face {
