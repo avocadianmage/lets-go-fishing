@@ -73,20 +73,12 @@
     background-color: rgba(0, 0, 0, 0.01);
     border-radius: inherit;
     overflow: hidden;
-    transition: transform 0.2s;
+    transition: transform 0.2s, opacity 0.2s;
     pointer-events: none;
-}
-
-.stack-zone.vertical .card .card-face {
-    transition: transform 0s;
 }
 
 .stack-zone .card-position-layer {
     transition: transform 0.1s;
-}
-
-.stack-zone:not(.show-top-only) .card .card-face {
-    animation: slideIn 0.15s;
 }
 
 .stack-zone:not(.vertical) .card-drag-layer:not(.react-draggable-dragging) .card.previewing:hover {
@@ -94,7 +86,8 @@
 }
 
 .stack-zone.vertical .card-drag-layer:not(.react-draggable-dragging) .card.previewing:hover .card-face {
-    transform: translate(-100%, 0);
+    left: -100%;
+    animation: fadeIn 0.2s;
 }
 
 .loader {
