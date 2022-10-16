@@ -23,6 +23,7 @@ interface CardProps {
     onDragStop: CardActionEventHandler;
     onMouseEnter: CardActionEventHandler;
     onMouseLeave: CardActionEventHandler;
+    onDoubleClick: CardActionEventHandler;
 }
 
 export type CardActionEventHandler = (action: CardActionInfo) => boolean;
@@ -34,6 +35,7 @@ export const Card = ({
     onDragStop,
     onMouseEnter,
     onMouseLeave,
+    onDoubleClick
 }: CardProps) => {
     const [imageUrl, setImageUrl] = useState('');
     const [manualDragPos, setManualDragPos] = useState<ControlPosition>();
@@ -71,6 +73,7 @@ export const Card = ({
     };
 
     const processDoubleClick = () => {
+        onDoubleClick(createAction());
         if (zoneName === ZoneName.Battlefield) {
             setTapped(!tapped);
         }

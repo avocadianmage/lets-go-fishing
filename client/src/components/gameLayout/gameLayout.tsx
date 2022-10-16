@@ -85,6 +85,7 @@ export const GameLayout = () => {
             [ZoneName.Library]: fromArray,
             [ZoneName.Hand]: toArray,
         });
+        return true;
     };
 
     const sliceEndElements = (fromArray: any[], toArray: any[], num: number) => {
@@ -163,10 +164,7 @@ export const GameLayout = () => {
             if (action.targetZone === ZoneName.None) return false;
 
             if (isClick(action)) {
-                if (fromLibrary(action)) {
-                    draw();
-                    return true;
-                } else if (fromBattlefield(action)) {
+                if (fromBattlefield(action)) {
                     updateCardFromAction(action);
                 }
                 return false;
@@ -228,6 +226,7 @@ export const GameLayout = () => {
                     contents={gameState[ZoneName.Library]}
                     faceDown={true}
                     showTopOnly={true}
+                    onCardDoubleClick={() => draw()}
                 />
                 <StackZone
                     {...zoneProps}
