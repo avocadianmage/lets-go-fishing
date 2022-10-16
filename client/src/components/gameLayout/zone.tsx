@@ -10,6 +10,7 @@ export interface ZoneCardInfo {
     zIndex?: number;
     previewing?: boolean;
     zoneName?: ZoneName;
+    tapped?: boolean;
 }
 
 export interface ZoneProps {

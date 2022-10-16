@@ -42,7 +42,6 @@ export const GameLayout = () => {
     });
     const [currentAction, setCurrentAction] = useState<CardActionInfo>();
 
-    const fromLibrary = (action: CardActionInfo) => action.sourceZone === ZoneName.Library;
     const fromBattlefield = (action: CardActionInfo) => action.sourceZone === ZoneName.Battlefield;
     const toBattlefield = (action: CardActionInfo) => action.targetZone === ZoneName.Battlefield;
     const toCommand = (action: CardActionInfo) => action.targetZone === ZoneName.Command;
@@ -85,6 +84,12 @@ export const GameLayout = () => {
             [ZoneName.Library]: fromArray,
             [ZoneName.Hand]: toArray,
         });
+        return true;
+    };
+
+    const toggleTap = (action: CardActionInfo) => {
+        const zoneCard = findZoneCard(action);
+        updateCard({ ...zoneCard, tapped: !zoneCard.tapped }, action);
         return true;
     };
 
@@ -201,6 +206,7 @@ export const GameLayout = () => {
                     {...zoneProps}
                     name={ZoneName.Battlefield}
                     contents={gameState[ZoneName.Battlefield]}
+                    onCardDoubleClick={(action) => toggleTap(action)}
                 />
                 <StackZone
                     {...zoneProps}
