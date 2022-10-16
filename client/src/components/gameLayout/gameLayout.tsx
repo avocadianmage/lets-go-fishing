@@ -42,6 +42,7 @@ export const GameLayout = () => {
     });
     const [currentAction, setCurrentAction] = useState<CardActionInfo>();
 
+    const fromLibrary = (action: CardActionInfo) => action.sourceZone === ZoneName.Library;
     const fromBattlefield = (action: CardActionInfo) => action.sourceZone === ZoneName.Battlefield;
     const toBattlefield = (action: CardActionInfo) => action.targetZone === ZoneName.Battlefield;
     const toCommand = (action: CardActionInfo) => action.targetZone === ZoneName.Command;
@@ -169,7 +170,9 @@ export const GameLayout = () => {
             if (action.targetZone === ZoneName.None) return false;
 
             if (isClick(action)) {
-                if (fromBattlefield(action)) {
+                if (fromLibrary(action)) {
+                    return draw();
+                } else if (fromBattlefield(action)) {
                     updateCardFromAction(action);
                 }
                 return false;
@@ -232,7 +235,6 @@ export const GameLayout = () => {
                     contents={gameState[ZoneName.Library]}
                     faceDown={true}
                     showTopOnly={true}
-                    onCardDoubleClick={() => draw()}
                 />
                 <StackZone
                     {...zoneProps}
