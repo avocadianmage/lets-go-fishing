@@ -9,7 +9,6 @@ export interface ZoneCardInfo {
     y?: number;
     zIndex?: number;
     previewing?: boolean;
-    zoneName?: ZoneName;
     tapped?: boolean;
 }
 
@@ -21,8 +20,6 @@ export interface ZoneProps {
     action?: CardActionInfo;
     onCardDrag?: CardActionEventHandler;
     onCardDragStop?: CardActionEventHandler;
-    onCardMouseEnter?: CardActionEventHandler;
-    onCardMouseLeave?: CardActionEventHandler;
     onCardDoubleClick?: CardActionEventHandler;
 }
 
@@ -36,8 +33,6 @@ export const Zone = forwardRef(
             action,
             onCardDrag,
             onCardDragStop,
-            onCardMouseEnter,
-            onCardMouseLeave,
             onCardDoubleClick
         }: ZoneProps,
         ref: ForwardedRef<HTMLDivElement>
@@ -68,12 +63,10 @@ export const Zone = forwardRef(
                 {updatedContents.map((zc) => (
                     <Card
                         key={zc.card.id}
-                        zoneCard={{ ...zc, zoneName: name }}
+                        zoneCard={zc}
                         faceDown={faceDown}
                         onDrag={(action) => fireAction(action, onCardDrag)}
                         onDragStop={(action) => fireAction(action, onCardDragStop)}
-                        onMouseEnter={(action) => fireAction(action, onCardMouseEnter)}
-                        onMouseLeave={(action) => fireAction(action, onCardMouseLeave)}
                         onDoubleClick={(action) => fireAction(action, onCardDoubleClick)}
                     />
                 ))}

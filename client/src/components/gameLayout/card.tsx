@@ -21,8 +21,6 @@ interface CardProps {
     faceDown?: boolean;
     onDrag: CardActionEventHandler;
     onDragStop: CardActionEventHandler;
-    onMouseEnter: CardActionEventHandler;
-    onMouseLeave: CardActionEventHandler;
     onDoubleClick: CardActionEventHandler;
 }
 
@@ -33,8 +31,6 @@ export const Card = ({
     faceDown,
     onDrag,
     onDragStop,
-    onMouseEnter,
-    onMouseLeave,
     onDoubleClick
 }: CardProps) => {
     const [imageUrl, setImageUrl] = useState('');
@@ -95,8 +91,6 @@ export const Card = ({
                     <div
                         className={className}
                         style={imageStyle}
-                        onMouseEnter={() => onMouseEnter(createAction())}
-                        onMouseLeave={() => onMouseLeave(createAction())}
                         onDoubleClick={() => onDoubleClick(createAction())}
                     >
                         {/* Separate divs needed to prevent React from replacing one with the other 
