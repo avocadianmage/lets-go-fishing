@@ -123,8 +123,7 @@ export const GameLayout = () => {
         if (toBattlefield(action) || (fromBattlefield(action) && isClick(action))) {
             const { x, y } = node!.getBoundingClientRect();
             const zoneCard = findZoneCard(action);
-            const tapped = isClick(action) ? !zoneCard.tapped : zoneCard.tapped;
-            return { ...zoneCard, x: x - ZONE_BORDER_PX, y: y - ZONE_BORDER_PX, tapped };
+            return { ...zoneCard, x: x - ZONE_BORDER_PX, y: y - ZONE_BORDER_PX };
         }
         return { card };
     };

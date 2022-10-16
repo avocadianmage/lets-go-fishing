@@ -7,9 +7,9 @@ export interface ZoneCardInfo {
     card: CardInfo;
     x?: number;
     y?: number;
-    tapped?: boolean;
     zIndex?: number;
     previewing?: boolean;
+    zoneName?: ZoneName;
 }
 
 export interface ZoneProps {
@@ -65,7 +65,7 @@ export const Zone = forwardRef(
                 {updatedContents.map((zc) => (
                     <Card
                         key={zc.card.id}
-                        zoneCard={zc}
+                        zoneCard={{ ...zc, zoneName: name }}
                         faceDown={faceDown}
                         onDrag={(action) => fireAction(action, onCardDrag)}
                         onDragStop={(action) => fireAction(action, onCardDragStop)}

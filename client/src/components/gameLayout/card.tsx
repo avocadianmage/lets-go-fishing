@@ -37,10 +37,11 @@ export const Card = ({
 }: CardProps) => {
     const [imageUrl, setImageUrl] = useState('');
     const [manualDragPos, setManualDragPos] = useState<ControlPosition>();
+    const [tapped, setTapped] = useState(false);
 
     const nodeRef = useRef<HTMLDivElement>(null);
 
-    const { card, x, y, tapped, zIndex, previewing } = zoneCard;
+    const { card, x, y, zIndex, previewing, zoneName } = zoneCard;
     const isLoading = !imageUrl && !faceDown;
     const faceUpAndLoaded = !isLoading && !faceDown;
 
@@ -69,6 +70,12 @@ export const Card = ({
         else return false;
     };
 
+    const processDoubleClick = () => {
+        if (zoneName === ZoneName.Battlefield) {
+            setTapped(!tapped);
+        }
+    };
+
     const round = (n?: number) => (n ? Math.round(n) : 0);
     const positionStyle = { transform: `translate(${round(x)}px, ${round(y)}px)` };
     const imageStyle = {
@@ -95,6 +102,7 @@ export const Card = ({
                         style={imageStyle}
                         onMouseEnter={() => onMouseEnter(createAction())}
                         onMouseLeave={() => onMouseLeave(createAction())}
+                        onDoubleClick={() => processDoubleClick()}
                     >
                         {/* Separate divs needed to prevent React from replacing one with the other 
                             during CSS animations. */}
