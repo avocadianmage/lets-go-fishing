@@ -1,7 +1,7 @@
 import '../css/gameLayout.css';
 
 import shuffle from 'lodash/shuffle';
-import { useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { DeckInfo } from '../../services/dbSvc';
 import { STARTING_HAND_SIZE, ZONE_BORDER_PX } from '../../utilities/constants';
 import { CardActionInfo } from './card';
@@ -74,25 +74,54 @@ export const GameLayout = () => {
         });
     };
 
-    const draw = (num = 1) => {
-        const { fromArray, toArray } = sliceEndElements(
-            gameState[ZoneName.Library],
-            gameState[ZoneName.Hand],
-            num
-        );
-        setGameState({
-            ...gameState,
-            [ZoneName.Library]: fromArray,
-            [ZoneName.Hand]: toArray,
-        });
-        return true;
-    };
+    const draw = useCallback(
+        (num = 1) => {
+            const { fromArray, toArray } = sliceEndElements(
+                gameState[ZoneName.Library],
+                gameState[ZoneName.Hand],
+                num
+            );
+            setGameState((g) => ({
+                ...g,
+                [ZoneName.Library]: fromArray,
+                [ZoneName.Hand]: toArray,
+            }));
+        },
+        [gameState]
+    );
+
+    const untapAll = useCallback(() => {
+        setGameState((g) => ({
+            ...g,
+            [ZoneName.Battlefield]: gameState[ZoneName.Battlefield].map((zc) => ({
+                ...zc,
+                tapped: false,
+            })),
+        }));
+    }, [gameState]);
 
     const toggleTap = (action: CardActionInfo) => {
         const zoneCard = findZoneCard(action);
         updateCard({ ...zoneCard, tapped: !zoneCard.tapped }, action);
         return true;
     };
+
+    const handleKeyPress = useCallback(
+        (event: { key: any }) => {
+            switch (event.key) {
+                case 'n':
+                    untapAll();
+                    draw();
+                    break;
+            }
+        },
+        [untapAll, draw]
+    );
+
+    useEffect(() => {
+        document.addEventListener('keydown', handleKeyPress);
+        return () => document.removeEventListener('keydown', handleKeyPress);
+    }, [handleKeyPress]);
 
     const sliceEndElements = (fromArray: any[], toArray: any[], num: number) => {
         const cutIndex = fromArray.length - num;
@@ -171,7 +200,8 @@ export const GameLayout = () => {
 
             if (isClick(action)) {
                 if (fromLibrary(action)) {
-                    return draw();
+                    draw();
+                    return true;
                 } else if (fromBattlefield(action)) {
                     updateCardFromAction(action);
                 }
