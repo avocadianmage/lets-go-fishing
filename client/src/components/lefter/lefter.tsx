@@ -21,8 +21,6 @@ export const Lefter = ({ onDeckSelect }: LefterProps) => {
         onDeckSelect(value);
     };
 
-    const [selectControlFocused, setSelectControlFocused] = useState<boolean>(false);
-
     const fireDeckSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const deckInfo = deckInfos.find((di) => di.name === e.target.value);
         updateSelectedDeck(deckInfo);
@@ -69,7 +67,7 @@ export const Lefter = ({ onDeckSelect }: LefterProps) => {
             <DeckImport onImport={doImport} />
 
             <div
-                className={`control outline ${selectControlFocused ? 'focused' : ''}`}
+                className={'control outline'}
                 style={{ display: 'flex', marginTop: '8px' }}
             >
                 <select
@@ -78,8 +76,6 @@ export const Lefter = ({ onDeckSelect }: LefterProps) => {
                     size={4}
                     value={selectedDeck?.name}
                     onChange={fireDeckSelectChange}
-                    onFocus={() => setSelectControlFocused(true)}
-                    onBlur={() => setSelectControlFocused(false)}
                 >
                     {deckInfos.map((di) => (
                         <option key={di.name} value={di.name}>
