@@ -84,6 +84,6 @@
     transition: background-color 0.2s;
 }
 
-.select > option:hover {
+.select > option:not(:checked):hover {
     background-color: var(--nord2);
 }
