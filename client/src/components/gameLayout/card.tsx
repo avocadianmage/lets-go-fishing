@@ -60,13 +60,15 @@ export const Card = ({
     });
 
     const fireDrag = () => {
-        setManualDragPos(undefined);
+        setManualDragPos({ x: 0, y: 0 });
         const success = onDrag(createAction());
         if (!success) return false;
     };
 
     const fireDragStop = () => {
-        if (!onDragStop(createAction())) setManualDragPos({ x: 0, y: 0 });
+        if (!onDragStop(createAction())) {
+            setManualDragPos({ x: 0, y: 0 });
+        }
         // Don't let react-draggable update since the card was dragged to a new zone.
         else return false;
     };
