@@ -31,6 +31,7 @@ interface GameState {
 }
 
 export const GameLayout = () => {
+    const [currentDeckInfo, setCurrentDeckInfo] = useState<DeckInfo>();
     const [gameState, setGameState] = useState<GameState>({
         [ZoneName.None]: [],
         [ZoneName.Library]: [],
@@ -60,6 +61,8 @@ export const GameLayout = () => {
     };
 
     const startGame = (deckInfo?: DeckInfo) => {
+        deckInfo = deckInfo ?? currentDeckInfo;
+        setCurrentDeckInfo(deckInfo);
         const { library, hand, command } = deckInfo
             ? getStartingZoneCards(deckInfo)
             : { library: [], hand: [], command: [] };
@@ -109,13 +112,19 @@ export const GameLayout = () => {
     const handleKeyPress = useCallback(
         (event: { key: any }) => {
             switch (event.key) {
+                // Keystroke 'n': next turn.
                 case 'n':
                     untapAll();
                     draw();
                     break;
+                // Keystroke 'r': restart game.
+                case 'r':
+                    startGame();
+                    break;
             }
         },
-        [untapAll, draw]
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        [gameState]
     );
 
     useEffect(() => {
