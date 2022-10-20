@@ -34,6 +34,10 @@ input, select {
     overflow-y: auto;
 }
 
+button {
+    color: var(--nord4);
+}
+
 ::-webkit-scrollbar {
     width: 4px;
 }

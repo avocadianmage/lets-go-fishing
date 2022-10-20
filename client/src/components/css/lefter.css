@@ -31,16 +31,8 @@
     padding: 10px 42px 10px 10px;
 }
 
-.add-icon {
-    background-image: url('../../assets/add.svg');
-}
-
-.remove-icon {
-    background-image: url('../../assets/remove.svg');
-}
-
-.edit-icon {
-    background-image: url('../../assets/edit.svg');
+button.add-icon {
+    color: var(--nord14);
 }
 
 .textfield-button {
@@ -68,6 +60,10 @@
 .deck-selection-button {
     display: block;
     margin: 2px;
+}
+
+button.remove-button {
+    color: var(--nord11);
 }
 
 .select {

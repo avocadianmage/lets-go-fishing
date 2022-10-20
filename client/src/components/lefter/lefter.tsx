@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { DatabaseService, DeckInfo } from '../../services/dbSvc';
 import { DeckImport } from './deckImport';
+import OpenInNewIcon from '@mui/icons-material/OpenInNew';
+import RemoveIcon from '@mui/icons-material/Remove';
 
 import '../css/lefter.css';
 
@@ -85,15 +87,19 @@ export const Lefter = ({ onDeckSelect }: LefterProps) => {
                 </select>
                 <div>
                     <button
-                        className='textfield-button deck-selection-button edit-icon'
+                        className='textfield-button deck-selection-button'
                         disabled={!selectedDeck}
                         onClick={fireDeckEditClick}
-                    />
+                    >
+                        <OpenInNewIcon />
+                    </button>
                     <button
-                        className='textfield-button deck-selection-button remove-icon'
+                        className='textfield-button deck-selection-button remove-button'
                         disabled={!selectedDeck}
                         onClick={fireDeckRemoveClick}
-                    />
+                    >
+                        <RemoveIcon />
+                    </button>
                 </div>
             </div>
         </div>

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { DeckInfo } from '../../services/dbSvc';
 import { DeckInfoService } from '../../services/deckInfoSvc';
+import AddIcon from '@mui/icons-material/Add';
 
 interface DeckImportProps {
     onImport(value: DeckInfo): void;
@@ -41,7 +42,9 @@ export const DeckImport = ({ onImport }: DeckImportProps) => {
                 style={{ position: 'absolute', top: '3px', right: '3px' }}
                 disabled={isDisabled}
                 onClick={doImport}
-            />
+            >
+                <AddIcon />
+            </button>
         </div>
     );
 };
