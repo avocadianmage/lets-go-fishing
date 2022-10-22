@@ -112,7 +112,7 @@ export const GameLayout = () => {
     };
 
     const handleKeyDown = useCallback(
-        (event: { key: any; stopPropagation: any }) => {
+        (event: { key: any; preventDefault: any }) => {
             // Only process keyboard shortcuts if nothing is focused or being dragged.
             if (currentAction || document.activeElement!.tagName !== 'BODY') return;
 
@@ -132,7 +132,7 @@ export const GameLayout = () => {
                 case 'k':
                     setLibrarySearchOpen(true);
                     // Prevent input from proliferating into the search box.
-                    event.stopPropagation();
+                    event.preventDefault();
                     break;
             }
         },
