@@ -23,17 +23,20 @@ export const LibrarySearch = ({ open, contents, requestClose }: LibrarySearchPro
 
     return (
         <Backdrop open={open} onClick={requestClose}>
-            <Autocomplete
-                autoSelect
-                autoHighlight
-                clearOnBlur
-                open={open}
-                options={contents.map((option) => option.card.name)}
-                sx={{ width: 400, background: 'var(--nord0)' }}
-                renderInput={(params) => (
-                    <TextField {...params} placeholder='Search library' inputRef={inputNode} />
-                )}
-            />
+            <div onClick={(e) => e.stopPropagation()}>
+                <Autocomplete
+                    autoSelect
+                    autoHighlight
+                    clearOnBlur
+                    forcePopupIcon={false}
+                    open={open}
+                    options={contents.map((option) => option.card.name)}
+                    sx={{ width: 400, background: 'var(--nord0)' }}
+                    renderInput={(params) => (
+                        <TextField {...params} placeholder='Search library' inputRef={inputNode} />
+                    )}
+                />
+            </div>
         </Backdrop>
     );
 };
