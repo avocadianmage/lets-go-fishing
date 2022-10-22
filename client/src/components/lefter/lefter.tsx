@@ -12,9 +12,6 @@ interface LefterProps {
 
 export const Lefter = ({ onDeckSelect }: LefterProps) => {
     const [deckInfos, setDeckInfos] = useState<DeckInfo[]>([]);
-    const updateDeckInfos = (value: DeckInfo[]) => {
-        setDeckInfos(value.sort((a, b) => a.name.localeCompare(b.name)));
-    };
 
     const [selectedDeck, setSelectedDeck] = useState<DeckInfo>();
     const updateSelectedDeck = (value?: DeckInfo) => {
@@ -36,16 +33,16 @@ export const Lefter = ({ onDeckSelect }: LefterProps) => {
         const updatedDeckInfos = deckInfos.filter((di: DeckInfo) => di.name !== deckToRemove);
         const updatedSelectedIndex =
             selectedIndex <= updatedDeckInfos.length - 1 ? selectedIndex : selectedIndex - 1;
-        updateDeckInfos(updatedDeckInfos);
+        setDeckInfos(updatedDeckInfos);
         updateSelectedDeck(updatedDeckInfos[updatedSelectedIndex]);
     };
 
     const fireDeckEditClick = () => {
         window.open(selectedDeck?.url, '_blank');
-    }
+    };
 
     const doImport = (deckInfo: DeckInfo) => {
-        updateDeckInfos(deckInfos.concat(deckInfo));
+        setDeckInfos(deckInfos.concat(deckInfo));
         updateSelectedDeck(deckInfo);
     };
 
@@ -53,7 +50,7 @@ export const Lefter = ({ onDeckSelect }: LefterProps) => {
         const decks = await DatabaseService.getDecks();
         const savedSelectedDeckName = DatabaseService.getSelectedDeckName();
         const deckToSelect = decks.find((di) => di.name === savedSelectedDeckName) ?? decks[0];
-        updateDeckInfos(decks);
+        setDeckInfos(decks);
         updateSelectedDeck(deckToSelect);
     };
 
@@ -68,10 +65,7 @@ export const Lefter = ({ onDeckSelect }: LefterProps) => {
 
             <DeckImport onImport={doImport} />
 
-            <div
-                className={'control outline'}
-                style={{ display: 'flex', marginTop: '8px' }}
-            >
+            <div className={'control outline'} style={{ display: 'flex', marginTop: '8px' }}>
                 <select
                     className='control select'
                     style={{ flex: 1 }}

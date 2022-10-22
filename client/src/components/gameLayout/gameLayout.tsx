@@ -9,6 +9,7 @@ import { ZoneCardInfo } from './zone';
 import { StackZone } from './stackZone';
 import { BattlefieldZone } from './battlefieldZone';
 import { Lefter } from '../lefter/lefter';
+import { LibrarySearch } from './librarySearch';
 
 export enum ZoneName {
     None = 'none',
@@ -42,6 +43,7 @@ export const GameLayout = () => {
         [ZoneName.Command]: [],
     });
     const [currentAction, setCurrentAction] = useState<CardActionInfo>();
+    const [librarySearchOpen, setLibrarySearchOpen] = useState(false);
 
     const fromLibrary = (action: CardActionInfo) => action.sourceZone === ZoneName.Library;
     const fromBattlefield = (action: CardActionInfo) => action.sourceZone === ZoneName.Battlefield;
@@ -110,16 +112,29 @@ export const GameLayout = () => {
     };
 
     const handleKeyPress = useCallback(
-        (event: { key: any }) => {
+        (event: { key: any, preventDefault: any }) => {
+
+            // Only process keyboard shortcuts if another control isn't focused.
+            if (document.activeElement!.tagName !== 'BODY') return;
+
             switch (event.key) {
-                // Keystroke 'n': next turn.
+
+                // Next turn.
                 case 'n':
                     untapAll();
                     draw();
                     break;
-                // Keystroke 'r': restart game.
+
+                // Restart game.
                 case 'r':
                     startGame();
+                    break;
+
+                // Search library.
+                case 'k':
+                    setLibrarySearchOpen(true);
+                    // Prevent input from proliferating into the search box.
+                    event.preventDefault();
                     break;
             }
         },
@@ -282,6 +297,7 @@ export const GameLayout = () => {
                     showTopOnly={true}
                 />
             </div>
+            <LibrarySearch contents={gameState[ZoneName.Library]} open={librarySearchOpen} />
         </div>
     );
 };
