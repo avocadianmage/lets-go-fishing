@@ -8,6 +8,15 @@ interface LibrarySearchProps {
     requestClose(selection?: ZoneCardInfo): void;
 }
 
+const style = {
+    position: 'absolute' as 'absolute',
+    top: '10%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: 400,
+    bgcolor: 'background.default'
+};
+
 export const LibrarySearch = ({ open, contents, requestClose }: LibrarySearchProps) => {
     const [selection, setSelection] = useState<ZoneCardInfo>();
     const [accepted, setAccepted] = useState<boolean>();
@@ -27,7 +36,7 @@ export const LibrarySearch = ({ open, contents, requestClose }: LibrarySearchPro
                 forcePopupIcon={false}
                 open={open}
                 options={contents.map((zoneCard) => ({ label: zoneCard.card.name, zoneCard }))}
-                sx={{ width: 400, background: 'var(--nord0)' }}
+                sx={style}
                 renderInput={(params) => (
                     <TextField {...params} placeholder='Search library' autoFocus />
                 )}
