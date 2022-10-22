@@ -257,7 +257,7 @@ export const GameLayout = () => {
         const [piece1, piece2] = sliceCardFromZone(zoneCard, ZoneName.Library);
         setGameState({
             ...gameState,
-            [ZoneName.Library]: piece1.concat(piece2),
+            [ZoneName.Library]: shuffle(piece1.concat(piece2)),
             [ZoneName.Hand]: gameState[ZoneName.Hand].concat(zoneCard)
         });
     };
