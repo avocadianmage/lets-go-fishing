@@ -53,7 +53,7 @@ export const Card = ({
         return cancel;
     }, [card]);
 
-    const createAction = () => ({
+    const createAction = (): CardActionInfo => ({
         card,
         node: nodeRef.current!.firstElementChild!,
         sourceZone: ZoneName.None,

@@ -111,14 +111,12 @@ export const GameLayout = () => {
         return true;
     };
 
-    const handleKeyPress = useCallback(
-        (event: { key: any, preventDefault: any }) => {
-
-            // Only process keyboard shortcuts if another control isn't focused.
-            if (document.activeElement!.tagName !== 'BODY') return;
+    const handleKeyDown = useCallback(
+        (event: { key: any; preventDefault: any }) => {
+            // Only process keyboard shortcuts if nothing is focused or being dragged.
+            if (currentAction || document.activeElement!.tagName !== 'BODY') return;
 
             switch (event.key) {
-
                 // Next turn.
                 case 'n':
                     untapAll();
@@ -138,14 +136,13 @@ export const GameLayout = () => {
                     break;
             }
         },
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-        [gameState]
+        [gameState, currentAction]
     );
 
     useEffect(() => {
-        document.addEventListener('keydown', handleKeyPress);
-        return () => document.removeEventListener('keydown', handleKeyPress);
-    }, [handleKeyPress]);
+        document.addEventListener('keydown', handleKeyDown);
+        return () => document.removeEventListener('keydown', handleKeyDown);
+    }, [handleKeyDown]);
 
     const sliceEndElements = (fromArray: any[], toArray: any[], num: number) => {
         const cutIndex = fromArray.length - num;
@@ -297,7 +294,11 @@ export const GameLayout = () => {
                     showTopOnly={true}
                 />
             </div>
-            <LibrarySearch contents={gameState[ZoneName.Library]} open={librarySearchOpen} />
+            <LibrarySearch
+                contents={gameState[ZoneName.Library]}
+                open={librarySearchOpen}
+                requestClose={() => setLibrarySearchOpen(false)}
+            />
         </div>
     );
 };
