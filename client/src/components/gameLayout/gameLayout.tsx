@@ -251,6 +251,17 @@ export const GameLayout = () => {
         });
     };
 
+    const tutorCard = (zoneCard?: ZoneCardInfo) => {
+        setLibrarySearchOpen(false);
+        if (!zoneCard) return;
+        const [piece1, piece2] = sliceCardFromZone(zoneCard, ZoneName.Library);
+        setGameState({
+            ...gameState,
+            [ZoneName.Library]: piece1.concat(piece2),
+            [ZoneName.Hand]: gameState[ZoneName.Hand].concat(zoneCard)
+        });
+    };
+
     const zoneProps = { action: currentAction, onCardDrag, onCardDragStop };
     return (
         <div className='gameLayout' onMouseMove={onMouseMove}>
@@ -297,7 +308,7 @@ export const GameLayout = () => {
             <LibrarySearch
                 contents={gameState[ZoneName.Library]}
                 open={librarySearchOpen}
-                requestClose={() => setLibrarySearchOpen(false)}
+                requestClose={tutorCard}
             />
         </div>
     );
