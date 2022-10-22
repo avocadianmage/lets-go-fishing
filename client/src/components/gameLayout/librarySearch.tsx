@@ -32,7 +32,7 @@ export const LibrarySearch = ({ open, contents, requestClose }: LibrarySearchPro
                     <TextField {...params} placeholder='Search library' autoFocus />
                 )}
                 onChange={(_, value) => setSelection(value?.zoneCard)}
-                onClose={(_, reason) => setAccepted(reason === 'selectOption' || reason === 'blur')}
+                onClose={(_, reason) => setAccepted(reason === 'selectOption')}
             />
         </Modal>
     );
