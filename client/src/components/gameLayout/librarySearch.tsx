@@ -19,7 +19,7 @@ const style = {
     top: '10%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
-    width: 400,
+    width: 600,
     bgcolor: 'background.default',
 };
 
@@ -56,11 +56,18 @@ export const LibrarySearch = ({ open, contents, requestClose }: LibrarySearchPro
                 open={open}
                 options={transformContents(contents)}
                 sx={style}
-                isOptionEqualToValue={(option, value) => option.label === value.label }
+                isOptionEqualToValue={(option, value) => option.label === value.label}
                 renderInput={(props) => (
                     <TextField {...props} placeholder='Search library' autoFocus />
                 )}
-                renderOption={(props, { label }) => <li {...props}>{label}</li>}
+                renderOption={(props, { label, count }) => (
+                    <li {...props}>
+                        <div style={{ width: '100%' }}>
+                            {label}
+                            <span style={{ float: 'right' }}>x {count}</span>
+                        </div>
+                    </li>
+                )}
                 onChange={(_, value) => setSelection(value?.zoneCard)}
                 onClose={(_, reason) => setAccepted(reason === 'selectOption')}
             />
