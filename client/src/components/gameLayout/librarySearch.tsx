@@ -64,7 +64,9 @@ export const LibrarySearch = ({ open, contents, requestClose }: LibrarySearchPro
                     <li {...props}>
                         <div style={{ width: '100%' }}>
                             {label}
-                            <span style={{ float: 'right' }}>x {count}</span>
+                            <span style={{ float: 'right' }}>
+                                <span style={{ fontSize: '0.8em' }}>x</span>&nbsp;{count}
+                            </span>
                         </div>
                     </li>
                 )}
