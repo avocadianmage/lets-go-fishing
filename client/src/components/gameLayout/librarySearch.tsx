@@ -33,7 +33,7 @@ const transformContents = (contents: ZoneCardInfo[]) => {
 
     const cardOptions = [];
     for (let label in map) cardOptions.push(map[label]);
-    return cardOptions;
+    return cardOptions.sort((a, b) => a.label.localeCompare(b.label));
 };
 
 export const LibrarySearch = ({ open, contents, requestClose }: LibrarySearchProps) => {
