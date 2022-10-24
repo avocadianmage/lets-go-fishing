@@ -56,6 +56,7 @@ export const LibrarySearch = ({ open, contents, requestClose }: LibrarySearchPro
                 open={open}
                 options={transformContents(contents)}
                 sx={style}
+                isOptionEqualToValue={(option, value) => option.label === value.label }
                 renderInput={(props) => (
                     <TextField {...props} placeholder='Search library' autoFocus />
                 )}
