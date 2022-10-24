@@ -8,13 +8,32 @@ interface LibrarySearchProps {
     requestClose(selection?: ZoneCardInfo): void;
 }
 
+interface CardOptionProps {
+    label: string;
+    zoneCard: ZoneCardInfo;
+    count: number;
+}
+
 const style = {
     position: 'absolute' as 'absolute',
     top: '10%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
     width: 400,
-    bgcolor: 'background.default'
+    bgcolor: 'background.default',
+};
+
+const transformContents = (contents: ZoneCardInfo[]) => {
+    const map: { [label: string]: CardOptionProps } = {};
+    contents.forEach((zoneCard) => {
+        const label: string = zoneCard.card.name;
+        if (map[label]) map[label].count++;
+        else map[label] = { label, zoneCard, count: 1 };
+    });
+
+    const cardOptions = [];
+    for (let label in map) cardOptions.push(map[label]);
+    return cardOptions;
 };
 
 export const LibrarySearch = ({ open, contents, requestClose }: LibrarySearchProps) => {
@@ -35,11 +54,12 @@ export const LibrarySearch = ({ open, contents, requestClose }: LibrarySearchPro
                 autoHighlight
                 forcePopupIcon={false}
                 open={open}
-                options={contents.map((zoneCard) => ({ label: zoneCard.card.name, zoneCard }))}
+                options={transformContents(contents)}
                 sx={style}
-                renderInput={(params) => (
-                    <TextField {...params} placeholder='Search library' autoFocus />
+                renderInput={(props) => (
+                    <TextField {...props} placeholder='Search library' autoFocus />
                 )}
+                renderOption={(props, { label }) => <li {...props}>{label}</li>}
                 onChange={(_, value) => setSelection(value?.zoneCard)}
                 onClose={(_, reason) => setAccepted(reason === 'selectOption')}
             />
