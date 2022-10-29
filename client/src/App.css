@@ -56,22 +56,23 @@ button {
 /* Animations */
 @keyframes wiggle {
     0% {
-        transform: rotate(0deg);
+        transform: translateX(0);
     }
     25% {
-        transform: rotate(5deg);
+        transform: translateX(10px);
     }
     50% {
-        transform: rotate(0eg);
+        transform: translateX(0px);
     }
     75% {
-        transform: rotate(-5deg);
+        transform: translateX(10px);
     }
     100% {
-        transform: rotate(0deg);
+        transform: translateX(0);
     }
 }
 
 .wiggle {
     animation: wiggle 0.2s;
+    animation-iteration-count: 1.5;
 }

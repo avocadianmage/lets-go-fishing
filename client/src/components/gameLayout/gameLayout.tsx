@@ -65,7 +65,7 @@ export const GameLayout = () => {
 
     const animateShuffle = () => {
         setLibraryShuffleAnimationRunning(true);
-        setTimeout(() => setLibraryShuffleAnimationRunning(false), 200);
+        setTimeout(() => setLibraryShuffleAnimationRunning(false), 300);
     };
 
     const startGame = (deckInfo?: DeckInfo) => {
