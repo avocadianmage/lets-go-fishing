@@ -44,6 +44,7 @@ export const GameLayout = () => {
     });
     const [currentAction, setCurrentAction] = useState<CardActionInfo>();
     const [librarySearchOpen, setLibrarySearchOpen] = useState(false);
+    const [libraryShuffleAnimationRunning, setLibraryShuffleAnimationRunning] = useState(true);
 
     const fromLibrary = (action: CardActionInfo) => action.sourceZone === ZoneName.Library;
     const fromBattlefield = (action: CardActionInfo) => action.sourceZone === ZoneName.Battlefield;
@@ -260,6 +261,8 @@ export const GameLayout = () => {
             [ZoneName.Library]: shuffle(piece1.concat(piece2)),
             [ZoneName.Hand]: gameState[ZoneName.Hand].concat(zoneCard)
         });
+        setLibraryShuffleAnimationRunning(true);
+        setTimeout(() => setLibraryShuffleAnimationRunning(false), 200);
     };
 
     const zoneProps = { action: currentAction, onCardDrag, onCardDragStop };
@@ -297,6 +300,7 @@ export const GameLayout = () => {
                     contents={gameState[ZoneName.Library]}
                     faceDown={true}
                     showTopOnly={true}
+                    wiggleCards={libraryShuffleAnimationRunning}
                 />
                 <StackZone
                     {...zoneProps}

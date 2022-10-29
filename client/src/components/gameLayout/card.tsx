@@ -19,6 +19,7 @@ export interface CardActionInfo {
 interface CardProps {
     zoneCard: ZoneCardInfo;
     faceDown?: boolean;
+    wiggle?: boolean;
     onDrag: CardActionEventHandler;
     onDragStop: CardActionEventHandler;
     onMouseEnter: CardActionEventHandler;
@@ -31,6 +32,7 @@ export type CardActionEventHandler = (action: CardActionInfo) => boolean;
 export const Card = ({
     zoneCard,
     faceDown,
+    wiggle,
     onDrag,
     onDragStop,
     onMouseEnter,
@@ -83,7 +85,8 @@ export const Card = ({
         (isLoading ? ' loading' : '') +
         (faceUpAndLoaded && previewing ? ' previewing' : '') +
         (faceUpAndLoaded && card.foil ? ' foil' : '') +
-        (tapped ? ' tapped' : '');
+        (tapped ? ' tapped' : '') +
+        (wiggle ? ' wiggle' : '');
     return (
         <Draggable
             nodeRef={nodeRef}

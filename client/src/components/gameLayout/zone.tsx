@@ -18,6 +18,7 @@ export interface ZoneProps {
     classesToAppend?: string;
     faceDown?: boolean;
     action?: CardActionInfo;
+    wiggleCards?: boolean;
     onCardDrag?: CardActionEventHandler;
     onCardDragStop?: CardActionEventHandler;
     onCardMouseEnter?: CardActionEventHandler;
@@ -33,6 +34,7 @@ export const Zone = forwardRef(
             classesToAppend,
             faceDown,
             action,
+            wiggleCards,
             onCardDrag,
             onCardDragStop,
             onCardMouseEnter,
@@ -69,6 +71,7 @@ export const Zone = forwardRef(
                         key={zc.card.id}
                         zoneCard={zc}
                         faceDown={faceDown}
+                        wiggle={wiggleCards}
                         onDrag={(action) => fireAction(action, onCardDrag)}
                         onDragStop={(action) => fireAction(action, onCardDragStop)}
                         onMouseEnter={(action) => fireAction(action, onCardMouseEnter)}

@@ -1,4 +1,4 @@
-@import "nord.css";
+@import 'nord.css';
 :root {
     --card-width: 244px;
     --card-height: 340px;
@@ -7,7 +7,9 @@
     --middle-gray: #9a9fad;
 }
 
-html, body, #root {
+html,
+body,
+#root {
     height: 100%;
     overflow: hidden;
 }
@@ -17,7 +19,8 @@ body {
     color: var(--nord6);
 }
 
-input, select {
+input,
+select {
     appearance: none;
     box-sizing: border-box;
     background-color: transparent;
@@ -48,4 +51,27 @@ button {
 
 ::-webkit-scrollbar-thumb {
     background: var(--middle-gray);
+}
+
+/* Animations */
+@keyframes wiggle {
+    0% {
+        transform: translateX(0);
+    }
+    25% {
+        transform: translateX(5px);
+    }
+    50% {
+        transform: translateX(-5px);
+    }
+    75% {
+        transform: translateX(5px);
+    }
+    100% {
+        transform: translateX(0);
+    }
+}
+
+.wiggle {
+    animation: wiggle 0.2s;
 }
