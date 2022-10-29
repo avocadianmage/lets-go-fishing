@@ -102,6 +102,14 @@ export const GameLayout = () => {
         [gameState]
     );
 
+    const shuffleLibrary = () => {
+        setGameState({
+            ...gameState,
+            [ZoneName.Library]: shuffle(gameState[ZoneName.Library]),
+        });
+        animateShuffle();
+    };
+
     const untapAll = useCallback(() => {
         setGameState((g) => ({
             ...g,
@@ -124,7 +132,6 @@ export const GameLayout = () => {
             if (currentAction || document.activeElement!.tagName !== 'BODY') return;
 
             switch (event.key) {
-                // Draw.
                 case 'd':
                     draw();
                     break;
@@ -135,7 +142,10 @@ export const GameLayout = () => {
                     draw();
                     break;
 
-                // Restart game.
+                case 's':
+                    shuffleLibrary();
+                    break;
+
                 case 'r':
                     startGame();
                     break;
