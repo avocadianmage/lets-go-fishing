@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { DeckInfo } from '../../services/dbSvc';
 import { DeckInfoService } from '../../services/deckInfoSvc';
-import AddIcon from '@mui/icons-material/Add';
+import { IconButton, InputAdornment, Paper, TextField } from '@mui/material';
+import { Add } from '@mui/icons-material';
 
 interface DeckImportProps {
     onImport(value: DeckInfo): void;
@@ -28,23 +29,30 @@ export const DeckImport = ({ onImport }: DeckImportProps) => {
     };
 
     return (
-        <div style={{ position: 'relative' }}>
-            <input
-                className='control outline textfield'
-                type='text'
+        <Paper>
+            <TextField
                 placeholder='Enter Moxfield deck address'
+                InputProps={{
+                    endAdornment: (
+                        <InputAdornment position='end'>
+                            <IconButton
+                                aria-label='import deck'
+                                edge='end'
+                                sx={{ color: 'var(--nord14)' }}
+                                disabled={isDisabled}
+                                onClick={doImport}
+                            >
+                                <Add />
+                            </IconButton>
+                        </InputAdornment>
+                    ),
+                }}
+                variant='outlined'
+                sx={{ width: '100%' }}
                 value={value}
                 onChange={(e) => setValue(e.target.value)}
                 onKeyDown={fireKeyDown}
             />
-            <button
-                className='textfield-button add-icon'
-                style={{ position: 'absolute', top: '3px', right: '3px' }}
-                disabled={isDisabled}
-                onClick={doImport}
-            >
-                <AddIcon />
-            </button>
-        </div>
+        </Paper>
     );
 };

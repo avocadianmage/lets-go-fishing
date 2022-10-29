@@ -6,10 +6,6 @@ import { GameLayout } from './components/gameLayout/gameLayout';
 const darkTheme = createTheme({
     palette: {
         mode: 'dark',
-        background: {
-            default: 'var(--nord0)',
-            paper: 'var(--nord0)'
-        }
     },
     typography: {
         fontFamily: [

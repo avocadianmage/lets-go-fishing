@@ -19,7 +19,6 @@ body {
     color: var(--nord6);
 }
 
-input,
 select {
     appearance: none;
     box-sizing: border-box;

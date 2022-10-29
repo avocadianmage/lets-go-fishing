@@ -27,14 +27,6 @@
     border-color: var(--nord8);
 }
 
-.textfield {
-    padding: 10px 42px 10px 10px;
-}
-
-button.add-icon {
-    color: var(--nord14);
-}
-
 .textfield-button {
     background-size: 24px 24px;
     background-repeat: no-repeat;
