@@ -56,19 +56,19 @@ button {
 /* Animations */
 @keyframes wiggle {
     0% {
-        transform: translateX(0);
+        transform: rotate(0deg);
     }
     25% {
-        transform: translateX(5px);
+        transform: rotate(5deg);
     }
     50% {
-        transform: translateX(-5px);
+        transform: rotate(0eg);
     }
     75% {
-        transform: translateX(5px);
+        transform: rotate(-5deg);
     }
     100% {
-        transform: translateX(0);
+        transform: rotate(0deg);
     }
 }
 

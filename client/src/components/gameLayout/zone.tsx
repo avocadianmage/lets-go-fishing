@@ -66,12 +66,12 @@ export const Zone = forwardRef(
                 data-name={name.toUpperCase()}
                 style={{ zIndex: isSourceZone ? 1 : 0 }}
             >
-                {updatedContents.map((zc) => (
+                {updatedContents.map((zc, index) => (
                     <Card
                         key={zc.card.id}
                         zoneCard={zc}
                         faceDown={faceDown}
-                        wiggle={wiggleCards}
+                        wiggle={index === updatedContents.length - 1 ? wiggleCards : false}
                         onDrag={(action) => fireAction(action, onCardDrag)}
                         onDragStop={(action) => fireAction(action, onCardDragStop)}
                         onMouseEnter={(action) => fireAction(action, onCardMouseEnter)}

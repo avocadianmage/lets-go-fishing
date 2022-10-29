@@ -63,6 +63,11 @@ export const GameLayout = () => {
         return { library: fromArray, hand: toArray, command: commanders.map((card) => ({ card })) };
     };
 
+    const animateShuffle = () => {
+        setLibraryShuffleAnimationRunning(true);
+        setTimeout(() => setLibraryShuffleAnimationRunning(false), 200);
+    };
+
     const startGame = (deckInfo?: DeckInfo) => {
         deckInfo = deckInfo ?? currentDeckInfo;
         setCurrentDeckInfo(deckInfo);
@@ -78,6 +83,7 @@ export const GameLayout = () => {
             [ZoneName.Exile]: [],
             [ZoneName.Command]: command,
         });
+        animateShuffle();
     };
 
     const draw = useCallback(
@@ -261,8 +267,7 @@ export const GameLayout = () => {
             [ZoneName.Library]: shuffle(piece1.concat(piece2)),
             [ZoneName.Hand]: gameState[ZoneName.Hand].concat(zoneCard)
         });
-        setLibraryShuffleAnimationRunning(true);
-        setTimeout(() => setLibraryShuffleAnimationRunning(false), 200);
+        animateShuffle();
     };
 
     const zoneProps = { action: currentAction, onCardDrag, onCardDragStop };
