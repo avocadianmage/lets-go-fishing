@@ -12,7 +12,7 @@ interface StackZoneProps extends ZoneProps {
 }
 
 export const StackZone = forwardRef((props: StackZoneProps, ref) => {
-    const { name, contents, action, showTopOnly, vertical, onCardMouseEnter } = props;
+    const { contents, showTopOnly, vertical, onCardMouseEnter } = props;
 
     const [previewingCard, setPreviewingCard] = useDebouncedValue<CardInfo>(undefined, 100);
 
@@ -35,16 +35,8 @@ export const StackZone = forwardRef((props: StackZoneProps, ref) => {
         return [offset * index + ZONE_PADDING_PX + centeringOffset, ZONE_PADDING_PX];
     };
 
-    const isCardDragging = (card: CardInfo) => card.id === action?.card.id;
-
-    let nondraggedIndex = 0;
-    const getCardOffset = (card: CardInfo, index: number) => {
-        const isDragging = isCardDragging(card);
-        const positioningCardCount = contents.length - (
-            (action?.sourceZone !== name || isDragging) ? 0 : 1
-        );
-        const positioningIndex = isDragging ? index : nondraggedIndex++;
-        const [offsetDim, constantDim] = getOffsetsForIndex(positioningCardCount, positioningIndex);
+    const getCardOffset = (index: number) => {
+        const [offsetDim, constantDim] = getOffsetsForIndex(contents.length, index);
         return vertical ? { x: constantDim, y: offsetDim } : { x: offsetDim, y: constantDim };
     };
 
@@ -57,7 +49,7 @@ export const StackZone = forwardRef((props: StackZoneProps, ref) => {
     // When only showing the top card, still need to load two in case the user drags the top card.
     const updatedContents = contents.slice(showTopOnly ? contents.length - 2 : 0).map((zc, i) => {
         const { card } = zc;
-        const { x, y } = getCardOffset(card, i);
+        const { x, y } = getCardOffset(i);
         const previewing = card.id === previewingCard?.id;
         return { ...zc, x, y, previewing };
     });
