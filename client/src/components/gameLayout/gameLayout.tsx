@@ -124,6 +124,11 @@ export const GameLayout = () => {
             if (currentAction || document.activeElement!.tagName !== 'BODY') return;
 
             switch (event.key) {
+                // Draw.
+                case 'd':
+                    draw();
+                    break;
+                
                 // Next turn.
                 case 'n':
                     untapAll();
