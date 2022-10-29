@@ -37,7 +37,7 @@ export const StackZone = forwardRef((props: StackZoneProps, ref) => {
 
     const getCardOffset = (index: number) => {
         const [offsetDim, constantDim] = getOffsetsForIndex(contents.length, index);
-        return vertical ? { x: constantDim, y: offsetDim } : { x: offsetDim, y: constantDim };
+        return vertical ? [constantDim, offsetDim] : [offsetDim, constantDim];
     };
 
     const className = (
@@ -49,7 +49,7 @@ export const StackZone = forwardRef((props: StackZoneProps, ref) => {
     // When only showing the top card, still need to load two in case the user drags the top card.
     const updatedContents = contents.slice(showTopOnly ? contents.length - 2 : 0).map((zc, i) => {
         const { card } = zc;
-        const { x, y } = getCardOffset(i);
+        const [x, y] = getCardOffset(i);
         const previewing = card.id === previewingCard?.id;
         return { ...zc, x, y, previewing };
     });
