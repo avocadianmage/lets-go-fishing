@@ -69,7 +69,6 @@ export const GameLayout = () => {
     };
 
     const startGame = (deckInfo?: DeckInfo) => {
-        deckInfo = deckInfo ?? currentDeckInfo;
         setCurrentDeckInfo(deckInfo);
         const { library, hand, command } = deckInfo
             ? getStartingZoneCards(deckInfo)
@@ -147,7 +146,7 @@ export const GameLayout = () => {
                     break;
 
                 case 'r':
-                    startGame();
+                    startGame(currentDeckInfo);
                     break;
 
                 // Search library.
