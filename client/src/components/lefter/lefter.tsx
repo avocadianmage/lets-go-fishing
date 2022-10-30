@@ -1,8 +1,6 @@
 import { useEffect, useState } from 'react';
 import { DatabaseService, DeckInfo } from '../../services/dbSvc';
 import { DeckImport } from './deckImport';
-
-import '../css/lefter.css';
 import {
     Divider,
     IconButton,
