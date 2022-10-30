@@ -4,7 +4,6 @@
     --card-height: 340px;
     --zone-padding: 6px;
     --zone-border-width: 4px;
-    --middle-gray: #9a9fad;
 }
 
 html,
@@ -19,37 +18,12 @@ body {
     color: var(--nord6);
 }
 
-select {
-    appearance: none;
-    box-sizing: border-box;
-    background-color: transparent;
-    border: none;
-    border-radius: 0;
-    padding: 0;
-    margin: 0;
-    width: 100%;
-    font-family: inherit;
-    font-size: inherit;
-    cursor: inherit;
-    line-height: inherit;
-    outline: none;
-    overflow-y: auto;
-}
-
-button {
-    color: var(--nord4);
-}
-
-::-webkit-scrollbar {
-    width: 4px;
-}
-
-::-webkit-scrollbar-track {
-    background: var(--nord1);
-}
-
-::-webkit-scrollbar-thumb {
-    background: var(--middle-gray);
+h1 {
+    font-weight: bold;
+    font-size: 20px;
+    color: var(--nord13);
+    margin: 6px 6px 16px 6px;
+    text-transform: uppercase;
 }
 
 /* Animations */

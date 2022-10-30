@@ -69,7 +69,7 @@ export const Lefter = ({ onDeckSelect }: LefterProps) => {
 
     return (
         <div id='lefter' className='pane'>
-            <div className='heading'>LET'S GO FISHING</div>
+            <h1>Let's Go Fishing</h1>
 
             <Paper>
                 <DeckImport onImport={doImport} />
