@@ -1,100 +1,110 @@
 import { useEffect, useState } from 'react';
 import { DatabaseService, DeckInfo } from '../../services/dbSvc';
 import { DeckImport } from './deckImport';
-import OpenInNewIcon from '@mui/icons-material/OpenInNew';
-import RemoveIcon from '@mui/icons-material/Remove';
 
 import '../css/lefter.css';
+import {
+    Divider,
+    IconButton,
+    List,
+    ListItem,
+    ListItemButton,
+    ListItemText,
+    Paper,
+} from '@mui/material';
+import { OpenInNew, Remove } from '@mui/icons-material';
 
 interface LefterProps {
     onDeckSelect(deckInfo?: DeckInfo): void;
 }
 
 export const Lefter = ({ onDeckSelect }: LefterProps) => {
+    const [selectedIndex, setSelectedIndex] = useState(0);
     const [deckInfos, setDeckInfos] = useState<DeckInfo[]>([]);
 
-    const [selectedDeck, setSelectedDeck] = useState<DeckInfo>();
-    const updateSelectedDeck = (value?: DeckInfo) => {
-        DatabaseService.putSelectedDeckName(value?.name ?? '');
-        setSelectedDeck(value);
-        onDeckSelect(value);
+    const updateDecksAndSelection = (index: number, updatedDeckInfos?: DeckInfo[]) => {
+        const decks = updatedDeckInfos ?? deckInfos;
+        const selectedDeck = decks.length === 0 ? undefined : decks[index];
+        DatabaseService.putSelectedDeckName(selectedDeck?.name ?? '');
+        setDeckInfos(decks);
+        setSelectedIndex(index);
+        onDeckSelect(selectedDeck);
     };
 
-    const fireDeckSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        const deckInfo = deckInfos.find((di) => di.name === e.target.value);
-        updateSelectedDeck(deckInfo);
-    };
+    const fireDeckRemove = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>, index: number) => {
+        e.stopPropagation();
 
-    const fireDeckRemoveClick = () => {
-        const deckToRemove = selectedDeck!.name;
+        const deckToRemove = deckInfos[index].name;
         DatabaseService.deleteDeck(deckToRemove);
 
-        const selectedIndex = deckInfos.findIndex((di: DeckInfo) => di.name === deckToRemove);
         const updatedDeckInfos = deckInfos.filter((di: DeckInfo) => di.name !== deckToRemove);
-        const updatedSelectedIndex =
+        let selectedIndex = deckInfos.findIndex((di: DeckInfo) => di.name === deckToRemove);
+        selectedIndex =
             selectedIndex <= updatedDeckInfos.length - 1 ? selectedIndex : selectedIndex - 1;
-        setDeckInfos(updatedDeckInfos);
-        updateSelectedDeck(updatedDeckInfos[updatedSelectedIndex]);
+        updateDecksAndSelection(selectedIndex, updatedDeckInfos);
     };
 
-    const fireDeckEditClick = () => {
-        window.open(selectedDeck?.url, '_blank');
+    const fireDeckEdit = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>, index: number) => {
+        e.stopPropagation();
+        window.open(deckInfos[index].url, '_blank');
     };
 
     const doImport = (deckInfo: DeckInfo) => {
-        setDeckInfos(deckInfos.concat(deckInfo));
-        updateSelectedDeck(deckInfo);
-    };
-
-    const loadDecks = async () => {
-        const decks = await DatabaseService.getDecks();
-        const savedSelectedDeckName = DatabaseService.getSelectedDeckName();
-        const deckToSelect = decks.find((di) => di.name === savedSelectedDeckName) ?? decks[0];
-        setDeckInfos(decks);
-        updateSelectedDeck(deckToSelect);
+        updateDecksAndSelection(deckInfos.length + 1, deckInfos.concat(deckInfo));
     };
 
     useEffect(() => {
-        loadDecks();
+        const fetchDecks = async () => {
+            const decks = await DatabaseService.getDecks();
+            const nameToSelect = DatabaseService.getSelectedDeckName();
+            const indexToSelect = Math.max(
+                0,
+                decks.findIndex((di) => di.name === nameToSelect)
+            );
+            updateDecksAndSelection(indexToSelect, decks);
+        };
+        fetchDecks();
+
+        // Run useEffect only once.
+        // eslint-disable-next-line
     }, []);
 
     return (
         <div id='lefter' className='pane'>
             <div className='heading'>LET'S GO FISHING</div>
 
-            <DeckImport onImport={doImport} />
-
-            <div className={'control outline'} style={{ display: 'flex', marginTop: '8px' }}>
-                <select
-                    className='control select'
-                    style={{ flex: 1 }}
-                    size={4}
-                    value={selectedDeck?.name}
-                    onChange={fireDeckSelectChange}
-                >
-                    {deckInfos.map((di) => (
-                        <option key={di.name} value={di.name}>
-                            {di.name}
-                        </option>
+            <Paper>
+                <DeckImport onImport={doImport} />
+                <Divider />
+                <List sx={{ height: 250, maxHeight: 250, overflow: 'auto' }}>
+                    {deckInfos.map((di, index) => (
+                        <ListItem key={index} disablePadding onFocus={(e) => e.target.blur()}>
+                            <ListItemButton
+                                selected={selectedIndex === index}
+                                onClick={() => updateDecksAndSelection(index)}
+                                sx={{ '&:hover': { '& svg': { opacity: 1 } } }}
+                            >
+                                <ListItemText primary={di.name} />
+                                <IconButton
+                                    aria-label='open deck in moxfield'
+                                    edge='end'
+                                    onClick={(e) => fireDeckEdit(e, index)}
+                                >
+                                    <OpenInNew sx={{ opacity: 0 }} />
+                                </IconButton>
+                                <IconButton
+                                    aria-label='remove deck'
+                                    edge='end'
+                                    onClick={(e) => fireDeckRemove(e, index)}
+                                    sx={{ color: 'var(--nord11)' }}
+                                >
+                                    <Remove sx={{ opacity: 0 }} />
+                                </IconButton>
+                            </ListItemButton>
+                        </ListItem>
                     ))}
-                </select>
-                <div>
-                    <button
-                        className='textfield-button deck-selection-button'
-                        disabled={!selectedDeck}
-                        onClick={fireDeckEditClick}
-                    >
-                        <OpenInNewIcon />
-                    </button>
-                    <button
-                        className='textfield-button deck-selection-button remove-button'
-                        disabled={!selectedDeck}
-                        onClick={fireDeckRemoveClick}
-                    >
-                        <RemoveIcon />
-                    </button>
-                </div>
-            </div>
+                </List>
+            </Paper>
         </div>
     );
 };
