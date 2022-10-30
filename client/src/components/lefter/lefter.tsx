@@ -48,7 +48,7 @@ export const Lefter = ({ onDeckSelect }: LefterProps) => {
     };
 
     const doImport = (deckInfo: DeckInfo) => {
-        updateDecksAndSelection(deckInfos.length + 1, deckInfos.concat(deckInfo));
+        updateDecksAndSelection(deckInfos.length, deckInfos.concat(deckInfo));
     };
 
     useEffect(() => {
