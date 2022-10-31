@@ -2,7 +2,6 @@ import './App.css';
 
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { GameLayout } from './components/gameLayout/gameLayout';
-import { grey } from '@mui/material/colors';
 
 const darkTheme = createTheme({
     palette: {
