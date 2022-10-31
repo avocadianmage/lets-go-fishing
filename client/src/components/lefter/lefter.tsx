@@ -1,54 +1,28 @@
 import { useEffect, useState } from 'react';
 import { DatabaseService, DeckInfo } from '../../services/dbSvc';
 import { DeckImport } from './deckImport';
-import {
-    Divider,
-    IconButton,
-    List,
-    ListItem,
-    ListItemButton,
-    ListItemText,
-    Paper,
-} from '@mui/material';
-import { OpenInNew, Remove } from '@mui/icons-material';
+import { Divider, Paper } from '@mui/material';
+import { DeckSelect } from './deckSelect';
 
 interface LefterProps {
     onDeckSelect(deckInfo?: DeckInfo): void;
 }
 
 export const Lefter = ({ onDeckSelect }: LefterProps) => {
+    const [decks, setDecks] = useState<DeckInfo[]>([]);
     const [selectedIndex, setSelectedIndex] = useState(0);
-    const [deckInfos, setDeckInfos] = useState<DeckInfo[]>([]);
 
-    const updateDecksAndSelection = (index: number, updatedDeckInfos?: DeckInfo[]) => {
-        const decks = updatedDeckInfos ?? deckInfos;
-        const selectedDeck = decks.length === 0 ? undefined : decks[index];
+    const updateDecksAndSelection = (index: number, updatedDecks?: DeckInfo[]) => {
+        updatedDecks = updatedDecks ?? decks;
+        const selectedDeck = updatedDecks.length === 0 ? undefined : updatedDecks[index];
         DatabaseService.putSelectedDeckName(selectedDeck?.name ?? '');
-        setDeckInfos(decks);
+        setDecks(updatedDecks);
         setSelectedIndex(index);
         onDeckSelect(selectedDeck);
     };
 
-    const fireDeckRemove = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>, index: number) => {
-        e.stopPropagation();
-
-        const deckToRemove = deckInfos[index].name;
-        DatabaseService.deleteDeck(deckToRemove);
-
-        const updatedDeckInfos = deckInfos.filter((di: DeckInfo) => di.name !== deckToRemove);
-        let selectedIndex = deckInfos.findIndex((di: DeckInfo) => di.name === deckToRemove);
-        selectedIndex =
-            selectedIndex <= updatedDeckInfos.length - 1 ? selectedIndex : selectedIndex - 1;
-        updateDecksAndSelection(selectedIndex, updatedDeckInfos);
-    };
-
-    const fireDeckEdit = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>, index: number) => {
-        e.stopPropagation();
-        window.open(deckInfos[index].url, '_blank');
-    };
-
-    const doImport = (deckInfo: DeckInfo) => {
-        updateDecksAndSelection(deckInfos.length, deckInfos.concat(deckInfo));
+    const addDeck = (deckInfo: DeckInfo) => {
+        updateDecksAndSelection(decks.length, decks.concat(deckInfo));
     };
 
     useEffect(() => {
@@ -72,36 +46,13 @@ export const Lefter = ({ onDeckSelect }: LefterProps) => {
             <h1>Let's Go Fishing</h1>
 
             <Paper>
-                <DeckImport onImport={doImport} />
+                <DeckImport onImport={addDeck} />
                 <Divider />
-                <List sx={{ height: 250, maxHeight: 250, overflow: 'auto' }}>
-                    {deckInfos.map((di, index) => (
-                        <ListItem key={index} disablePadding onFocus={(e) => e.target.blur()}>
-                            <ListItemButton
-                                selected={selectedIndex === index}
-                                onClick={() => updateDecksAndSelection(index)}
-                                sx={{ '&:hover': { '& svg': { opacity: 1 } } }}
-                            >
-                                <ListItemText primary={di.name} />
-                                <IconButton
-                                    aria-label='open deck in moxfield'
-                                    edge='end'
-                                    onClick={(e) => fireDeckEdit(e, index)}
-                                >
-                                    <OpenInNew sx={{ opacity: 0 }} />
-                                </IconButton>
-                                <IconButton
-                                    aria-label='remove deck'
-                                    edge='end'
-                                    onClick={(e) => fireDeckRemove(e, index)}
-                                    sx={{ color: 'var(--nord11)' }}
-                                >
-                                    <Remove sx={{ opacity: 0 }} />
-                                </IconButton>
-                            </ListItemButton>
-                        </ListItem>
-                    ))}
-                </List>
+                <DeckSelect
+                    decks={decks}
+                    selectedIndex={selectedIndex}
+                    onUpdateDecksAndSelection={updateDecksAndSelection}
+                />
             </Paper>
         </div>
     );
