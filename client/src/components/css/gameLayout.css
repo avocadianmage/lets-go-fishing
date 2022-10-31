@@ -2,7 +2,7 @@
     display: flex;
     flex-flow: column;
     height: calc(100% - 6px);
-    margin: 3px;
+    margin: 2px;
 }
 
 .zone {

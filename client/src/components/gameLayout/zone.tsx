@@ -60,25 +60,25 @@ export const Zone = forwardRef(
             handler ? handler({ ...action, sourceZone: name }) : true;
         return (
             <Pane
-                    ref={ref}
-                    id={name}
-                    className={className}
-                    data-name={name.toUpperCase()}
-                    sx={{ zIndex: isSourceZone ? Number.MAX_SAFE_INTEGER - 1 : 0 }}
-                >
-                    {updatedContents.map((zc, index) => (
-                        <Card
-                            key={zc.card.id}
-                            zoneCard={zc}
-                            faceDown={faceDown}
-                            wiggle={index === updatedContents.length - 1 ? wiggleCards : false}
-                            onDrag={(action) => fireAction(action, onCardDrag)}
-                            onDragStop={(action) => fireAction(action, onCardDragStop)}
-                            onMouseEnter={(action) => fireAction(action, onCardMouseEnter)}
-                            onMouseLeave={(action) => fireAction(action, onCardMouseLeave)}
-                            onDoubleClick={(action) => fireAction(action, onCardDoubleClick)}
-                        />
-                    ))}
+                ref={ref}
+                id={name}
+                className={className}
+                data-name={name.toUpperCase()}
+                sx={{ zIndex: isSourceZone ? 1 : 0 }}
+            >
+                {updatedContents.map((zc, index) => (
+                    <Card
+                        key={zc.card.id}
+                        zoneCard={zc}
+                        faceDown={faceDown}
+                        wiggle={index === updatedContents.length - 1 ? wiggleCards : false}
+                        onDrag={(action) => fireAction(action, onCardDrag)}
+                        onDragStop={(action) => fireAction(action, onCardDragStop)}
+                        onMouseEnter={(action) => fireAction(action, onCardMouseEnter)}
+                        onMouseLeave={(action) => fireAction(action, onCardMouseLeave)}
+                        onDoubleClick={(action) => fireAction(action, onCardDoubleClick)}
+                    />
+                ))}
             </Pane>
         );
     }
