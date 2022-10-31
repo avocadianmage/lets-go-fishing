@@ -1,7 +1,7 @@
 import { ForwardedRef, forwardRef } from 'react';
 import { CardInfo } from '../../services/dbSvc';
 import { Card, CardActionEventHandler, CardActionInfo } from './card';
-import { ZoneName } from './gameLayout';
+import { Pane, ZoneName } from './gameLayout';
 
 export interface ZoneCardInfo {
     card: CardInfo;
@@ -39,14 +39,14 @@ export const Zone = forwardRef(
             onCardDragStop,
             onCardMouseEnter,
             onCardMouseLeave,
-            onCardDoubleClick
+            onCardDoubleClick,
         }: ZoneProps,
         ref: ForwardedRef<HTMLDivElement>
     ) => {
         const isSourceZone = action?.sourceZone === name;
         const isTargetZone = action?.targetZone === name;
         const className =
-            'pane zone' +
+            'zone' +
             (classesToAppend ? ' ' + classesToAppend : '') +
             (isTargetZone ? ' highlight' : '');
 
@@ -59,27 +59,27 @@ export const Zone = forwardRef(
         const fireAction = (action: CardActionInfo, handler?: CardActionEventHandler) =>
             handler ? handler({ ...action, sourceZone: name }) : true;
         return (
-            <div
-                ref={ref}
-                id={name}
-                className={className}
-                data-name={name.toUpperCase()}
-                style={{ zIndex: isSourceZone ? 1 : 0 }}
-            >
-                {updatedContents.map((zc, index) => (
-                    <Card
-                        key={zc.card.id}
-                        zoneCard={zc}
-                        faceDown={faceDown}
-                        wiggle={index === updatedContents.length - 1 ? wiggleCards : false}
-                        onDrag={(action) => fireAction(action, onCardDrag)}
-                        onDragStop={(action) => fireAction(action, onCardDragStop)}
-                        onMouseEnter={(action) => fireAction(action, onCardMouseEnter)}
-                        onMouseLeave={(action) => fireAction(action, onCardMouseLeave)}
-                        onDoubleClick={(action) => fireAction(action, onCardDoubleClick)}
-                    />
-                ))}
-            </div>
+            <Pane
+                    ref={ref}
+                    id={name}
+                    className={className}
+                    data-name={name.toUpperCase()}
+                    sx={{ zIndex: isSourceZone ? Number.MAX_SAFE_INTEGER - 1 : 0 }}
+                >
+                    {updatedContents.map((zc, index) => (
+                        <Card
+                            key={zc.card.id}
+                            zoneCard={zc}
+                            faceDown={faceDown}
+                            wiggle={index === updatedContents.length - 1 ? wiggleCards : false}
+                            onDrag={(action) => fireAction(action, onCardDrag)}
+                            onDragStop={(action) => fireAction(action, onCardDragStop)}
+                            onMouseEnter={(action) => fireAction(action, onCardMouseEnter)}
+                            onMouseLeave={(action) => fireAction(action, onCardMouseLeave)}
+                            onDoubleClick={(action) => fireAction(action, onCardDoubleClick)}
+                        />
+                    ))}
+            </Pane>
         );
     }
 );

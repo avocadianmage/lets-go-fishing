@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
 import { DatabaseService, DeckInfo } from '../../services/dbSvc';
 import { DeckImport } from './deckImport';
-import { Divider, Paper } from '@mui/material';
+import { CardContent, Divider, Paper } from '@mui/material';
 import { DeckSelect } from './deckSelect';
+import { Pane } from '../gameLayout/gameLayout';
 
 interface LefterProps {
     onDeckSelect(deckInfo?: DeckInfo): void;
@@ -44,19 +45,21 @@ export const Lefter = ({ onDeckSelect }: LefterProps) => {
     }, []);
 
     return (
-        <div id='lefter' className='pane'>
-            <h1 style={{ margin: 6, marginBottom: 16 }}>Let's Go Fishing</h1>
+        <Pane id='lefter'>
+            <CardContent>
+                <h1 style={{ margin: 6, marginBottom: 16 }}>Let's Go Fishing</h1>
 
-            <Paper>
-                <DeckImport ref={deckImportRef} onImport={addDeck} />
-                <Divider />
-                <DeckSelect
-                    decks={decks}
-                    selectedIndex={selectedIndex}
-                    onUpdateDecksAndSelection={updateDecksAndSelection}
-                    onClickPlaceholder={() => deckImportRef.current?.focus()}
-                />
-            </Paper>
-        </div>
+                <Paper>
+                    <DeckImport ref={deckImportRef} onImport={addDeck} />
+                    <Divider />
+                    <DeckSelect
+                        decks={decks}
+                        selectedIndex={selectedIndex}
+                        onUpdateDecksAndSelection={updateDecksAndSelection}
+                        onClickPlaceholder={() => deckImportRef.current?.focus()}
+                    />
+                </Paper>
+            </CardContent>
+        </Pane>
     );
 };

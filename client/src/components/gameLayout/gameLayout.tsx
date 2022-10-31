@@ -3,13 +3,30 @@ import '../css/gameLayout.css';
 import shuffle from 'lodash/shuffle';
 import React, { useCallback, useEffect, useState } from 'react';
 import { DeckInfo } from '../../services/dbSvc';
-import { STARTING_HAND_SIZE, ZONE_BORDER_PX } from '../../utilities/constants';
+import {
+    CARD_HEIGHT_PX,
+    CARD_WIDTH_PX,
+    STARTING_HAND_SIZE,
+    ZONE_BORDER_PX,
+    ZONE_PADDING_PX,
+} from '../../utilities/constants';
 import { CardActionInfo } from './card';
 import { ZoneCardInfo } from './zone';
 import { StackZone } from './stackZone';
 import { BattlefieldZone } from './battlefieldZone';
 import { Lefter } from '../lefter/lefter';
 import { LibrarySearch } from './librarySearch';
+import { Card, styled } from '@mui/material';
+
+export const Pane = styled(Card)(() => ({
+    backgroundImage: 'linear-gradient(rgba(255, 255, 255, 0.11), rgba(255, 255, 255, 0.11))',
+    minWidth: CARD_WIDTH_PX,
+    minHeight: CARD_HEIGHT_PX,
+    position: 'relative',
+    overflow: 'visible',
+    margin: 2,
+    padding: ZONE_PADDING_PX,
+}));
 
 export enum ZoneName {
     None = 'none',
@@ -134,7 +151,7 @@ export const GameLayout = () => {
                 case 'd':
                     draw();
                     break;
-                
+
                 // Next turn.
                 case 'n':
                     untapAll();
@@ -279,7 +296,7 @@ export const GameLayout = () => {
         setGameState({
             ...gameState,
             [ZoneName.Library]: shuffle(piece1.concat(piece2)),
-            [ZoneName.Hand]: gameState[ZoneName.Hand].concat(zoneCard)
+            [ZoneName.Hand]: gameState[ZoneName.Hand].concat(zoneCard),
         });
         animateShuffle();
     };
