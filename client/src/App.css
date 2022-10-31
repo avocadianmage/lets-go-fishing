@@ -18,7 +18,8 @@ body {
     color: var(--nord6);
 }
 
-h1, h6 {
+h1,
+h6 {
     text-transform: uppercase;
 }
 
@@ -53,4 +54,21 @@ h6 {
 .wiggle {
     animation: wiggle 0.2s;
     animation-iteration-count: 1.5;
+}
+
+@keyframes verticalWave {
+    0% {
+        transform: translateY(-25%);
+    }
+    50% {
+        transform: translateY(25%);
+    }
+    100% {
+        transform: translateY(-25%);
+    }
+}
+
+.verticalWave {
+    animation: verticalWave 1s ease-in-out;
+    animation-iteration-count: infinite;
 }

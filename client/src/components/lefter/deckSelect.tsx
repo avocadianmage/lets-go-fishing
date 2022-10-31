@@ -1,5 +1,5 @@
 import { DatabaseService, DeckInfo } from '../../services/dbSvc';
-import { Box, IconButton, List, ListItem, ListItemButton, ListItemText, Typography } from '@mui/material';
+import { Box, IconButton, List, ListItem, ListItemButton, ListItemText } from '@mui/material';
 import { ArrowUpward, OpenInNew, Remove } from '@mui/icons-material';
 
 const DECK_SELECT_HEIGHT = 250;
@@ -77,8 +77,13 @@ export const DeckSelect = ({
                         height: DECK_SELECT_HEIGHT,
                     }}
                 >
-                    <ArrowUpward />
-                    <h6>Import a deck to get started</h6>
+                    <div>
+                        <ArrowUpward
+                            className='verticalWave'
+                            style={{ fontSize: '3em', width: '100%', color: 'var(--nord13)' }}
+                        />
+                        <h6>Import a deck to get started</h6>
+                    </div>
                 </div>
             )}
         </Box>
