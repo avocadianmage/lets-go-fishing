@@ -8,6 +8,7 @@ interface DeckSelectProps {
     decks: DeckInfo[];
     selectedIndex: number;
     onUpdateDecksAndSelection(index: number, updatedDeckInfos?: DeckInfo[]): void;
+    onClickPlaceholder(): void;
 }
 
 const fireDeckEdit = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>, deck: DeckInfo) => {
@@ -19,6 +20,7 @@ export const DeckSelect = ({
     decks,
     selectedIndex,
     onUpdateDecksAndSelection,
+    onClickPlaceholder,
 }: DeckSelectProps) => {
     const fireDeckRemove = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>, index: number) => {
         e.stopPropagation();
@@ -75,7 +77,9 @@ export const DeckSelect = ({
                         alignItems: 'center',
                         justifyContent: 'center',
                         height: DECK_SELECT_HEIGHT,
+                        cursor: 'pointer',
                     }}
+                    onClick={onClickPlaceholder}
                 >
                     <div>
                         <ArrowUpward

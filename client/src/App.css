@@ -21,6 +21,7 @@ body {
 h1,
 h6 {
     text-transform: uppercase;
+    user-select: none;
 }
 
 h1 {

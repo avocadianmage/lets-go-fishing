@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { forwardRef, useState } from 'react';
 import { DeckInfo } from '../../services/dbSvc';
 import { DeckInfoService } from '../../services/deckInfoSvc';
 import { IconButton, InputAdornment, styled, TextField } from '@mui/material';
@@ -16,7 +16,7 @@ const CssTextField = styled(TextField)({
     },
 });
 
-export const DeckImport = ({ onImport }: DeckImportProps) => {
+export const DeckImport = forwardRef(({ onImport }: DeckImportProps, ref) => {
     const [value, setValue] = useState('');
     const isDisabled = value === '';
     const doImport = async () => {
@@ -38,6 +38,7 @@ export const DeckImport = ({ onImport }: DeckImportProps) => {
 
     return (
         <CssTextField
+            inputRef={ref}
             placeholder='Enter Moxfield deck address'
             InputProps={{
                 endAdornment: (
@@ -47,7 +48,7 @@ export const DeckImport = ({ onImport }: DeckImportProps) => {
                             edge='end'
                             disabled={isDisabled}
                             onClick={doImport}
-                            sx={{ color: 'var(--nord14)' }} 
+                            sx={{ color: 'var(--nord14)' }}
                         >
                             <Add />
                         </IconButton>
@@ -60,4 +61,4 @@ export const DeckImport = ({ onImport }: DeckImportProps) => {
             onKeyDown={fireKeyDown}
         />
     );
-};
+});
