@@ -40,6 +40,7 @@ export const DeckImport = forwardRef(({ onImport }: DeckImportProps, ref) => {
         <CssTextField
             inputRef={ref}
             placeholder='Enter Moxfield deck address'
+            inputProps={{ style: { fontSize: '0.8rem' } }}
             InputProps={{
                 endAdornment: (
                     <InputAdornment position='end'>

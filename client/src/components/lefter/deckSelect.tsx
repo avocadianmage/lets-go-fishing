@@ -44,7 +44,10 @@ export const DeckSelect = ({
                         onClick={() => onUpdateDecksAndSelection(index)}
                         sx={{ '&:hover': { '& svg': { opacity: 1 } } }}
                     >
-                        <ListItemText primary={deck.name} />
+                        <ListItemText
+                            primary={deck.name}
+                            primaryTypographyProps={{ fontSize: '0.8rem' }}
+                        />
                         <IconButton
                             aria-label='open deck in moxfield'
                             edge='end'
@@ -84,7 +87,7 @@ export const DeckSelect = ({
                     <div>
                         <ArrowUpward
                             className='verticalWave'
-                            style={{ fontSize: '3em', width: '100%', color: 'var(--nord13)' }}
+                            style={{ fontSize: '3rem', width: '100%', color: 'var(--nord13)' }}
                         />
                         <h6>Import a deck to get started</h6>
                     </div>
