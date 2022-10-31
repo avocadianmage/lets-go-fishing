@@ -12,7 +12,7 @@
 }
 
 .zone.highlight {
-    box-shadow: 0 0 0 var(--zone-border-width) var(--nord3);
+    box-shadow: 0 0 0 calc(var(--zone-border-width) * 2) var(--nord3);
     transition: box-shadow 0.15s;
 }
 
