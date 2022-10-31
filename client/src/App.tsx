@@ -2,6 +2,7 @@ import './App.css';
 
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { GameLayout } from './components/gameLayout/gameLayout';
+import { grey } from '@mui/material/colors';
 
 const darkTheme = createTheme({
     palette: {
@@ -9,20 +10,20 @@ const darkTheme = createTheme({
     },
     typography: {
         fontFamily: [
-            '"Noto Sans"', 
-            '-apple-system', 
-            'BlinkMacSystemFont', 
-            '"Segoe UI"', 
-            'Roboto', 
-            'Oxygen', 
-            'Ubuntu', 
-            'Cantarell', 
-            '"Fira Sans"', 
-            '"Droid Sans"', 
-            '"Helvetica Neue"', 
-            'sans-serif'
-        ].join(',')
-    }
+            '"Noto Sans"',
+            '-apple-system',
+            'BlinkMacSystemFont',
+            '"Segoe UI"',
+            'Roboto',
+            'Oxygen',
+            'Ubuntu',
+            'Cantarell',
+            '"Fira Sans"',
+            '"Droid Sans"',
+            '"Helvetica Neue"',
+            'sans-serif',
+        ].join(','),
+    },
 });
 
 export default function App() {

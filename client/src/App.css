@@ -18,12 +18,17 @@ body {
     color: var(--nord6);
 }
 
-h1 {
-    font-weight: bold;
-    font-size: 20px;
-    color: var(--nord13);
-    margin: 6px 6px 16px 6px;
+h1, h6 {
     text-transform: uppercase;
+}
+
+h1 {
+    font-size: 1.5em;
+    color: var(--nord13);
+}
+
+h6 {
+    font-size: 0.8em;
 }
 
 /* Animations */
