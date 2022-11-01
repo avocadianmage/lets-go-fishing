@@ -38,7 +38,7 @@ export const DeckSelect = ({
     const ListOfDecks = () => (
         <List>
             {decks.map((deck, index) => (
-                <ListItem key={index} disablePadding onFocus={(e) => e.target.blur()}>
+                <ListItem key={index} disablePadding>
                     <ListItemButton
                         selected={selectedIndex === index}
                         onClick={() => onUpdateDecksAndSelection(index)}

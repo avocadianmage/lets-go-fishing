@@ -305,7 +305,7 @@ export const GameLayout = () => {
     return (
         <div className='gameLayout' onMouseMove={onMouseMove}>
             <div className='topPanel'>
-                <Lefter onDeckSelect={(di) => startGame(di)} />
+                <Lefter onDeckSelect={startGame} />
                 <BattlefieldZone
                     {...zoneProps}
                     name={ZoneName.Battlefield}
