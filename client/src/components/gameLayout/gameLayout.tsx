@@ -16,15 +16,14 @@ import { StackZone } from './stackZone';
 import { BattlefieldZone } from './battlefieldZone';
 import { Lefter } from '../lefter/lefter';
 import { LibrarySearch } from './librarySearch';
-import { Card, styled } from '@mui/material';
+import { Paper, styled } from '@mui/material';
 
-export const Pane = styled(Card)(() => ({
+export const Pane = styled(Paper)(() => ({
     backgroundImage: 'linear-gradient(rgba(255, 255, 255, 0.11), rgba(255, 255, 255, 0.11))',
     minWidth: CARD_WIDTH_PX,
     minHeight: CARD_HEIGHT_PX,
     position: 'relative',
-    overflow: 'visible',
-    margin: 2,
+    margin: ZONE_BORDER_PX,
     padding: ZONE_PADDING_PX,
 }));
 

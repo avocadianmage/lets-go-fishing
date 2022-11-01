@@ -19,9 +19,9 @@ export const BattlefieldZone = forwardRef((props: ZoneProps, ref) => {
                 ? [CARD_WIDTH_PX, CARD_HEIGHT_PX, zc.x!, width, left]
                 : [CARD_HEIGHT_PX, CARD_WIDTH_PX, zc.y!, height, top];
             const tapMargin = zc.tapped ? (cardOrthoLen - cardLen) / 2 : 0;
-            const min = tapMargin - ZONE_BORDER_PX;
-            const max = zoneLen - cardLen - tapMargin - ZONE_BORDER_PX;
-            return clamp(cardPos - zoneMin, min, max);
+            const min = tapMargin;
+            const max = zoneLen - cardLen - tapMargin;
+            return clamp(cardPos - zoneMin + ZONE_BORDER_PX, min, max);
         };
         return { ...zc, x: snapToBounds(true), y: snapToBounds(false) };
     });
