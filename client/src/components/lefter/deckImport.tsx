@@ -18,11 +18,24 @@ const CssTextField = styled(TextField)({
 
 export const DeckImport = forwardRef(({ onImport }: DeckImportProps, ref) => {
     const [value, setValue] = useState('');
+    const updateInput = (input: string) => {
+        setValue(input);
+        setErrorMessage('');
+    }
+
+    const [errorMessage, setErrorMessage] = useState('');
+
     const isDisabled = value === '';
     const doImport = async () => {
         if (isDisabled) return;
-        onImport(await DeckInfoService.getDecklist(value));
-        setValue('');
+        const deck = await DeckInfoService.getDecklist(value);
+        if (!deck) {
+            setErrorMessage('Unable to find deck.');
+            return;
+        }
+
+        onImport(deck);
+        updateInput('');
     };
 
     const fireKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -31,7 +44,7 @@ export const DeckImport = forwardRef(({ onImport }: DeckImportProps, ref) => {
                 doImport();
                 break;
             case 'Escape':
-                setValue('');
+                updateInput('');
                 break;
         }
     };
@@ -58,7 +71,10 @@ export const DeckImport = forwardRef(({ onImport }: DeckImportProps, ref) => {
             }}
             sx={{ width: '100%' }}
             value={value}
-            onChange={(e) => setValue(e.target.value)}
+            error={!!errorMessage}
+            helperText={errorMessage}
+            FormHelperTextProps={{ sx: { marginBottom: '4px' } }}
+            onChange={(e) => updateInput(e.target.value)}
             onKeyDown={fireKeyDown}
         />
     );
