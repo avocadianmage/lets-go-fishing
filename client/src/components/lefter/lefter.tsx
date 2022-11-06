@@ -12,6 +12,7 @@ import ManaBlue from '../../assets/mana-blue.svg';
 import ManaBlack from '../../assets/mana-black.svg';
 import ManaRed from '../../assets/mana-red.svg';
 import ManaGreen from '../../assets/mana-green.svg';
+import ManaColorless from '../../assets/mana-colorless.svg';
 
 interface LefterProps {
     onDeckSelect(deckInfo?: DeckInfo): void;
@@ -79,6 +80,7 @@ export const Lefter = ({ onDeckSelect }: LefterProps) => {
                     <NumberWheel label='black mana' icon={<img src={ManaBlack} />} />
                     <NumberWheel label='red mana' icon={<img src={ManaRed} />} />
                     <NumberWheel label='green mana' icon={<img src={ManaGreen} />} />
+                    <NumberWheel label='colorless mana' icon={<img src={ManaColorless} />} />
                 </div>
             </CardContent>
         </Pane>

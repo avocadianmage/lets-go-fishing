@@ -24,7 +24,7 @@ export const NumberWheel = ({ label, icon, defaultCount }: NumberWheelProps) => 
         <ButtonGroup
             orientation='vertical'
             aria-label={label}
-            sx={{ m: '0px 4px 0px 4px', backgroundColor: grey[900] }}
+            sx={{ m: '0px 3px 0px 3px', backgroundColor: grey[900] }}
         >
             <Button
                 variant='text'
