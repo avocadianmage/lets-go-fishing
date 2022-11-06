@@ -18,9 +18,10 @@ interface LefterProps {
     onDeckSelect(deckInfo?: DeckInfo): void;
 }
 
-const ManaNumberWheel = ({ color, iconSrc }: { color: string; iconSrc: string }) => (
-    <NumberWheel label={color + ' mana'} icon={<img src={iconSrc} />} min={0} />
-);
+const ManaNumberWheel = ({ color, iconSrc }: { color: string; iconSrc: string }) => {
+    const label = color + ' mana';
+    return <NumberWheel label={label} icon={<img src={iconSrc} alt={label} />} min={0} />;
+};
 
 export const Lefter = ({ onDeckSelect }: LefterProps) => {
     const deckImportRef = useRef<HTMLInputElement>(null);
