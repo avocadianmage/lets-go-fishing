@@ -18,16 +18,17 @@ const ButtonHalf = ({ item1, item2 }: { item1: JSX.Element; item2: JSX.Element }
     </div>
 );
 
-export const NumberWheel = ({ label, icon, defaultCount, min, max }: NumberWheelProps) => {
-    defaultCount = defaultCount ?? 0;
-
+export const NumberWheel = ({
+    label,
+    icon,
+    defaultCount = 0,
+    min = Number.MIN_SAFE_INTEGER,
+    max = Number.MAX_SAFE_INTEGER,
+}: NumberWheelProps) => {
     const [count, setCount] = useState<number>(defaultCount);
-    const increment = () => {
-        setCount(Math.min(max === undefined ? Number.MAX_SAFE_INTEGER : max, count + 1));
-    };
-    const decrement = () => {
-        setCount(Math.max(min === undefined ? Number.MIN_SAFE_INTEGER : min, count - 1));
-    };
+
+    const increment = () => setCount(Math.min(max, count + 1));
+    const decrement = () => setCount(Math.max(min, count - 1));
 
     return (
         <ButtonGroup orientation='vertical' aria-label={label} sx={{ flex: 1 }}>
