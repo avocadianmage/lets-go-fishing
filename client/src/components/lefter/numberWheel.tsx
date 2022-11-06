@@ -21,24 +21,18 @@ export const NumberWheel = ({ label, icon, defaultCount }: NumberWheelProps) => 
     const [count, setCount] = useState<number>(defaultCount ?? 0);
 
     return (
-        <ButtonGroup
-            orientation='vertical'
-            aria-label={label}
-            sx={{ m: '0px 3px 0px 3px', backgroundColor: grey[900] }}
-        >
+        <ButtonGroup orientation='vertical' aria-label={label} sx={{ flex: 1 }}>
             <Button
-                variant='text'
                 aria-label='increment'
-                sx={{ paddingTop: '2px', paddingBottom: '8px' }}
+                sx={{ p: '2px 0px 8px 0px' }}
                 onClick={() => setCount(count + 1)}
             >
                 <ButtonHalf item1={<ArrowDropUp />} item2={icon} />
             </Button>
             <Divider />
             <Button
-                variant='text'
                 aria-label='decrement'
-                sx={{ paddingTop: '4px', paddingBottom: '2px' }}
+                sx={{ p: '4px 0px 2px 0px' }}
                 onClick={() => setCount(count - 1)}
             >
                 <ButtonHalf

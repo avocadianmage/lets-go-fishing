@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { DatabaseService, DeckInfo } from '../../services/dbSvc';
 import { DeckImport } from './deckImport';
 import { CardContent, Divider, Paper } from '@mui/material';
@@ -17,6 +17,8 @@ import ManaColorless from '../../assets/mana-colorless.svg';
 interface LefterProps {
     onDeckSelect(deckInfo?: DeckInfo): void;
 }
+
+const cardSpacingStyle: React.CSSProperties = { textAlign: 'center', marginBottom: '16px' };
 
 export const Lefter = ({ onDeckSelect }: LefterProps) => {
     const deckImportRef = useRef<HTMLInputElement>(null);
@@ -58,7 +60,7 @@ export const Lefter = ({ onDeckSelect }: LefterProps) => {
             <CardContent>
                 <h1 style={{ margin: 6, marginBottom: 16 }}>Let's Go Fishing</h1>
 
-                <Paper>
+                <Paper sx={cardSpacingStyle}>
                     <DeckImport ref={deckImportRef} onImport={addDeck} />
                     <Divider />
                     <DeckSelect
@@ -69,7 +71,7 @@ export const Lefter = ({ onDeckSelect }: LefterProps) => {
                     />
                 </Paper>
 
-                <div style={{ margin: '16px 0px 16px 0px', textAlign: 'center' }}>
+                <Paper sx={{...cardSpacingStyle, display: 'flex'}}>
                     <NumberWheel
                         label='life'
                         icon={<Favorite sx={{ color: 'var(--nord15)' }} />}
@@ -81,7 +83,7 @@ export const Lefter = ({ onDeckSelect }: LefterProps) => {
                     <NumberWheel label='red mana' icon={<img src={ManaRed} />} />
                     <NumberWheel label='green mana' icon={<img src={ManaGreen} />} />
                     <NumberWheel label='colorless mana' icon={<img src={ManaColorless} />} />
-                </div>
+                </Paper>
             </CardContent>
         </Pane>
     );
