@@ -6,6 +6,8 @@ interface NumberWheelProps {
     label: string;
     icon: JSX.Element;
     defaultCount?: number;
+    min?: number;
+    max?: number;
 }
 
 const sizeStyle = { width: '24px', height: '24px' };
@@ -16,9 +18,16 @@ const ButtonHalf = ({ item1, item2 }: { item1: JSX.Element; item2: JSX.Element }
     </div>
 );
 
-export const NumberWheel = ({ label, icon, defaultCount }: NumberWheelProps) => {
+export const NumberWheel = ({ label, icon, defaultCount, min, max }: NumberWheelProps) => {
     defaultCount = defaultCount ?? 0;
+
     const [count, setCount] = useState<number>(defaultCount);
+    const increment = () => {
+        setCount(Math.min(max === undefined ? Number.MAX_SAFE_INTEGER : max, count + 1));
+    };
+    const decrement = () => {
+        setCount(Math.max(min === undefined ? Number.MIN_SAFE_INTEGER : min, count - 1));
+    };
 
     return (
         <ButtonGroup orientation='vertical' aria-label={label} sx={{ flex: 1 }}>
@@ -26,7 +35,7 @@ export const NumberWheel = ({ label, icon, defaultCount }: NumberWheelProps) => 
                 aria-label='increment'
                 sx={{ p: '2px 0px 10px 0px' }}
                 className='removeMuiButtonGroupBorder'
-                onClick={() => setCount(count + 1)}
+                onClick={increment}
             >
                 <ButtonHalf item1={<ArrowDropUp />} item2={icon} />
             </Button>
@@ -34,11 +43,11 @@ export const NumberWheel = ({ label, icon, defaultCount }: NumberWheelProps) => 
                 aria-label='decrement'
                 sx={{ p: '4px 0px 2px 0px' }}
                 className='removeMuiButtonGroupBorder'
-                onClick={() => setCount(count - 1)}
+                onClick={decrement}
             >
                 <ButtonHalf
                     item1={
-                        <code 
+                        <code
                             style={{
                                 fontSize: '1.2em',
                                 fontWeight: 'bold',

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { DatabaseService, DeckInfo } from '../../services/dbSvc';
 import { DeckImport } from './deckImport';
 import { CardContent, Divider, Paper } from '@mui/material';
@@ -18,7 +18,9 @@ interface LefterProps {
     onDeckSelect(deckInfo?: DeckInfo): void;
 }
 
-const cardSpacingStyle: React.CSSProperties = { textAlign: 'center', marginBottom: '16px' };
+const ManaNumberWheel = ({ color, iconSrc }: { color: string; iconSrc: string }) => (
+    <NumberWheel label={color + ' mana'} icon={<img src={iconSrc} />} min={0} />
+);
 
 export const Lefter = ({ onDeckSelect }: LefterProps) => {
     const deckImportRef = useRef<HTMLInputElement>(null);
@@ -60,7 +62,7 @@ export const Lefter = ({ onDeckSelect }: LefterProps) => {
             <CardContent>
                 <h1 style={{ margin: 6, marginBottom: 16 }}>Let's Go Fishing</h1>
 
-                <Paper sx={cardSpacingStyle}>
+                <Paper className='widget'>
                     <DeckImport ref={deckImportRef} onImport={addDeck} />
                     <Divider />
                     <DeckSelect
@@ -71,18 +73,22 @@ export const Lefter = ({ onDeckSelect }: LefterProps) => {
                     />
                 </Paper>
 
-                <Paper sx={{...cardSpacingStyle, display: 'flex'}}>
+                <Paper className='widget' sx={{ display: 'flex' }}>
                     <NumberWheel
                         label='life'
                         icon={<Favorite sx={{ color: 'var(--nord15)' }} />}
                         defaultCount={40}
                     />
-                    <NumberWheel label='white mana' icon={<img src={ManaWhite} />} />
-                    <NumberWheel label='blue mana' icon={<img src={ManaBlue} />} />
-                    <NumberWheel label='black mana' icon={<img src={ManaBlack} />} />
-                    <NumberWheel label='red mana' icon={<img src={ManaRed} />} />
-                    <NumberWheel label='green mana' icon={<img src={ManaGreen} />} />
-                    <NumberWheel label='colorless mana' icon={<img src={ManaColorless} />} />
+                    {[
+                        ['white', ManaWhite],
+                        ['blue', ManaBlue],
+                        ['black', ManaBlack],
+                        ['red', ManaRed],
+                        ['green', ManaGreen],
+                        ['colorless', ManaColorless],
+                    ].map(([color, iconSrc]) => (
+                        <ManaNumberWheel color={color} iconSrc={iconSrc} />
+                    ))}
                 </Paper>
             </CardContent>
         </Pane>
