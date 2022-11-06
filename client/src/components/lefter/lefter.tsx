@@ -4,6 +4,14 @@ import { DeckImport } from './deckImport';
 import { CardContent, Divider, Paper } from '@mui/material';
 import { DeckSelect } from './deckSelect';
 import { Pane } from '../gameLayout/gameLayout';
+import { NumberWheel } from './numberWheel';
+import { Favorite } from '@mui/icons-material';
+
+import ManaWhite from '../../assets/mana-white.svg';
+import ManaBlue from '../../assets/mana-blue.svg';
+import ManaBlack from '../../assets/mana-black.svg';
+import ManaRed from '../../assets/mana-red.svg';
+import ManaGreen from '../../assets/mana-green.svg';
 
 interface LefterProps {
     onDeckSelect(deckInfo?: DeckInfo): void;
@@ -59,6 +67,19 @@ export const Lefter = ({ onDeckSelect }: LefterProps) => {
                         onClickPlaceholder={() => deckImportRef.current?.focus()}
                     />
                 </Paper>
+
+                <div style={{ margin: '16px 0px 16px 0px', textAlign: 'center' }}>
+                    <NumberWheel
+                        label='life'
+                        icon={<Favorite sx={{ color: 'var(--nord15)' }} />}
+                        defaultCount={40}
+                    />
+                    <NumberWheel label='white mana' icon={<img src={ManaWhite} />} />
+                    <NumberWheel label='blue mana' icon={<img src={ManaBlue} />} />
+                    <NumberWheel label='black mana' icon={<img src={ManaBlack} />} />
+                    <NumberWheel label='red mana' icon={<img src={ManaRed} />} />
+                    <NumberWheel label='green mana' icon={<img src={ManaGreen} />} />
+                </div>
             </CardContent>
         </Pane>
     );
