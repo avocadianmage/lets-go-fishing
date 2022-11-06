@@ -21,10 +21,11 @@ export const NumberWheel = ({ label, icon, defaultCount }: NumberWheelProps) => 
     const [count, setCount] = useState<number>(defaultCount);
 
     return (
-        <ButtonGroup orientation='vertical' variant='text' aria-label={label} sx={{ flex: 1 }}>
+        <ButtonGroup orientation='vertical' aria-label={label} sx={{ flex: 1 }}>
             <Button
                 aria-label='increment'
                 sx={{ p: '2px 0px 10px 0px' }}
+                className='removeMuiButtonGroupBorder'
                 onClick={() => setCount(count + 1)}
             >
                 <ButtonHalf item1={<ArrowDropUp />} item2={icon} />
@@ -32,11 +33,12 @@ export const NumberWheel = ({ label, icon, defaultCount }: NumberWheelProps) => 
             <Button
                 aria-label='decrement'
                 sx={{ p: '4px 0px 2px 0px' }}
+                className='removeMuiButtonGroupBorder'
                 onClick={() => setCount(count - 1)}
             >
                 <ButtonHalf
                     item1={
-                        <code
+                        <code 
                             style={{
                                 fontSize: '1.2em',
                                 fontWeight: 'bold',
