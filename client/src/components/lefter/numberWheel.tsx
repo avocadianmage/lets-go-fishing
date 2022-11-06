@@ -1,7 +1,7 @@
 import { ArrowDropDown, ArrowDropUp } from '@mui/icons-material';
 import { Button, ButtonGroup, Divider } from '@mui/material';
 import { grey } from '@mui/material/colors';
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 interface NumberWheelProps {
     label: string;
@@ -42,7 +42,13 @@ export const NumberWheel = ({ label, icon, defaultCount }: NumberWheelProps) => 
                 onClick={() => setCount(count - 1)}
             >
                 <ButtonHalf
-                    item1={<React.Fragment>{count}</React.Fragment>}
+                    item1={
+                        <code
+                            style={{ fontSize: '1.2em', fontWeight: 'bold', color: 'var(--nord4)' }}
+                        >
+                            {count}
+                        </code>
+                    }
                     item2={<ArrowDropDown />}
                 />
             </Button>
