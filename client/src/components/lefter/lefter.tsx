@@ -88,7 +88,7 @@ export const Lefter = ({ onDeckSelect }: LefterProps) => {
                         ['green', ManaGreen],
                         ['colorless', ManaColorless],
                     ].map(([color, iconSrc]) => (
-                        <ManaNumberWheel color={color} iconSrc={iconSrc} />
+                        <ManaNumberWheel key={color} color={color} iconSrc={iconSrc} />
                     ))}
                 </Paper>
             </CardContent>
