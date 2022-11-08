@@ -1,7 +1,7 @@
 import '../css/gameLayout.css';
 
 import shuffle from 'lodash/shuffle';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { DeckInfo } from '../../services/dbSvc';
 import {
     CARD_HEIGHT_PX,
@@ -17,6 +17,7 @@ import { BattlefieldZone } from './battlefieldZone';
 import { Lefter } from '../lefter/lefter';
 import { LibrarySearch } from './librarySearch';
 import { Paper, styled } from '@mui/material';
+import { useGlobalShortcuts } from '../hooks/useKeyDown';
 
 export const Pane = styled(Paper)(() => ({
     backgroundImage: 'linear-gradient(rgba(255, 255, 255, 0.11), rgba(255, 255, 255, 0.11))',
@@ -141,45 +142,23 @@ export const GameLayout = () => {
         return true;
     };
 
-    const handleKeyDown = useCallback(
-        (event: { key: any; preventDefault: any }) => {
-            // Only process keyboard shortcuts if nothing is focused or being dragged.
-            if (currentAction || document.activeElement!.tagName !== 'BODY') return;
-
-            switch (event.key) {
-                case 'd':
-                    draw();
-                    break;
-
-                // Next turn.
-                case 'n':
-                    untapAll();
-                    draw();
-                    break;
-
-                case 's':
-                    shuffleLibrary();
-                    break;
-
-                case 'r':
-                    startGame(currentDeckInfo);
-                    break;
-
-                // Search library.
-                case 'k':
-                    setLibrarySearchOpen(true);
-                    // Prevent input from proliferating into the search box.
-                    event.preventDefault();
-                    break;
-            }
+    useGlobalShortcuts(
+        {
+            d: () => draw(),
+            k: (e) => {
+                setLibrarySearchOpen(true);
+                // Prevent input from proliferating into the search box.
+                e.preventDefault();
+            },
+            n: () => {
+                untapAll();
+                draw();
+            },
+            r: () => startGame(currentDeckInfo),
+            s: () => shuffleLibrary(),
         },
-        [gameState, currentAction]
+        () => currentAction === undefined
     );
-
-    useEffect(() => {
-        document.addEventListener('keydown', handleKeyDown);
-        return () => document.removeEventListener('keydown', handleKeyDown);
-    }, [handleKeyDown]);
 
     const sliceEndElements = (fromArray: any[], toArray: any[], num: number) => {
         const cutIndex = fromArray.length - num;
