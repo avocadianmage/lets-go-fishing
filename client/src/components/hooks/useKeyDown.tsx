@@ -4,13 +4,13 @@ export const useGlobalShortcuts = (
     shortcutMap: {
         [shortcut: string]: (e: KeyboardEvent) => void;
     },
-    validator: () => boolean
+    validator: () => boolean = () => true
 ) => {
     const handler = useCallback(
         (e: KeyboardEvent) => {
             const action = shortcutMap[e.key];
-            const noControlFocus = document.activeElement!.tagName === 'BODY';
-            if (action && noControlFocus && validator()) action(e);
+            const noInputFocus = document.activeElement!.tagName !== 'INPUT';
+            if (action && noInputFocus && validator()) action(e);
         },
         [shortcutMap, validator]
     );

@@ -1,6 +1,7 @@
 import { ArrowDropDown, ArrowDropUp } from '@mui/icons-material';
 import { Button, ButtonGroup } from '@mui/material';
 import { useState } from 'react';
+import { useGlobalShortcuts } from '../hooks/useKeyDown';
 
 interface NumberWheelProps {
     label: string;
@@ -31,6 +32,11 @@ export const NumberWheel = ({
         className: 'removeMuiButtonGroupBorder',
         onWheel: (e: React.WheelEvent<HTMLButtonElement>) => increment(-Math.sign(e.deltaY)),
     };
+
+    useGlobalShortcuts({
+        r: () => setCount(defaultCount),
+    });
+
     return (
         <ButtonGroup orientation='vertical' aria-label={label} sx={{ flex: 1 }}>
             <Button
