@@ -7,6 +7,7 @@ import {
     CARD_HEIGHT_PX,
     CARD_WIDTH_PX,
     STARTING_HAND_SIZE,
+    STARTING_LIFE,
     ZONE_BORDER_PX,
     ZONE_PADDING_PX,
 } from '../../utilities/constants';
@@ -28,6 +29,25 @@ export const Pane = styled(Paper)(() => ({
     padding: ZONE_PADDING_PX,
 }));
 
+export enum ManaColor {
+    White = 'White',
+    Blue = 'Blue',
+    Black = 'Black',
+    Red = 'Red',
+    Green = 'Green',
+    Colorless = 'Colorless',
+}
+
+export interface GameDetailsState {
+    life: number;
+    [ManaColor.White]: number;
+    [ManaColor.Blue]: number;
+    [ManaColor.Black]: number;
+    [ManaColor.Red]: number;
+    [ManaColor.Green]: number;
+    [ManaColor.Colorless]: number;
+}
+
 export enum ZoneName {
     None = 'none',
     Library = 'library',
@@ -38,7 +58,7 @@ export enum ZoneName {
     Command = 'command',
 }
 
-interface GameState {
+interface GameZonesState {
     [ZoneName.None]: ZoneCardInfo[];
     [ZoneName.Library]: ZoneCardInfo[];
     [ZoneName.Hand]: ZoneCardInfo[];
@@ -50,7 +70,16 @@ interface GameState {
 
 export const GameLayout = () => {
     const [currentDeckInfo, setCurrentDeckInfo] = useState<DeckInfo>();
-    const [gameState, setGameState] = useState<GameState>({
+    const [gameDetailsState, setGameDetailsState] = useState<GameDetailsState>({
+        life: 0,
+        [ManaColor.White]: 0,
+        [ManaColor.Blue]: 0,
+        [ManaColor.Black]: 0,
+        [ManaColor.Green]: 0,
+        [ManaColor.Red]: 0,
+        [ManaColor.Colorless]: 0,
+    });
+    const [gameZonesState, setGameZonesState] = useState<GameZonesState>({
         [ZoneName.None]: [],
         [ZoneName.Library]: [],
         [ZoneName.Hand]: [],
@@ -88,11 +117,20 @@ export const GameLayout = () => {
     const restartGame = () => startGame(currentDeckInfo);
     const startGame = (deckInfo?: DeckInfo) => {
         setCurrentDeckInfo(deckInfo);
+        setGameDetailsState({
+            life: STARTING_LIFE,
+            [ManaColor.White]: 0,
+            [ManaColor.Blue]: 0,
+            [ManaColor.Black]: 0,
+            [ManaColor.Green]: 0,
+            [ManaColor.Red]: 0,
+            [ManaColor.Colorless]: 0,
+        });
         const { library, hand, command } = deckInfo
             ? getStartingZoneCards(deckInfo)
             : { library: [], hand: [], command: [] };
-        setGameState({
-            ...gameState,
+        setGameZonesState({
+            [ZoneName.None]: [],
             [ZoneName.Library]: library,
             [ZoneName.Hand]: hand,
             [ZoneName.Battlefield]: [],
@@ -106,11 +144,11 @@ export const GameLayout = () => {
     const drawOne = () => draw();
     const draw = (num = 1) => {
         const { fromArray, toArray } = sliceEndElements(
-            gameState[ZoneName.Library],
-            gameState[ZoneName.Hand],
+            gameZonesState[ZoneName.Library],
+            gameZonesState[ZoneName.Hand],
             num
         );
-        setGameState((g) => ({
+        setGameZonesState((g) => ({
             ...g,
             [ZoneName.Library]: fromArray,
             [ZoneName.Hand]: toArray,
@@ -118,17 +156,17 @@ export const GameLayout = () => {
     };
 
     const shuffleLibrary = () => {
-        setGameState({
-            ...gameState,
-            [ZoneName.Library]: shuffle(gameState[ZoneName.Library]),
-        });
+        setGameZonesState((g) => ({
+            ...g,
+            [ZoneName.Library]: shuffle(g[ZoneName.Library]),
+        }));
         animateShuffle();
     };
 
     const untapAll = () => {
-        setGameState((g) => ({
+        setGameZonesState((g) => ({
             ...g,
-            [ZoneName.Battlefield]: gameState[ZoneName.Battlefield].map((zc) => ({
+            [ZoneName.Battlefield]: g[ZoneName.Battlefield].map((zc) => ({
                 ...zc,
                 tapped: false,
             })),
@@ -172,17 +210,17 @@ export const GameLayout = () => {
     };
 
     const sliceCardFromZone = (zoneCard: ZoneCardInfo, zone: ZoneName) => {
-        const cards = gameState[zone];
+        const cards = gameZonesState[zone];
         const index = cards.findIndex((zc) => zc.card.id === zoneCard.card.id);
         return [cards.slice(0, index), cards.slice(index + 1)];
     };
 
     const findZoneCard = (action: CardActionInfo) => {
-        return gameState[action.sourceZone].find((zc) => zc.card.id === action.card.id)!;
+        return gameZonesState[action.sourceZone].find((zc) => zc.card.id === action.card.id)!;
     };
 
     const getIncrementedZIndex = (zone: ZoneName) => {
-        const cards = gameState[zone];
+        const cards = gameZonesState[zone];
         const highestIndex = cards.some(() => true)
             ? cards.map((zc) => zc.zIndex ?? 0).reduce((prev, curr) => Math.max(prev, curr))
             : 0;
@@ -214,17 +252,17 @@ export const GameLayout = () => {
         const [sourceSlice1, sourceSlice2] = sliceCardFromZone(zoneCard, sourceZone);
         if (isClick(action) || isIntrazoneDrag(action)) {
             const sourceZoneCards = sourceSlice1.concat(zoneCard).concat(sourceSlice2);
-            setGameState({ ...gameState, [sourceZone]: sourceZoneCards });
+            setGameZonesState((g) => ({ ...g, [sourceZone]: sourceZoneCards }));
             return;
         }
 
         const sourceZoneCards = sourceSlice1.concat(sourceSlice2);
-        const targetZoneCards = gameState[targetZone!].concat(zoneCard);
-        setGameState({
-            ...gameState,
+        const targetZoneCards = gameZonesState[targetZone!].concat(zoneCard);
+        setGameZonesState((g) => ({
+            ...g,
             [sourceZone]: sourceZoneCards,
             [targetZone!]: targetZoneCards,
-        });
+        }));
     };
 
     const onCardDrag = (action: CardActionInfo) => {
@@ -261,12 +299,12 @@ export const GameLayout = () => {
     };
 
     const onMouseMove = (e: React.MouseEvent) => {
-        if (!currentAction) return;
         const mouseOverElems = document.elementsFromPoint(e.clientX, e.clientY);
         const targetElem = mouseOverElems.find((elem) => elem.classList.contains('zone'));
-        setCurrentAction({
-            ...currentAction,
-            targetZone: targetElem ? (targetElem.id as ZoneName) : ZoneName.None,
+        setCurrentAction((ca) => {
+            return ca
+                ? { ...ca, targetZone: targetElem ? (targetElem.id as ZoneName) : ZoneName.None }
+                : undefined;
         });
     };
 
@@ -274,11 +312,11 @@ export const GameLayout = () => {
         setLibrarySearchOpen(false);
         if (!zoneCard) return;
         const [piece1, piece2] = sliceCardFromZone(zoneCard, ZoneName.Library);
-        setGameState({
-            ...gameState,
+        setGameZonesState((g) => ({
+            ...g,
             [ZoneName.Library]: shuffle(piece1.concat(piece2)),
-            [ZoneName.Hand]: gameState[ZoneName.Hand].concat(zoneCard),
-        });
+            [ZoneName.Hand]: g[ZoneName.Hand].concat(zoneCard),
+        }));
         animateShuffle();
     };
 
@@ -286,17 +324,21 @@ export const GameLayout = () => {
     return (
         <div className='gameLayout' onMouseMove={onMouseMove}>
             <div className='topPanel'>
-                <Lefter onDeckSelect={startGame} />
+                <Lefter
+                    gameDetailsState={gameDetailsState}
+                    onUpdateGameDetailsState={setGameDetailsState}
+                    onDeckSelect={startGame}
+                />
                 <BattlefieldZone
                     {...zoneProps}
                     name={ZoneName.Battlefield}
-                    contents={gameState[ZoneName.Battlefield]}
+                    contents={gameZonesState[ZoneName.Battlefield]}
                     onCardDoubleClick={(action) => toggleTap(action)}
                 />
                 <StackZone
                     {...zoneProps}
                     name={ZoneName.Graveyard}
-                    contents={gameState[ZoneName.Graveyard]}
+                    contents={gameZonesState[ZoneName.Graveyard]}
                     vertical={true}
                 />
             </div>
@@ -304,17 +346,17 @@ export const GameLayout = () => {
                 <StackZone
                     {...zoneProps}
                     name={ZoneName.Command}
-                    contents={gameState[ZoneName.Command]}
+                    contents={gameZonesState[ZoneName.Command]}
                 />
                 <StackZone
                     {...zoneProps}
                     name={ZoneName.Hand}
-                    contents={gameState[ZoneName.Hand]}
+                    contents={gameZonesState[ZoneName.Hand]}
                 />
                 <StackZone
                     {...zoneProps}
                     name={ZoneName.Library}
-                    contents={gameState[ZoneName.Library]}
+                    contents={gameZonesState[ZoneName.Library]}
                     faceDown={true}
                     showTopOnly={true}
                     wiggleCards={libraryShuffleAnimationRunning}
@@ -322,12 +364,12 @@ export const GameLayout = () => {
                 <StackZone
                     {...zoneProps}
                     name={ZoneName.Exile}
-                    contents={gameState[ZoneName.Exile]}
+                    contents={gameZonesState[ZoneName.Exile]}
                     showTopOnly={true}
                 />
             </div>
             <LibrarySearch
-                contents={gameState[ZoneName.Library]}
+                contents={gameZonesState[ZoneName.Library]}
                 open={librarySearchOpen}
                 requestClose={tutorCard}
             />

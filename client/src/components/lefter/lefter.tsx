@@ -3,27 +3,53 @@ import { DatabaseService, DeckInfo } from '../../services/dbSvc';
 import { DeckImport } from './deckImport';
 import { CardContent, Divider, Paper } from '@mui/material';
 import { DeckSelect } from './deckSelect';
-import { Pane } from '../gameLayout/gameLayout';
+import { GameDetailsState, ManaColor, Pane } from '../gameLayout/gameLayout';
 import { NumberWheel } from './numberWheel';
 import { Favorite } from '@mui/icons-material';
+import { STARTING_LIFE } from '../../utilities/constants';
 
-import ManaWhite from '../../assets/mana-white.svg';
-import ManaBlue from '../../assets/mana-blue.svg';
-import ManaBlack from '../../assets/mana-black.svg';
-import ManaRed from '../../assets/mana-red.svg';
-import ManaGreen from '../../assets/mana-green.svg';
-import ManaColorless from '../../assets/mana-colorless.svg';
+import SvgManaWhite from '../../assets/mana-white.svg';
+import SvgManaBlue from '../../assets/mana-blue.svg';
+import SvgManaBlack from '../../assets/mana-black.svg';
+import SvgManaRed from '../../assets/mana-red.svg';
+import SvgManaGreen from '../../assets/mana-green.svg';
+import SvgManaColorless from '../../assets/mana-colorless.svg';
 
 interface LefterProps {
+    gameDetailsState: GameDetailsState;
+    onUpdateGameDetailsState(state: GameDetailsState): void;
     onDeckSelect(deckInfo?: DeckInfo): void;
 }
 
-const ManaNumberWheel = ({ color, iconSrc }: { color: string; iconSrc: string }) => {
-    const label = color + ' mana';
-    return <NumberWheel label={label} icon={<img src={iconSrc} alt={label} />} min={0} />;
-};
+export const Lefter = ({
+    gameDetailsState,
+    onUpdateGameDetailsState,
+    onDeckSelect,
+}: LefterProps) => {
+    const SvgManaMap = {
+        [ManaColor.White]: SvgManaWhite,
+        [ManaColor.Blue]: SvgManaBlue,
+        [ManaColor.Black]: SvgManaBlack,
+        [ManaColor.Red]: SvgManaRed,
+        [ManaColor.Green]: SvgManaGreen,
+        [ManaColor.Colorless]: SvgManaColorless,
+    };
 
-export const Lefter = ({ onDeckSelect }: LefterProps) => {
+    const ManaNumberWheel = ({ color }: { color: ManaColor }) => {
+        const label = color + ' mana';
+        return (
+            <NumberWheel
+                label={label}
+                icon={<img src={SvgManaMap[color]} alt={label} />}
+                count={gameDetailsState[color]}
+                updateCount={(manaValue) =>
+                    onUpdateGameDetailsState({ ...gameDetailsState, [color]: manaValue })
+                }
+                min={0}
+            />
+        );
+    };
+
     const deckImportRef = useRef<HTMLInputElement>(null);
 
     const [decks, setDecks] = useState<DeckInfo[]>([]);
@@ -78,18 +104,15 @@ export const Lefter = ({ onDeckSelect }: LefterProps) => {
                     <NumberWheel
                         label='life'
                         icon={<Favorite sx={{ color: 'var(--nord15)' }} />}
-                        defaultCount={40}
+                        count={gameDetailsState.life}
+                        updateCount={(life) =>
+                            onUpdateGameDetailsState({ ...gameDetailsState, life })
+                        }
+                        defaultCount={STARTING_LIFE}
                     />
-                    {[
-                        ['white', ManaWhite],
-                        ['blue', ManaBlue],
-                        ['black', ManaBlack],
-                        ['red', ManaRed],
-                        ['green', ManaGreen],
-                        ['colorless', ManaColorless],
-                    ].map(([color, iconSrc]) => (
-                        <ManaNumberWheel key={color} color={color} iconSrc={iconSrc} />
-                    ))}
+                    {(Object.keys(ManaColor) as Array<keyof typeof ManaColor>).map((color) => {
+                        return <ManaNumberWheel key={color} color={ManaColor[color]} />;
+                    })}
                 </Paper>
             </CardContent>
         </Pane>
