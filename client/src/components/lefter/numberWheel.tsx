@@ -27,14 +27,17 @@ export const NumberWheel = ({
     max = Number.MAX_SAFE_INTEGER,
 }: NumberWheelProps) => {
     const [count, setCount] = useState<number>(defaultCount);
+
     const increment = (step: number) => setCount(Math.max(min, Math.min(max, count + step)));
+    const reset = () => setCount(defaultCount);
+    
     const buttonProps = {
         className: 'removeMuiButtonGroupBorder',
         onWheel: (e: React.WheelEvent<HTMLButtonElement>) => increment(-Math.sign(e.deltaY)),
     };
 
     useGlobalShortcuts({
-        r: () => setCount(defaultCount),
+        r: reset,
     });
 
     return (

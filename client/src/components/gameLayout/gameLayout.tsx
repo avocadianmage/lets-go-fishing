@@ -1,7 +1,7 @@
 import '../css/gameLayout.css';
 
 import shuffle from 'lodash/shuffle';
-import React, { useCallback, useState } from 'react';
+import React, { useState } from 'react';
 import { DeckInfo } from '../../services/dbSvc';
 import {
     CARD_HEIGHT_PX,
@@ -85,6 +85,7 @@ export const GameLayout = () => {
         setTimeout(() => setLibraryShuffleAnimationRunning(false), 300);
     };
 
+    const restartGame = () => startGame(currentDeckInfo);
     const startGame = (deckInfo?: DeckInfo) => {
         setCurrentDeckInfo(deckInfo);
         const { library, hand, command } = deckInfo
@@ -102,21 +103,19 @@ export const GameLayout = () => {
         animateShuffle();
     };
 
-    const draw = useCallback(
-        (num = 1) => {
-            const { fromArray, toArray } = sliceEndElements(
-                gameState[ZoneName.Library],
-                gameState[ZoneName.Hand],
-                num
-            );
-            setGameState((g) => ({
-                ...g,
-                [ZoneName.Library]: fromArray,
-                [ZoneName.Hand]: toArray,
-            }));
-        },
-        [gameState]
-    );
+    const drawOne = () => draw();
+    const draw = (num = 1) => {
+        const { fromArray, toArray } = sliceEndElements(
+            gameState[ZoneName.Library],
+            gameState[ZoneName.Hand],
+            num
+        );
+        setGameState((g) => ({
+            ...g,
+            [ZoneName.Library]: fromArray,
+            [ZoneName.Hand]: toArray,
+        }));
+    };
 
     const shuffleLibrary = () => {
         setGameState({
@@ -126,7 +125,7 @@ export const GameLayout = () => {
         animateShuffle();
     };
 
-    const untapAll = useCallback(() => {
+    const untapAll = () => {
         setGameState((g) => ({
             ...g,
             [ZoneName.Battlefield]: gameState[ZoneName.Battlefield].map((zc) => ({
@@ -134,7 +133,7 @@ export const GameLayout = () => {
                 tapped: false,
             })),
         }));
-    }, [gameState]);
+    };
 
     const toggleTap = (action: CardActionInfo) => {
         const zoneCard = findZoneCard(action);
@@ -142,20 +141,24 @@ export const GameLayout = () => {
         return true;
     };
 
+    const takeNextTurn = () => {
+        untapAll();
+        draw();
+    };
+
+    const searchLibrary = (e: KeyboardEvent) => {
+        setLibrarySearchOpen(true);
+        // Prevent input from proliferating into the search box.
+        e.preventDefault();
+    };
+
     useGlobalShortcuts(
         {
-            d: () => draw(),
-            k: (e) => {
-                setLibrarySearchOpen(true);
-                // Prevent input from proliferating into the search box.
-                e.preventDefault();
-            },
-            n: () => {
-                untapAll();
-                draw();
-            },
-            r: () => startGame(currentDeckInfo),
-            s: () => shuffleLibrary(),
+            d: drawOne,
+            k: searchLibrary,
+            n: takeNextTurn,
+            r: restartGame,
+            s: shuffleLibrary,
         },
         () => currentAction === undefined
     );
