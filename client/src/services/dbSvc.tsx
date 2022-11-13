@@ -43,12 +43,16 @@ const dbPromise = openDB(dbName, dbVersion, {
 });
 
 class DbSvc {
-    async getCardBlob(name: string): Promise<Blob> {
-        return (await dbPromise).get(StoreNames.Card, name);
+    private getCardKey(name: string, set: string): string {
+        return JSON.stringify({ name, set });
     }
 
-    async putCardBlob(blob: Blob, name: string): Promise<void> {
-        (await dbPromise).put(StoreNames.Card, blob, name);
+    async getCardBlob(name: string, set: string): Promise<Blob> {
+        return (await dbPromise).get(StoreNames.Card, this.getCardKey(name, set));
+    }
+
+    async putCardBlob(blob: Blob, name: string, set: string): Promise<void> {
+        (await dbPromise).put(StoreNames.Card, blob, this.getCardKey(name, set));
     }
 
     async getDecks(): Promise<DeckInfo[]> {
@@ -65,7 +69,7 @@ class DbSvc {
         db.delete(StoreNames.Deck, key!);
     }
 
-    getSelectedDeckName(): string | undefined  {
+    getSelectedDeckName(): string | undefined {
         return localStorage.getItem(LocalStorageKeys.SelectedDeckName) ?? undefined;
     }
 

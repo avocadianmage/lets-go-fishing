@@ -30,7 +30,7 @@ class CardInfoSvc {
             }
 
             // Check if the blob is already stored in the IndexedDB.
-            const blobFromIDB = await DatabaseService.getCardBlob(name);
+            const blobFromIDB = await DatabaseService.getCardBlob(name, set);
             if (blobFromIDB) {
                 resolve(this.processBlob(name, blobFromIDB));
                 return;
@@ -49,7 +49,7 @@ class CardInfoSvc {
                         )
                         .then(response => response.blob())
                         .then(blob => {
-                            DatabaseService.putCardBlob(blob, name);
+                            DatabaseService.putCardBlob(blob, name, set);
                             resolve(this.processBlob(name, blob));
                         });
                 })
