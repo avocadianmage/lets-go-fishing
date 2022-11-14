@@ -42,7 +42,6 @@ export const DeckSelect = ({
                     <ListItemButton
                         selected={selectedIndex === index}
                         onClick={() => onUpdateDecksAndSelection(index)}
-                        sx={{ '&:hover': { '& svg': { opacity: 1 } } }}
                     >
                         <ListItemText
                             primary={deck.name}
@@ -53,7 +52,7 @@ export const DeckSelect = ({
                             edge='end'
                             onClick={(e) => fireDeckEdit(e, deck)}
                         >
-                            <OpenInNew sx={{ opacity: 0 }} />
+                            <OpenInNew />
                         </IconButton>
                         <IconButton
                             aria-label='remove deck'
@@ -61,7 +60,7 @@ export const DeckSelect = ({
                             onClick={(e) => fireDeckRemove(e, index)}
                             sx={{ color: 'var(--nord11)' }}
                         >
-                            <Remove sx={{ opacity: 0 }} />
+                            <Remove />
                         </IconButton>
                     </ListItemButton>
                 </ListItem>
