@@ -8,6 +8,7 @@ import { cancelablePromise } from '../../utilities/helpers';
 import { ZoneCardInfo } from './zone';
 import { CardInfo } from '../../services/dbSvc';
 import { ZoneName } from './gameLayout';
+import { CARD_HEIGHT_PX, CARD_WIDTH_PX } from '../../utilities/constants';
 
 export interface CardActionInfo {
     card: CardInfo;
@@ -20,11 +21,12 @@ interface CardProps {
     zoneCard: ZoneCardInfo;
     faceDown?: boolean;
     wiggle?: boolean;
-    onDrag: CardActionEventHandler;
-    onDragStop: CardActionEventHandler;
-    onMouseEnter: CardActionEventHandler;
-    onMouseLeave: CardActionEventHandler;
-    onDoubleClick: CardActionEventHandler;
+    disabled?: boolean;
+    onDrag?: CardActionEventHandler;
+    onDragStop?: CardActionEventHandler;
+    onMouseEnter?: CardActionEventHandler;
+    onMouseLeave?: CardActionEventHandler;
+    onDoubleClick?: CardActionEventHandler;
 }
 
 export type CardActionEventHandler = (action: CardActionInfo) => boolean;
@@ -33,11 +35,12 @@ export const Card = ({
     zoneCard,
     faceDown,
     wiggle,
+    disabled,
     onDrag,
     onDragStop,
     onMouseEnter,
     onMouseLeave,
-    onDoubleClick
+    onDoubleClick,
 }: CardProps) => {
     const [imageUrl, setImageUrl] = useState('');
     const [manualDragPos, setManualDragPos] = useState<ControlPosition>();
@@ -62,12 +65,16 @@ export const Card = ({
     });
 
     const fireDrag = () => {
+        if (!onDrag) return false;
+
         setManualDragPos({ x: 0, y: 0 });
         const success = onDrag(createAction());
         if (!success) return false;
     };
 
     const fireDragStop = () => {
+        if (!onDragStop) return false;
+
         if (!onDragStop(createAction())) {
             setManualDragPos({ x: 0, y: 0 });
         }
@@ -87,7 +94,23 @@ export const Card = ({
         (faceUpAndLoaded && card.foil ? ' foil' : '') +
         (tapped ? ' tapped' : '') +
         (wiggle ? ' wiggle' : '');
-    return (
+
+    const VisualLayerCard = () => (
+        <div
+            className={className}
+            style={imageStyle}
+            onMouseEnter={() => onMouseEnter && onMouseEnter(createAction())}
+            onMouseLeave={() => onMouseLeave && onMouseLeave(createAction())}
+            onDoubleClick={() => onDoubleClick && onDoubleClick(createAction())}
+        >
+            {/* Separate divs needed to prevent React from replacing one with the other 
+                            during CSS animations. */}
+            <div className='loader' style={isLoading ? {} : { display: 'none' }} />
+            <div className='card-face' style={isLoading ? { display: 'none' } : {}} />
+        </div>
+    );
+
+    const DraggableCard = () => (
         <Draggable
             nodeRef={nodeRef}
             defaultClassName='card-drag-layer'
@@ -97,20 +120,25 @@ export const Card = ({
         >
             <div ref={nodeRef} style={{ zIndex }}>
                 <div className='card-position-layer' style={positionStyle}>
-                    <div
-                        className={className}
-                        style={imageStyle}
-                        onMouseEnter={() => onMouseEnter(createAction())}
-                        onMouseLeave={() => onMouseLeave(createAction())}
-                        onDoubleClick={() => onDoubleClick(createAction())}
-                    >
-                        {/* Separate divs needed to prevent React from replacing one with the other 
-                            during CSS animations. */}
-                        <div className='loader' style={isLoading ? {} : { display: 'none' }} />
-                        <div className='card-face' style={isLoading ? { display: 'none' } : {}} />
-                    </div>
+                    <VisualLayerCard />
                 </div>
             </div>
         </Draggable>
     );
+
+    const DisabledCard = () => (
+        <div style={{ width: CARD_WIDTH_PX, height: CARD_HEIGHT_PX }}>
+            <div
+                style={{
+                    width: CARD_WIDTH_PX,
+                    height: CARD_HEIGHT_PX,
+                    position: 'absolute',
+                }}
+            >
+                <VisualLayerCard />
+            </div>
+        </div>
+    );
+
+    return disabled ? <DisabledCard /> : <DraggableCard />;
 };

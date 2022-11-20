@@ -1,5 +1,8 @@
 import { Autocomplete, Modal, TextField } from '@mui/material';
+import { SxProps, Theme } from '@mui/system';
 import { useEffect, useState } from 'react';
+import { Card } from './card';
+import { Pane } from './gameLayout';
 import { ZoneCardInfo } from './zone';
 
 interface LibrarySearchProps {
@@ -14,13 +17,13 @@ interface CardOptionProps {
     count: number;
 }
 
-const style = {
+const style: SxProps<Theme> = {
     position: 'absolute' as 'absolute',
     top: '10%',
     left: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: 600,
+    transform: 'translate(-50%, -10%)',
     bgcolor: 'background.default',
+    p: '12px',
 };
 
 const transformContents = (contents: ZoneCardInfo[]) => {
@@ -49,30 +52,33 @@ export const LibrarySearch = ({ open, contents, requestClose }: LibrarySearchPro
 
     return (
         <Modal open={open} onClose={() => requestClose()}>
-            <Autocomplete
-                autoSelect
-                autoHighlight
-                forcePopupIcon={false}
-                open={open}
-                options={transformContents(contents)}
-                sx={style}
-                isOptionEqualToValue={(option, value) => option.label === value.label}
-                renderInput={(props) => (
-                    <TextField {...props} placeholder='Search library' autoFocus />
-                )}
-                renderOption={(props, { label, count }) => (
-                    <li {...props}>
-                        <div style={{ width: '100%' }}>
-                            {label}
-                            <span style={{ float: 'right' }}>
-                                <span style={{ fontSize: '0.8em' }}>x</span>&nbsp;{count}
-                            </span>
-                        </div>
-                    </li>
-                )}
-                onChange={(_, value) => setSelection(value?.zoneCard)}
-                onClose={(_, reason) => setAccepted(reason === 'selectOption')}
-            />
+            <Pane sx={{ ...style, display: 'flex', gap: '12px' }}>
+                {selection && <Card zoneCard={selection} disabled={true} />}
+                <Autocomplete
+                    sx={{ width: 600 }}
+                    autoSelect
+                    autoHighlight
+                    forcePopupIcon={false}
+                    open={open}
+                    options={transformContents(contents)}
+                    isOptionEqualToValue={(option, value) => option.label === value.label}
+                    renderInput={(props) => (
+                        <TextField {...props} placeholder='Search library' autoFocus />
+                    )}
+                    renderOption={(props, { label, count }) => (
+                        <li {...props}>
+                            <div style={{ width: '100%' }}>
+                                {label}
+                                <span style={{ float: 'right' }}>
+                                    <span style={{ fontSize: '0.8em' }}>x</span>&nbsp;{count}
+                                </span>
+                            </div>
+                        </li>
+                    )}
+                    onHighlightChange={(_, value) => setSelection(value?.zoneCard)}
+                    onClose={(_, reason) => setAccepted(reason === 'selectOption')}
+                />
+            </Pane>
         </Modal>
     );
 };
