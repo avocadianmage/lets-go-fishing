@@ -3,7 +3,7 @@ import { CardInfo } from "../../services/dbSvc";
 import { CARD_HEIGHT_PX, CARD_WIDTH_PX, ZONE_BORDER_PX, ZONE_PADDING_PX } from "../../utilities/constants";
 import { useDebouncedValue } from "../hooks/useDebouncedValue";
 import { useRect } from "../hooks/useRect";
-import { CardActionInfo } from "./card";
+import { CardActionInfo } from "./draggableCard";
 import { Zone, ZoneProps } from "./zone";
 
 interface StackZoneProps extends ZoneProps {

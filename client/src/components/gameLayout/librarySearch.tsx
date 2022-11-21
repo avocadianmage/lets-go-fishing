@@ -1,8 +1,8 @@
 import { Autocomplete, Modal, TextField } from '@mui/material';
 import { SxProps, Theme } from '@mui/system';
 import { useEffect, useState } from 'react';
-import { Card } from './card';
 import { Pane } from './gameLayout';
+import { VisualCard } from './visualCard';
 import { ZoneCardInfo } from './zone';
 
 interface LibrarySearchProps {
@@ -53,7 +53,7 @@ export const LibrarySearch = ({ open, contents, requestClose }: LibrarySearchPro
     return (
         <Modal open={open} onClose={() => requestClose()}>
             <Pane sx={{ ...style, display: 'flex', gap: '12px' }}>
-                {selection && <Card zoneCard={selection} disabled={true} />}
+                {selection && <VisualCard zoneCard={selection} />}
                 <Autocomplete
                     sx={{ width: 600 }}
                     autoSelect

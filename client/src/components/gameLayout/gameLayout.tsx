@@ -11,7 +11,6 @@ import {
     ZONE_BORDER_PX,
     ZONE_PADDING_PX,
 } from '../../utilities/constants';
-import { CardActionInfo } from './card';
 import { ZoneCardInfo } from './zone';
 import { StackZone } from './stackZone';
 import { BattlefieldZone } from './battlefieldZone';
@@ -19,6 +18,7 @@ import { Lefter } from '../lefter/lefter';
 import { LibrarySearch } from './librarySearch';
 import { Paper, styled } from '@mui/material';
 import { useGlobalShortcuts } from '../hooks/useKeyDown';
+import { CardActionInfo } from './draggableCard';
 
 export const Pane = styled(Paper)(() => ({
     backgroundImage: 'linear-gradient(rgba(255, 255, 255, 0.11), rgba(255, 255, 255, 0.11))',

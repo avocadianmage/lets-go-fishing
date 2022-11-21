@@ -1,6 +1,6 @@
 import { ForwardedRef, forwardRef } from 'react';
 import { CardInfo } from '../../services/dbSvc';
-import { Card, CardActionEventHandler, CardActionInfo } from './card';
+import { CardActionEventHandler, CardActionInfo, DraggableCard } from './draggableCard';
 import { Pane, ZoneName } from './gameLayout';
 
 export interface ZoneCardInfo {
@@ -67,7 +67,7 @@ export const Zone = forwardRef(
                 sx={{ zIndex: isSourceZone ? 1 : 0 }}
             >
                 {updatedContents.map((zc, index) => (
-                    <Card
+                    <DraggableCard
                         key={zc.card.id}
                         zoneCard={zc}
                         faceDown={faceDown}
