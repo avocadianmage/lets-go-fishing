@@ -16,10 +16,8 @@
 }
 
 .card {
-    width: inherit;
-    height: inherit;
-    display: inherit;
-    position: inherit;
+    width: var(--card-width);
+    height: var(--card-height);
     box-shadow: 1px 1px 8px rgba(0, 0, 0, 0.5);
     border-bottom-left-radius: 4.75% 3.5%;
     border-bottom-right-radius: 4.75% 3.5%;
@@ -36,37 +34,11 @@
     transform: rotate(90deg);
 }
 
-.card.foil .card-face::after {
-    position: absolute;
-    content: "";
-    border-radius: 4.75% / 3.5%;
-    background-image: linear-gradient(
-        to bottom,
-        transparent 0%,
-        rgba(255, 255, 255, 0.2) 50%,
-        transparent 100%
-    );
-    top: -90%;
-    left: -50%;
-    right: -50%;
-    height: 150px;
-    transform: rotate(-45deg);
-    animation-name: shine;
-    animation-timing-function: ease-out;
-    animation-duration: 7s;
-    animation-iteration-count: infinite;
-}
-
-.card.tapped.foil .card-face::after {
-    transform: rotate(45deg);
-    animation-direction: reverse;
-}
-
 .card .card-face {
     width: inherit;
     height: inherit;
-    display: inherit;
-    position: inherit;
+    display: inline-block;
+    position: absolute;
     background-image: inherit;
     background-size: inherit;
     background-blend-mode: inherit;

@@ -4,7 +4,6 @@ export interface CardInfo {
     id: number;
     name: string;
     set: string;
-    foil: boolean;
     commander: boolean;
 }
 

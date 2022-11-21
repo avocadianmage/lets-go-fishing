@@ -13,7 +13,6 @@ interface MoxfieldCardList {
 interface MoxfieldDeckEntry {
     card: MoxfieldCardInfo;
     quantity: number;
-    isFoil: boolean;
 }
 
 interface MoxfieldCardInfo {
@@ -35,7 +34,6 @@ class DeckInfoSvc {
                             id: id++,
                             name: cardName,
                             set: entry.card.set,
-                            foil: entry.isFoil,
                             commander: areCommanders,
                         };
                     }

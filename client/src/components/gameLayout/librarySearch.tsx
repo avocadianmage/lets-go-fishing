@@ -76,6 +76,7 @@ export const LibrarySearch = ({ open, contents, requestClose }: LibrarySearchPro
                         </li>
                     )}
                     onHighlightChange={(_, value) => setSelection(value?.zoneCard)}
+                    onChange={(_, value) => setSelection(value?.zoneCard)}
                     onClose={(_, reason) => setAccepted(reason === 'selectOption')}
                 />
             </Pane>
