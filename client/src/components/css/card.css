@@ -18,6 +18,7 @@
 .card {
     width: var(--card-width);
     height: var(--card-height);
+    position: relative;
     box-shadow: 1px 1px 8px rgba(0, 0, 0, 0.5);
     border-bottom-left-radius: 4.75% 3.5%;
     border-bottom-right-radius: 4.75% 3.5%;
@@ -66,6 +67,7 @@
 }
 
 .loader {
+    z-index: 2147483647;
     position: absolute;
     top: 50%;
     left: 50%;
