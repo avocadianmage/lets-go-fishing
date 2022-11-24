@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { DatabaseService, DeckInfo } from '../../services/dbSvc';
 import { DeckImport } from './deckImport';
 import { CardContent, Divider, Paper } from '@mui/material';
@@ -110,9 +110,12 @@ export const Lefter = ({
                         }
                         defaultCount={STARTING_LIFE}
                     />
-                    {(Object.keys(ManaColor) as Array<keyof typeof ManaColor>).map((color) => {
-                        return <ManaNumberWheel key={color} color={ManaColor[color]} />;
-                    })}
+                    
+                    <Divider orientation='vertical' variant='middle' flexItem />
+
+                    {(Object.keys(ManaColor) as Array<keyof typeof ManaColor>).map((color) => (
+                        <ManaNumberWheel key={color} color={ManaColor[color]} />
+                    ))}
                 </Paper>
             </CardContent>
         </Pane>
