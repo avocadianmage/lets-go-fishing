@@ -21,11 +21,13 @@ export const Shortcuts = () => (
         <Box sx={{ display: 'flex' }}>
             <Box sx={shortcutColProps}>
                 <SingleShortcut>R – Restart</SingleShortcut>
-                <SingleShortcut>N – Next turn</SingleShortcut>
+                <SingleShortcut>K – Search library</SingleShortcut>
+                <SingleShortcut>S – Shuffle library</SingleShortcut>
             </Box>
             <Box sx={shortcutColProps}>
-                <SingleShortcut>D – Draw</SingleShortcut>
+                <SingleShortcut>N – Next turn</SingleShortcut>
                 <SingleShortcut>U – Untap all</SingleShortcut>
+                <SingleShortcut>D – Draw</SingleShortcut>
             </Box>
         </Box>
     </Paper>

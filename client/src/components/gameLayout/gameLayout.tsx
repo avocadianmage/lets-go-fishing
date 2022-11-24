@@ -197,6 +197,7 @@ export const GameLayout = () => {
             n: takeNextTurn,
             r: restartGame,
             s: shuffleLibrary,
+            u: untapAll,
         },
         () => currentAction === undefined
     );
