@@ -1,19 +1,20 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { DatabaseService, DeckInfo } from '../../services/dbSvc';
-import { DeckImport } from './deckImport';
-import { CardContent, Divider, Paper } from '@mui/material';
-import { DeckSelect } from './deckSelect';
-import { GameDetailsState, ManaColor, Pane } from '../gameLayout/gameLayout';
-import { NumberWheel } from './numberWheel';
 import { Favorite } from '@mui/icons-material';
+import { CardContent, Divider, Paper } from '@mui/material';
+import { useEffect, useRef, useState } from 'react';
+import { DatabaseService, DeckInfo } from '../../services/dbSvc';
 import { STARTING_LIFE } from '../../utilities/constants';
+import { GameDetailsState, ManaColor, Pane } from '../gameLayout/gameLayout';
+import { DeckImport } from './deckImport';
+import { DeckSelect } from './deckSelect';
+import { NumberWheel } from './numberWheel';
 
-import SvgManaWhite from '../../assets/mana-white.svg';
-import SvgManaBlue from '../../assets/mana-blue.svg';
 import SvgManaBlack from '../../assets/mana-black.svg';
-import SvgManaRed from '../../assets/mana-red.svg';
-import SvgManaGreen from '../../assets/mana-green.svg';
+import SvgManaBlue from '../../assets/mana-blue.svg';
 import SvgManaColorless from '../../assets/mana-colorless.svg';
+import SvgManaGreen from '../../assets/mana-green.svg';
+import SvgManaRed from '../../assets/mana-red.svg';
+import SvgManaWhite from '../../assets/mana-white.svg';
+import { Shortcuts } from './shortcuts';
 
 interface LefterProps {
     gameDetailsState: GameDetailsState;
@@ -89,7 +90,7 @@ export const Lefter = ({
             <CardContent>
                 <h1 style={{ margin: 6, marginBottom: 16 }}>Let's Go Fishing</h1>
 
-                <Paper className='widget'>
+                <Paper sx={{ marginBottom: '16px' }}>
                     <DeckImport ref={deckImportRef} onImport={addDeck} />
                     <Divider />
                     <DeckSelect
@@ -100,7 +101,7 @@ export const Lefter = ({
                     />
                 </Paper>
 
-                <Paper className='widget' sx={{ display: 'flex' }}>
+                <Paper sx={{ marginBottom: '16px', display: 'flex' }}>
                     <NumberWheel
                         label='life'
                         icon={<Favorite sx={{ color: 'var(--nord15)' }} />}
@@ -110,13 +111,15 @@ export const Lefter = ({
                         }
                         defaultCount={STARTING_LIFE}
                     />
-                    
+
                     <Divider orientation='vertical' variant='middle' flexItem />
 
                     {(Object.keys(ManaColor) as Array<keyof typeof ManaColor>).map((color) => (
                         <ManaNumberWheel key={color} color={ManaColor[color]} />
                     ))}
                 </Paper>
+
+                <Shortcuts />
             </CardContent>
         </Pane>
     );

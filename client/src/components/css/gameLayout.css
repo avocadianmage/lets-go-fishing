@@ -47,10 +47,6 @@
     flex: 1;
 }
 
-.widget {
-    margin-bottom: 16px;
-}
-
 .removeMuiButtonGroupBorder {
     border-style: none !important;
 }
