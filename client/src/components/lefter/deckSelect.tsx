@@ -1,6 +1,6 @@
-import { DatabaseService, DeckInfo } from '../../services/dbSvc';
-import { Box, IconButton, List, ListItem, ListItemButton, ListItemText } from '@mui/material';
 import { ArrowUpward, OpenInNew, Remove } from '@mui/icons-material';
+import { Box, IconButton, List, ListItem, ListItemButton, ListItemText } from '@mui/material';
+import { DatabaseService, DeckInfo } from '../../services/dbSvc';
 
 const DECK_SELECT_HEIGHT = 250;
 
@@ -42,6 +42,7 @@ export const DeckSelect = ({
                     <ListItemButton
                         selected={selectedIndex === index}
                         onClick={() => onUpdateDecksAndSelection(index)}
+                        sx={{ p: '0 16px' }}
                     >
                         <ListItemText
                             primary={deck.name}
