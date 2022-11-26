@@ -66,32 +66,8 @@
     left: -100%;
 }
 
-@keyframes spin {
-    0% {
-        transform: rotate(0deg);
-    }
-    100% {
-        transform: rotate(360deg);
-    }
-}
-
 @keyframes fadeIn {
     from {
         opacity: 0;
-    }
-}
-
-@keyframes shine {
-    0% {
-        top: -90%
-    }
-    100% {
-        top: 150%
-    }
-}
-
-@keyframes slideIn {
-    from {
-        transform: translate(0, -10%);
     }
 }

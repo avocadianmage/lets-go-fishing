@@ -24,7 +24,15 @@ const SingleShortcut = (props: { shortcutKey: string; description: string }) => 
 );
 
 export const Shortcuts = () => (
-    <Paper sx={{ marginBottom: '16px', p: '4px 12px' }}>
+    <Paper
+        sx={{
+            p: '4px 12px',
+            position: 'absolute',
+            bottom: '16px',
+            left: '16px',
+            width: 'calc(100% - 56px)',
+        }}
+    >
         <Typography variant='overline' color={grayText}>
             Keyboard shortcuts
         </Typography>

@@ -1,8 +1,8 @@
 import { Favorite } from '@mui/icons-material';
-import { CardContent, Divider, Paper } from '@mui/material';
+import { Box, Divider, Paper } from '@mui/material';
 import { useEffect, useRef, useState } from 'react';
-import { DatabaseService, DeckInfo } from '../../services/dbSvc';
 import { STARTING_LIFE } from '../../global/constants';
+import { DatabaseService, DeckInfo } from '../../services/dbSvc';
 import { GameDetailsState, ManaColor, Pane } from '../gameLayout/gameLayout';
 import { DeckImport } from './deckImport';
 import { DeckSelect } from './deckSelect';
@@ -87,7 +87,7 @@ export const Lefter = ({
 
     return (
         <Pane id='lefter'>
-            <CardContent>
+            <Box sx={{ p: '10px' }}>
                 <h1 style={{ margin: 6, marginBottom: 16 }}>Let's Go Fishing</h1>
 
                 <Paper sx={{ marginBottom: '16px' }}>
@@ -120,7 +120,7 @@ export const Lefter = ({
                 </Paper>
 
                 <Shortcuts />
-            </CardContent>
+            </Box>
         </Pane>
     );
 };
