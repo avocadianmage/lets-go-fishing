@@ -88,7 +88,7 @@ export const Lefter = ({
     return (
         <Pane id='lefter'>
             <Box sx={{ p: '10px' }}>
-                <h1 style={{ margin: 6, marginBottom: 16 }}>Let's Go Fishing</h1>
+                <h1 style={{ marginTop: 0 }}>Let's Go Fishing</h1>
 
                 <Paper sx={{ marginBottom: '16px' }}>
                     <DeckImport ref={deckImportRef} onImport={addDeck} />
