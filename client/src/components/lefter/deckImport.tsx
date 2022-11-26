@@ -1,8 +1,9 @@
+import { Add } from '@mui/icons-material';
+import { InputAdornment, styled, TextField } from '@mui/material';
 import { forwardRef, useState } from 'react';
 import { DeckInfo } from '../../services/dbSvc';
 import { DeckInfoService } from '../../services/deckInfoSvc';
-import { IconButton, InputAdornment, styled, TextField } from '@mui/material';
-import { Add } from '@mui/icons-material';
+import { InputButton } from './inputButton';
 
 interface DeckImportProps {
     onImport(value: DeckInfo): void;
@@ -21,7 +22,7 @@ export const DeckImport = forwardRef(({ onImport }: DeckImportProps, ref) => {
     const updateInput = (input: string) => {
         setValue(input);
         setErrorMessage('');
-    }
+    };
 
     const [errorMessage, setErrorMessage] = useState('');
 
@@ -56,16 +57,15 @@ export const DeckImport = forwardRef(({ onImport }: DeckImportProps, ref) => {
             inputProps={{ style: { fontSize: '0.8rem' } }}
             InputProps={{
                 endAdornment: (
-                    <InputAdornment position='end' sx={{ marginRight: '2px' }}>
-                        <IconButton
+                    <InputAdornment position='end' sx={{ marginRight: '-3px' }}>
+                        <InputButton
                             aria-label='import deck'
-                            edge='end'
                             disabled={isDisabled}
                             onClick={doImport}
                             sx={{ color: 'var(--nord14)' }}
                         >
                             <Add />
-                        </IconButton>
+                        </InputButton>
                     </InputAdornment>
                 ),
             }}

@@ -1,13 +1,7 @@
 import { ArrowUpward, OpenInNew, Remove } from '@mui/icons-material';
-import {
-    Box,
-    IconButton,
-    List,
-    ListItem,
-    ListItemButton,
-    ListItemText
-} from '@mui/material';
+import { Box, List, ListItem, ListItemButton, ListItemText } from '@mui/material';
 import { DatabaseService, DeckInfo } from '../../services/dbSvc';
+import { InputButton } from './inputButton';
 
 const DECK_SELECT_HEIGHT = 250;
 
@@ -49,30 +43,25 @@ export const DeckSelect = ({
                     <ListItemButton
                         selected={selectedIndex === index}
                         onClick={() => onUpdateDecksAndSelection(index)}
-                        sx={{ paddingLeft: '14px', paddingRight: '10px' }}
+                        sx={{ paddingLeft: '14px', paddingRight: '11px' }}
                     >
                         <ListItemText
                             primary={deck.name}
                             primaryTypographyProps={{ fontSize: '0.8rem' }}
                         />
-                        <IconButton
+                        <InputButton
                             aria-label='open deck in moxfield'
-                            edge='end'
                             onClick={(e) => fireDeckEdit(e, deck)}
-                            sx={{ borderRadius: '4px' }}
-                            size='small'
                         >
                             <OpenInNew />
-                        </IconButton>
-                        <IconButton
+                        </InputButton>
+                        <InputButton
                             aria-label='remove deck'
-                            edge='end'
                             onClick={(e) => fireDeckRemove(e, index)}
-                            sx={{ borderRadius: '4px', color: 'var(--nord11)' }}
-                            size='small'
+                            sx={{ color: 'var(--nord11)' }}
                         >
                             <Remove />
-                        </IconButton>
+                        </InputButton>
                     </ListItemButton>
                 </ListItem>
             ))}
