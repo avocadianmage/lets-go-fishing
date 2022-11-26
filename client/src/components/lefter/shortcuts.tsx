@@ -1,11 +1,10 @@
-import { Box, Divider, Paper, Typography } from '@mui/material';
+import { Box, Divider, Paper, Theme, Typography, TypographyProps } from '@mui/material';
 
-const SingleShortcut = (props: { shortcutKey: string; description: string }) => (
-    <Typography variant='overline' lineHeight={1}>
-        {props.shortcutKey + ' \u{2014} ' + props.description}
-    </Typography>
-);
-
+const grayText = (theme: Theme) => theme.palette.grey[600];
+const shortcutTypographyProps: TypographyProps = {
+    variant: 'overline',
+    lineHeight: 1,
+};
 const shortcutColProps = {
     flexGrow: 1,
     display: 'flex',
@@ -14,9 +13,21 @@ const shortcutColProps = {
     p: '8px 0',
 };
 
+const SingleShortcut = (props: { shortcutKey: string; description: string }) => (
+    <Typography {...shortcutTypographyProps}>
+        {props.shortcutKey}
+        <Typography {...shortcutTypographyProps} color={grayText}>
+            {'\u{00A0}\u{2014}\u{00A0}'}
+        </Typography>
+        {props.description}
+    </Typography>
+);
+
 export const Shortcuts = () => (
     <Paper sx={{ marginBottom: '16px', p: '4px 12px' }}>
-        <Typography variant='overline'>Keyboard shortcuts</Typography>
+        <Typography variant='overline' color={grayText}>
+            Keyboard shortcuts
+        </Typography>
         <Divider sx={{ marginBottom: '3px' }} />
 
         <Box sx={{ display: 'flex' }}>
