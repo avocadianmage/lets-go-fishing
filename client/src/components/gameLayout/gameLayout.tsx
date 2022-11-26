@@ -324,7 +324,7 @@ export const GameLayout = () => {
     const zoneProps = { action: currentAction, onCardDrag, onCardDragStop };
     return (
         <div className='gameLayout' onMouseMove={onMouseMove}>
-            <div className='topPanel'>
+            <div style={{ display: 'flex', flex: 1 }}>
                 <Lefter
                     gameDetailsState={gameDetailsState}
                     onUpdateGameDetailsState={setGameDetailsState}
@@ -343,7 +343,7 @@ export const GameLayout = () => {
                     vertical={true}
                 />
             </div>
-            <div className='bottomPanel'>
+            <div style={{ display: 'flex' }}>
                 <StackZone
                     {...zoneProps}
                     name={ZoneName.Command}

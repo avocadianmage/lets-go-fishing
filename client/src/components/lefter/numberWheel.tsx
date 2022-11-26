@@ -31,7 +31,7 @@ export const NumberWheel = ({
     const increment = (step: number) => updateCount(Math.max(min, Math.min(max, count + step)));
 
     const buttonProps = {
-        className: 'removeMuiButtonGroupBorder',
+        sx: { borderStyle: 'none !important' },
         onWheel: (e: React.WheelEvent<HTMLButtonElement>) => increment(-Math.sign(e.deltaY)),
     };
 
@@ -40,7 +40,7 @@ export const NumberWheel = ({
             <Button
                 {...buttonProps}
                 aria-label='increment'
-                sx={{ p: '2px 0px 10px 0px' }}
+                sx={{ ...buttonProps.sx, p: '2px 0px 10px 0px' }}
                 onClick={() => increment(1)}
             >
                 <ButtonHalf item1={<ArrowDropUp />} item2={icon} />
@@ -48,7 +48,7 @@ export const NumberWheel = ({
             <Button
                 {...buttonProps}
                 aria-label='decrement'
-                sx={{ p: '4px 0px 2px 0px' }}
+                sx={{ ...buttonProps.sx, p: '4px 0px 2px 0px' }}
                 onClick={() => increment(-1)}
             >
                 <ButtonHalf
