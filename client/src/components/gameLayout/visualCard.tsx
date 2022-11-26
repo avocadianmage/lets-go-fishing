@@ -2,10 +2,10 @@ import cardBack from '../../assets/mtg-card-back.png';
 import '../css/card.css';
 
 import { useEffect, useState } from 'react';
-import { CardInfoService } from '../../services/cardInfoSvc';
 import { cancelablePromise } from '../../global/helpers';
+import { CardInfoService } from '../../services/cardInfoSvc';
+import { CenteredSpinner } from '../util/centeredSpinner';
 import { ZoneCardInfo } from './zone';
-import { Spinner } from '../util/spinner';
 
 export interface VisualCardProps {
     zoneCard: ZoneCardInfo;
@@ -37,7 +37,7 @@ export const VisualCard = ({ zoneCard, faceDown, wiggle }: VisualCardProps) => {
 
     return (
         <div className={className} style={imageStyle}>
-            {isLoading ? <Spinner /> : <div className='card-face' />}
+            {isLoading ? <CenteredSpinner diameter={80} /> : <div className='card-face' />}
         </div>
     );
 };
