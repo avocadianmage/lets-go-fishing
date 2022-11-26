@@ -53,7 +53,7 @@ export const LibrarySearch = ({ open, contents, requestClose }: LibrarySearchPro
     return (
         <Modal open={open} onClose={() => requestClose()}>
             <Pane sx={{ ...style, display: 'flex', gap: '12px' }}>
-                {selection && <VisualCard zoneCard={selection} />}
+                <VisualCard zoneCard={selection} />
                 <Autocomplete
                     sx={{ width: 600 }}
                     autoSelect

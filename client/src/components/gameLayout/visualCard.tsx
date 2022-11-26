@@ -8,7 +8,7 @@ import { CenteredSpinner } from '../util/centeredSpinner';
 import { ZoneCardInfo } from './zone';
 
 export interface VisualCardProps {
-    zoneCard: ZoneCardInfo;
+    zoneCard?: ZoneCardInfo;
     faceDown?: boolean;
     wiggle?: boolean;
 }
@@ -16,12 +16,14 @@ export interface VisualCardProps {
 export const VisualCard = ({ zoneCard, faceDown, wiggle }: VisualCardProps) => {
     const [imageUrl, setImageUrl] = useState('');
 
-    const { card, previewing, tapped } = zoneCard;
+    faceDown = zoneCard ? faceDown : true;
     const isLoading = !imageUrl && !faceDown;
     const faceUpAndLoaded = !isLoading && !faceDown;
 
+    const card = zoneCard?.card;
     useEffect(() => {
         setImageUrl('');
+        if (!card) return;
         const { promise, cancel } = cancelablePromise(CardInfoService.getCardImageUrl(card));
         promise.then((url) => setImageUrl(url)).catch(() => {});
         return cancel;
@@ -31,8 +33,8 @@ export const VisualCard = ({ zoneCard, faceDown, wiggle }: VisualCardProps) => {
     const className =
         'card' +
         (isLoading ? ' loading' : '') +
-        (faceUpAndLoaded && previewing ? ' previewing' : '') +
-        (tapped ? ' tapped' : '') +
+        (faceUpAndLoaded && zoneCard?.previewing ? ' previewing' : '') +
+        (zoneCard?.tapped ? ' tapped' : '') +
         (wiggle ? ' wiggle' : '');
 
     return (

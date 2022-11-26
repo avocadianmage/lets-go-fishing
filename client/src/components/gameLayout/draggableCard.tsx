@@ -5,6 +5,7 @@ import Draggable, { ControlPosition } from 'react-draggable';
 import { CardInfo } from '../../services/dbSvc';
 import { ZoneName } from './gameLayout';
 import { VisualCard, VisualCardProps } from './visualCard';
+import { ZoneCardInfo } from './zone';
 
 export interface CardActionInfo {
     card: CardInfo;
@@ -14,6 +15,7 @@ export interface CardActionInfo {
 }
 
 interface DraggableCardProps extends VisualCardProps {
+    zoneCard: ZoneCardInfo;
     onDrag: CardActionEventHandler;
     onDragStop: CardActionEventHandler;
     onMouseEnter: CardActionEventHandler;
