@@ -1,5 +1,12 @@
 import { ArrowUpward, OpenInNew, Remove } from '@mui/icons-material';
-import { Box, IconButton, List, ListItem, ListItemButton, ListItemText } from '@mui/material';
+import {
+    Box,
+    IconButton,
+    List,
+    ListItem,
+    ListItemButton,
+    ListItemText
+} from '@mui/material';
 import { DatabaseService, DeckInfo } from '../../services/dbSvc';
 
 const DECK_SELECT_HEIGHT = 250;
@@ -42,7 +49,7 @@ export const DeckSelect = ({
                     <ListItemButton
                         selected={selectedIndex === index}
                         onClick={() => onUpdateDecksAndSelection(index)}
-                        sx={{ p: '0 16px' }}
+                        sx={{ paddingLeft: '14px', paddingRight: '10px' }}
                     >
                         <ListItemText
                             primary={deck.name}
@@ -52,6 +59,8 @@ export const DeckSelect = ({
                             aria-label='open deck in moxfield'
                             edge='end'
                             onClick={(e) => fireDeckEdit(e, deck)}
+                            sx={{ borderRadius: '4px' }}
+                            size='small'
                         >
                             <OpenInNew />
                         </IconButton>
@@ -59,7 +68,8 @@ export const DeckSelect = ({
                             aria-label='remove deck'
                             edge='end'
                             onClick={(e) => fireDeckRemove(e, index)}
-                            sx={{ color: 'var(--nord11)' }}
+                            sx={{ borderRadius: '4px', color: 'var(--nord11)' }}
+                            size='small'
                         >
                             <Remove />
                         </IconButton>
