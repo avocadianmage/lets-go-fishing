@@ -66,21 +66,6 @@
     left: -100%;
 }
 
-.loader {
-    z-index: 2147483647;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    margin: -40px 0 0 -40px;
-    border: 8px solid var(--nord4);
-    border-top: 8px solid var(--nord10);
-    border-radius: 50%;
-    width: 64px;
-    height: 64px;
-    animation: fadeIn 0.2s, spin 1s linear infinite;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 1);
-}
-
 @keyframes spin {
     0% {
         transform: rotate(0deg);
