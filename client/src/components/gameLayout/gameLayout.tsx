@@ -3,7 +3,6 @@ import '../css/gameLayout.css';
 import { Paper, styled } from '@mui/material';
 import shuffle from 'lodash/shuffle';
 import React, { useState } from 'react';
-import { DeckInfo } from '../../services/dbSvc';
 import {
     CARD_HEIGHT_PX,
     CARD_WIDTH_PX,
@@ -11,9 +10,10 @@ import {
     STARTING_LIFE,
     ZONE_BORDER_PX,
     ZONE_PADDING_PX
-} from '../../utilities/constants';
-import { useGlobalShortcuts } from '../hooks/useKeyDown';
+} from '../../global/constants';
+import { DeckInfo } from '../../services/dbSvc';
 import { Lefter } from '../lefter/lefter';
+import { useGlobalShortcuts } from '../util/useKeyDown';
 import { BattlefieldZone } from './battlefieldZone';
 import { CardActionInfo } from './draggableCard';
 import { LibrarySearch } from './librarySearch';

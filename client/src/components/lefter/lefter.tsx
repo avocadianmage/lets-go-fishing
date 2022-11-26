@@ -2,7 +2,7 @@ import { Favorite } from '@mui/icons-material';
 import { CardContent, Divider, Paper } from '@mui/material';
 import { useEffect, useRef, useState } from 'react';
 import { DatabaseService, DeckInfo } from '../../services/dbSvc';
-import { STARTING_LIFE } from '../../utilities/constants';
+import { STARTING_LIFE } from '../../global/constants';
 import { GameDetailsState, ManaColor, Pane } from '../gameLayout/gameLayout';
 import { DeckImport } from './deckImport';
 import { DeckSelect } from './deckSelect';

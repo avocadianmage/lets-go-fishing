@@ -3,8 +3,9 @@ import '../css/card.css';
 
 import { useEffect, useState } from 'react';
 import { CardInfoService } from '../../services/cardInfoSvc';
-import { cancelablePromise } from '../../utilities/helpers';
+import { cancelablePromise } from '../../global/helpers';
 import { ZoneCardInfo } from './zone';
+import { Spinner } from '../util/spinner';
 
 export interface VisualCardProps {
     zoneCard: ZoneCardInfo;
@@ -36,7 +37,7 @@ export const VisualCard = ({ zoneCard, faceDown, wiggle }: VisualCardProps) => {
 
     return (
         <div className={className} style={imageStyle}>
-            {isLoading ? <div className='loader' /> : <div className='card-face' />}
+            {isLoading ? <Spinner /> : <div className='card-face' />}
         </div>
     );
 };
