@@ -193,7 +193,7 @@ export const GameLayout = () => {
     useGlobalShortcuts(
         {
             d: drawOne,
-            k: searchLibrary,
+            l: searchLibrary,
             n: takeNextTurn,
             r: restartGame,
             s: shuffleLibrary,
