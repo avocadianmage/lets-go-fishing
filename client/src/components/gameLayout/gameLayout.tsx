@@ -319,16 +319,16 @@ export const GameLayout = () => {
     const retrieveCard = (zoneCard?: ZoneCardInfo) => {
         const fromZone = searchingZone;
         const toZone = ZoneName.Hand;
+        const isSameZone = fromZone === toZone;
         setSearchingZone(ZoneName.None);
 
         if (!zoneCard) return;
-        const [piece1, piece2] = sliceCardFromZone(zoneCard, fromZone);
-        const fromZoneContents = piece1.concat(piece2);
-        setGameZonesState((g) => ({
-            ...g,
-            [fromZone]: fromZoneContents,
-            [ZoneName.Hand]: (fromZone === toZone ? fromZoneContents : g[toZone]).concat(zoneCard),
-        }));
+        setGameZonesState((g) => {
+            const [piece1, piece2] = sliceCardFromZone(zoneCard, fromZone);
+            const fromZoneContents = piece1.concat(piece2);
+            const toZoneContents = (isSameZone ? fromZoneContents : g[toZone]).concat(zoneCard);
+            return { ...g, [fromZone]: fromZoneContents, [toZone]: toZoneContents };
+        });
 
         if (fromZone === ZoneName.Library) shuffleLibrary();
     };
