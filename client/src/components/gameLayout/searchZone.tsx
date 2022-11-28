@@ -1,13 +1,13 @@
 import { Autocomplete, Modal, TextField } from '@mui/material';
 import { SxProps, Theme } from '@mui/system';
 import { useEffect, useState } from 'react';
-import { Pane } from './gameLayout';
+import { Pane, ZoneName } from './gameLayout';
 import { VisualCard } from './visualCard';
 import { ZoneCardInfo } from './zone';
 
-interface LibrarySearchProps {
+interface SearchZoneProps {
+    zone: ZoneName;
     contents: ZoneCardInfo[];
-    open: boolean;
     requestClose(selection?: ZoneCardInfo): void;
 }
 
@@ -36,12 +36,13 @@ const transformContents = (contents: ZoneCardInfo[]) => {
 
     const cardOptions = [];
     for (let label in map) cardOptions.push(map[label]);
-    return cardOptions.sort((a, b) => a.label.localeCompare(b.label));
+    return cardOptions.reverse();
 };
 
-export const LibrarySearch = ({ open, contents, requestClose }: LibrarySearchProps) => {
+export const SearchZone = ({ zone, contents, requestClose }: SearchZoneProps) => {
     const [selection, setSelection] = useState<ZoneCardInfo>();
     const [accepted, setAccepted] = useState<boolean>();
+    const open = zone !== ZoneName.None;
 
     useEffect(() => {
         if (accepted !== undefined) {
@@ -63,7 +64,7 @@ export const LibrarySearch = ({ open, contents, requestClose }: LibrarySearchPro
                     options={transformContents(contents)}
                     isOptionEqualToValue={(option, value) => option.label === value.label}
                     renderInput={(props) => (
-                        <TextField {...props} placeholder='Search library' autoFocus />
+                        <TextField {...props} placeholder={`Search ${zone}`} autoFocus />
                     )}
                     renderOption={(props, { label, count }) => (
                         <li {...props}>

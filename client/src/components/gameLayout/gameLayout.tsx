@@ -9,14 +9,14 @@ import {
     STARTING_HAND_SIZE,
     STARTING_LIFE,
     ZONE_BORDER_PX,
-    ZONE_PADDING_PX
+    ZONE_PADDING_PX,
 } from '../../global/constants';
 import { DeckInfo } from '../../services/dbSvc';
 import { Lefter } from '../lefter/lefter';
 import { useGlobalShortcuts } from '../util/useKeyDown';
 import { BattlefieldZone } from './battlefieldZone';
 import { CardActionInfo } from './draggableCard';
-import { LibrarySearch } from './librarySearch';
+import { SearchZone } from './searchZone';
 import { StackZone } from './stackZone';
 import { ZoneCardInfo } from './zone';
 
@@ -89,7 +89,7 @@ export const GameLayout = () => {
         [ZoneName.Command]: [],
     });
     const [currentAction, setCurrentAction] = useState<CardActionInfo>();
-    const [librarySearchOpen, setLibrarySearchOpen] = useState(false);
+    const [searchingZone, setSearchingZone] = useState(ZoneName.None);
     const [libraryShuffleAnimationRunning, setLibraryShuffleAnimationRunning] = useState(true);
 
     const fromLibrary = (action: CardActionInfo) => action.sourceZone === ZoneName.Library;
@@ -184,15 +184,22 @@ export const GameLayout = () => {
         draw();
     };
 
-    const searchLibrary = (e: KeyboardEvent) => {
-        setLibrarySearchOpen(true);
+    const searchZone = (zone: ZoneName, e: KeyboardEvent) => {
+        setSearchingZone(zone);
         // Prevent input from proliferating into the search box.
         e.preventDefault();
     };
+    const searchExile = (e: KeyboardEvent) => searchZone(ZoneName.Exile, e);
+    const searchGraveyard = (e: KeyboardEvent) => searchZone(ZoneName.Graveyard, e);
+    const searchHand = (e: KeyboardEvent) => searchZone(ZoneName.Hand, e);
+    const searchLibrary = (e: KeyboardEvent) => searchZone(ZoneName.Library, e);
 
     useGlobalShortcuts(
         {
             d: drawOne,
+            e: searchExile,
+            g: searchGraveyard,
+            h: searchHand,
             l: searchLibrary,
             n: takeNextTurn,
             r: restartGame,
@@ -309,16 +316,21 @@ export const GameLayout = () => {
         });
     };
 
-    const tutorCard = (zoneCard?: ZoneCardInfo) => {
-        setLibrarySearchOpen(false);
+    const retrieveCard = (zoneCard?: ZoneCardInfo) => {
+        const fromZone = searchingZone;
+        const toZone = ZoneName.Hand;
+        setSearchingZone(ZoneName.None);
+
         if (!zoneCard) return;
-        const [piece1, piece2] = sliceCardFromZone(zoneCard, ZoneName.Library);
+        const [piece1, piece2] = sliceCardFromZone(zoneCard, fromZone);
+        const fromZoneContents = piece1.concat(piece2);
         setGameZonesState((g) => ({
             ...g,
-            [ZoneName.Library]: shuffle(piece1.concat(piece2)),
-            [ZoneName.Hand]: g[ZoneName.Hand].concat(zoneCard),
+            [fromZone]: fromZoneContents,
+            [ZoneName.Hand]: (fromZone === toZone ? fromZoneContents : g[toZone]).concat(zoneCard),
         }));
-        animateShuffle();
+
+        if (fromZone === ZoneName.Library) shuffleLibrary();
     };
 
     const zoneProps = { action: currentAction, onCardDrag, onCardDragStop };
@@ -369,10 +381,10 @@ export const GameLayout = () => {
                     showTopOnly={true}
                 />
             </div>
-            <LibrarySearch
-                contents={gameZonesState[ZoneName.Library]}
-                open={librarySearchOpen}
-                requestClose={tutorCard}
+            <SearchZone
+                zone={searchingZone}
+                contents={gameZonesState[searchingZone]}
+                requestClose={retrieveCard}
             />
         </div>
     );
