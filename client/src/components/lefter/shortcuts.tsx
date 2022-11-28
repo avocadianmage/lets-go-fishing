@@ -42,12 +42,15 @@ export const Shortcuts = () => (
             <Box sx={shortcutColProps}>
                 <SingleShortcut shortcutKey='R' description='restart game' />
                 <SingleShortcut shortcutKey='L' description='search library' />
-                <SingleShortcut shortcutKey='S' description='shuffle library' />
+                <SingleShortcut shortcutKey='G' description='search graveyard' />
+                <SingleShortcut shortcutKey='E' description='search exile' />
+                <SingleShortcut shortcutKey='H' description='search hand' />
             </Box>
             <Box sx={shortcutColProps}>
                 <SingleShortcut shortcutKey='N' description='next turn' />
                 <SingleShortcut shortcutKey='U' description='untap all' />
                 <SingleShortcut shortcutKey='D' description='draw one' />
+                <SingleShortcut shortcutKey='S' description='shuffle library' />
             </Box>
         </Box>
     </Paper>
