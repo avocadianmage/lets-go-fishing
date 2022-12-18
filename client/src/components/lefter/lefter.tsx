@@ -66,7 +66,12 @@ export const Lefter = ({
     };
 
     const addDeck = (deckInfo: DeckInfo) => {
-        updateDecksAndSelection(decks.length, decks.concat(deckInfo));
+        const existingDeckIndex = decks.findIndex((d) => d.url === deckInfo.url);
+        if (existingDeckIndex >= 0) {
+            updateDecksAndSelection(existingDeckIndex);
+        } else {
+            updateDecksAndSelection(decks.length, decks.concat(deckInfo));
+        }
     };
 
     useEffect(() => {
@@ -91,7 +96,7 @@ export const Lefter = ({
                 <h1 style={{ marginTop: 0 }}>Let's Go Fishing</h1>
 
                 <Paper sx={{ marginBottom: '16px' }}>
-                    <DeckImport ref={deckImportRef} onImport={addDeck} />
+                    <DeckImport ref={deckImportRef} decks={decks} onImport={addDeck} />
                     <Divider />
                     <DeckSelect
                         decks={decks}

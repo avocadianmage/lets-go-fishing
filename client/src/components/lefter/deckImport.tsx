@@ -6,6 +6,7 @@ import { DeckInfoService } from '../../services/deckInfoSvc';
 import { InputButton } from './inputButton';
 
 interface DeckImportProps {
+    decks: DeckInfo[];
     onImport(value: DeckInfo): void;
 }
 
@@ -17,19 +18,21 @@ const CssTextField = styled(TextField)({
     },
 });
 
-export const DeckImport = forwardRef(({ onImport }: DeckImportProps, ref) => {
+export const DeckImport = forwardRef(({ decks, onImport }: DeckImportProps, ref) => {
     const [value, setValue] = useState('');
+    const [errorMessage, setErrorMessage] = useState('');
     const updateInput = (input: string) => {
         setValue(input);
         setErrorMessage('');
     };
 
-    const [errorMessage, setErrorMessage] = useState('');
-
     const isDisabled = value === '';
+
     const doImport = async () => {
         if (isDisabled) return;
-        const deck = await DeckInfoService.getDecklist(value);
+
+        const deck =
+            decks.find((d) => d.url === value) ?? (await DeckInfoService.getDecklist(value));
         if (!deck) {
             setErrorMessage('Unable to find deck.');
             return;
