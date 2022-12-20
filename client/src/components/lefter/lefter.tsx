@@ -1,4 +1,4 @@
-import { Favorite } from '@mui/icons-material';
+import { Favorite, GitHub } from '@mui/icons-material';
 import { Box, Divider, Paper } from '@mui/material';
 import { useEffect, useRef, useState } from 'react';
 import { STARTING_LIFE } from '../../global/constants';
@@ -15,6 +15,13 @@ import SvgManaGreen from '../../assets/mana-green.svg';
 import SvgManaRed from '../../assets/mana-red.svg';
 import SvgManaWhite from '../../assets/mana-white.svg';
 import { Shortcuts } from './shortcuts';
+import { InputButton } from './inputButton';
+
+import { homepage } from '../../../package.json';
+
+const openGitHub = () => {
+    window.open(homepage, '_blank');
+};
 
 interface LefterProps {
     gameDetailsState: GameDetailsState;
@@ -93,6 +100,11 @@ export const Lefter = ({
     return (
         <Pane id='lefter'>
             <Box sx={{ p: '10px' }}>
+                <Box sx={{ float: 'right' }}>
+                    <InputButton aria-label='GitHub' onClick={openGitHub}>
+                        <GitHub />
+                    </InputButton>
+                </Box>
                 <h1 style={{ marginTop: 0 }}>Let's Go Fishing</h1>
 
                 <Paper sx={{ marginBottom: '16px' }}>
