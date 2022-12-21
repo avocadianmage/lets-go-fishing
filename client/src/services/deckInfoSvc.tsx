@@ -55,11 +55,18 @@ class DeckInfoSvc {
         }
     }
 
+    private createMoxfieldApiUrl(moxfieldDeckUrl: string) {
+        const apiUrlPrefix = 'https://api.moxfield.com/v2/decks/all/';
+        const deckUrlPieces = moxfieldDeckUrl.split('/');
+        return apiUrlPrefix + deckUrlPieces[deckUrlPieces.length - 1];
+    }
+
     async getDecklist(moxfieldDeckUrl: string) {
+        const moxfieldApiUrl = this.createMoxfieldApiUrl(moxfieldDeckUrl);
         const response = await fetch('/api/get-deck', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ moxfieldDeckUrl }),
+            body: JSON.stringify({ moxfieldApiUrl }),
         });
         const json = await response.json();
         return this.parseAndSaveDeck(moxfieldDeckUrl, json);

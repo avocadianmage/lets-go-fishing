@@ -10,17 +10,10 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 const endpointGetDeck = '/api/get-deck';
 
-const createMoxfieldApiUrl = (moxfieldDeckUrl) => {
-    const apiUrlPrefix = 'https://api.moxfield.com/v2/decks/all/';
-    const deckUrlPieces = moxfieldDeckUrl.split('/');
-    return apiUrlPrefix + deckUrlPieces[deckUrlPieces.length - 1];
-};
-
 app.post(endpointGetDeck, async (req, res) => {
     console.log({ endpoint: endpointGetDeck, body: req.body });
 
-    const moxfieldApiUrl = createMoxfieldApiUrl(req.body.moxfieldDeckUrl);
-    const response = await fetch(moxfieldApiUrl);
+    const response = await fetch(req.body.moxfieldApiUrl);
     const responseBody = await response.json();
     res.send(responseBody);
 });
