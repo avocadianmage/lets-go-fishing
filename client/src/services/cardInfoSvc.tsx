@@ -45,13 +45,9 @@ class CardInfoSvc {
                     this.outgoingThrottle = this.outgoingThrottle
                         .then(getPromisedTimeout)
                         .then(() => {
-                            let image_uris: any;
-                            if (json.card_faces) {
-                                image_uris = json.card_faces[0].image_uris;
-                            }
-                            if (!image_uris) {
-                                image_uris = json.image_uris;
-                            }
+                            const image_uris = json.card_faces
+                                ? json.card_faces[0].image_uris ?? json.image_uris
+                                : json.image_uris;
                             return fetch(image_uris.normal);
                         })
                         .then((response) => response.blob())
