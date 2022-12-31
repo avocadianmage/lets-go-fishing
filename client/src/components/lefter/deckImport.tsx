@@ -2,7 +2,7 @@ import { Add } from '@mui/icons-material';
 import { InputAdornment, styled, TextField } from '@mui/material';
 import { forwardRef, useState } from 'react';
 import { DeckInfo } from '../../services/dbSvc';
-import { DeckInfoService } from '../../services/deckInfoSvc';
+import { FetchDecklist } from '../../services/deckInfoSvc';
 import { InputButton } from './inputButton';
 
 interface DeckImportProps {
@@ -31,8 +31,7 @@ export const DeckImport = forwardRef(({ decks, onImport }: DeckImportProps, ref)
     const doImport = async () => {
         if (isDisabled) return;
 
-        const deck =
-            decks.find((d) => d.url === value) ?? (await DeckInfoService.getDecklist(value));
+        const deck = decks.find((d) => d.url === value) ?? (await FetchDecklist(value));
         if (!deck) {
             setErrorMessage('Unable to find deck.');
             return;

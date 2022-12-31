@@ -3,7 +3,7 @@ import { CardInfo, DatabaseService } from './dbSvc';
 const MS_QUERY_RATE = 80;
 
 function getPromisedTimeout() {
-    return new Promise(r => setTimeout(r, MS_QUERY_RATE));
+    return new Promise((r) => setTimeout(r, MS_QUERY_RATE));
 }
 
 function getQueryUrl(name: string, set: string) {
@@ -39,16 +39,23 @@ class CardInfoSvc {
             this.outgoingThrottle = this.outgoingThrottle
                 // Fetch card information from external site.
                 .then(() => fetch(getQueryUrl(name, set)))
-                .then(result => result.json())
+                .then((result) => result.json())
                 // Store the fetched image to the database as a blob.
-                .then(json => {
+                .then((json) => {
                     this.outgoingThrottle = this.outgoingThrottle
                         .then(getPromisedTimeout)
-                        .then(() => 
-                            fetch((json.card_faces ? json.card_faces[0] : json).image_uris.normal)
-                        )
-                        .then(response => response.blob())
-                        .then(blob => {
+                        .then(() => {
+                            let image_uris: any;
+                            if (json.card_faces) {
+                                image_uris = json.card_faces[0].image_uris;
+                            }
+                            if (!image_uris) {
+                                image_uris = json.image_uris;
+                            }
+                            return fetch(image_uris.normal);
+                        })
+                        .then((response) => response.blob())
+                        .then((blob) => {
                             DatabaseService.putCardBlob(blob, name, set);
                             resolve(this.processBlob(name, blob));
                         });
