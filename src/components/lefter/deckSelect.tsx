@@ -88,7 +88,7 @@ export const DeckSelect = ({
                             className='verticalWave'
                             style={{ fontSize: '3rem', width: '100%', color: 'var(--nord13)' }}
                         />
-                        <h6>Import a deck to get started</h6>
+                        <h4>Import a deck</h4>
                     </div>
                 </div>
             )}

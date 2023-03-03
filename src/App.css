@@ -1,4 +1,4 @@
-@import 'nord.css';
+@import 'assets/nord.css';
 :root {
     --card-width: 244px;
     --card-height: 340px;
@@ -19,7 +19,7 @@ body {
 }
 
 h1,
-h6 {
+h4 {
     text-transform: uppercase;
     user-select: none;
 }
