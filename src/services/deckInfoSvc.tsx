@@ -54,19 +54,17 @@ const parseAndSaveDeck = (
     }
 };
 
-const createMoxfieldApiUrl = (moxfieldDeckUrl: string) => {
-    const apiUrlPrefix = 'https://api.moxfield.com/v2/decks/all/';
+const createDeckAggregatorUrl = (moxfieldDeckUrl: string) => {
+    const corsApiUrl = 'https://guarded-brushlands-38173.herokuapp.com/';
+    const deckAggregatorApiUrl = 'https://api.moxfield.com/v2/decks/all/';
+
     const deckUrlPieces = moxfieldDeckUrl.split('/');
-    return apiUrlPrefix + deckUrlPieces[deckUrlPieces.length - 1];
+    return corsApiUrl + deckAggregatorApiUrl + deckUrlPieces[deckUrlPieces.length - 1];
 };
 
 export const FetchDecklist = async (moxfieldDeckUrl: string) => {
-    const moxfieldApiUrl = createMoxfieldApiUrl(moxfieldDeckUrl);
-    const response = await fetch('/api/get-deck', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ moxfieldApiUrl }),
-    });
+    const deckAggregatorUrl = createDeckAggregatorUrl(moxfieldDeckUrl);
+    const response = await fetch(deckAggregatorUrl);
     const json = await response.json();
     return parseAndSaveDeck(moxfieldDeckUrl, json);
 };
