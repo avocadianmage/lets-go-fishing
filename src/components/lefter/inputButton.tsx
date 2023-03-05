@@ -1,9 +1,23 @@
-import { IconButtonProps, IconButton } from '@mui/material';
+import { IconButtonProps, IconButton, Tooltip, Link } from '@mui/material';
 
-export const InputButton = (props: IconButtonProps) => {
+export interface InputButtonProps extends IconButtonProps {
+    tooltip?: string;
+    link?: string;
+}
+
+export const InputButton = (props: InputButtonProps) => {
     return (
-        <IconButton {...props} edge='end' size='small' sx={{ ...props.sx, borderRadius: '4px' }}>
-            {props.children}
-        </IconButton>
+        <Tooltip title={props.tooltip}>
+            <Link href={props.link}>
+                <IconButton
+                    {...props}
+                    edge='end'
+                    size='small'
+                    sx={{ ...props.sx, borderRadius: '4px' }}
+                >
+                    {props.children}
+                </IconButton>
+            </Link>
+        </Tooltip>
     );
 };

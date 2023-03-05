@@ -7,6 +7,7 @@
         "type": "git",
         "url": "https://github.com/avocadianmage/lets-go-fishing.git"
     },
+    "funding": "https://www.paypal.com/donate/?business=4PCGHAHD54RG8&no_recurring=0&currency_code=USD",
     "type": "module",
     "scripts": {
         "dev": "vite",
