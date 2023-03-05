@@ -1,34 +1,38 @@
 {
-  "name": "lets-go-fishing",
-  "private": true,
-  "version": "0.2.0",
-  "homepage": "https://avocadianmage.github.io/lets-go-fishing/",
-  "type": "module",
-  "scripts": {
-    "dev": "vite",
-    "build": "tsc && vite build",
-    "preview": "vite preview",
-    "predeploy": "npm run build",
-    "deploy": "gh-pages -d dist"
-  },
-  "dependencies": {
-    "@emotion/react": "^11.10.4",
-    "@emotion/styled": "^11.10.4",
-    "@mui/icons-material": "^5.10.9",
-    "@mui/material": "^5.10.10",
-    "@types/lodash": "^4.14.168",
-    "idb": "^5.0.7",
-    "lodash": "^4.17.21",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "react-draggable": "^4.4.5"
-  },
-  "devDependencies": {
-    "@types/react": "^18.0.26",
-    "@types/react-dom": "^18.0.9",
-    "@vitejs/plugin-react": "^3.0.0",
-    "gh-pages": "^5.0.0",
-    "typescript": "^4.9.3",
-    "vite": "^4.0.0"
-  }
+    "name": "lets-go-fishing",
+    "private": true,
+    "version": "0.2.0",
+    "homepage": "https://avocadianmage.github.io/lets-go-fishing/",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/avocadianmage/lets-go-fishing.git"
+    },
+    "type": "module",
+    "scripts": {
+        "dev": "vite",
+        "build": "tsc && vite build",
+        "preview": "vite preview",
+        "predeploy": "npm run build",
+        "deploy": "gh-pages -d dist"
+    },
+    "dependencies": {
+        "@emotion/react": "^11.10.4",
+        "@emotion/styled": "^11.10.4",
+        "@mui/icons-material": "^5.10.9",
+        "@mui/material": "^5.10.10",
+        "@types/lodash": "^4.14.168",
+        "idb": "^5.0.7",
+        "lodash": "^4.17.21",
+        "react": "^18.2.0",
+        "react-dom": "^18.2.0",
+        "react-draggable": "^4.4.5"
+    },
+    "devDependencies": {
+        "@types/react": "^18.0.26",
+        "@types/react-dom": "^18.0.9",
+        "@vitejs/plugin-react": "^3.0.0",
+        "gh-pages": "^5.0.0",
+        "typescript": "^4.9.3",
+        "vite": "^4.0.0"
+    }
 }

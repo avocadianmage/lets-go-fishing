@@ -1,5 +1,5 @@
 import { Favorite, GitHub } from '@mui/icons-material';
-import { Box, Divider, Paper } from '@mui/material';
+import { Box, Divider, Link, Paper } from '@mui/material';
 import { useEffect, useRef, useState } from 'react';
 import { STARTING_LIFE } from '../../global/constants';
 import { DatabaseService, DeckInfo } from '../../services/dbSvc';
@@ -17,11 +17,7 @@ import SvgManaWhite from '../../assets/mana-white.svg';
 import { Shortcuts } from './shortcuts';
 import { InputButton } from './inputButton';
 
-import { homepage } from '../../../package.json';
-
-const openGitHub = () => {
-    window.open(homepage, '_blank');
-};
+import { repository } from '../../../package.json';
 
 interface LefterProps {
     gameDetailsState: GameDetailsState;
@@ -101,9 +97,11 @@ export const Lefter = ({
         <Pane id='lefter'>
             <Box sx={{ p: '10px' }}>
                 <Box sx={{ float: 'right' }}>
-                    <InputButton aria-label='GitHub' onClick={openGitHub}>
-                        <GitHub />
-                    </InputButton>
+                    <Link href={repository.url}>
+                        <InputButton aria-label='GitHub'>
+                            <GitHub />
+                        </InputButton>
+                    </Link>
                 </Box>
                 <h1 style={{ marginTop: 0 }}>Let's Go Fishing</h1>
 
