@@ -1,5 +1,5 @@
 import { Add } from '@mui/icons-material';
-import { InputAdornment, styled, TextField } from '@mui/material';
+import { CircularProgress, InputAdornment, styled, TextField } from '@mui/material';
 import { forwardRef, useState } from 'react';
 import { DeckInfo } from '../../services/dbSvc';
 import { FetchDecklist } from '../../services/deckInfoSvc';
@@ -21,6 +21,7 @@ const CssTextField = styled(TextField)({
 export const DeckImport = forwardRef(({ decks, onImport }: DeckImportProps, ref) => {
     const [value, setValue] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
+    const [loading, setLoading] = useState(false);
     const updateInput = (input: string) => {
         setValue(input);
         setErrorMessage('');
@@ -31,7 +32,13 @@ export const DeckImport = forwardRef(({ decks, onImport }: DeckImportProps, ref)
     const doImport = async () => {
         if (isDisabled) return;
 
-        const deck = decks.find((d) => d.url === value) ?? (await FetchDecklist(value));
+        let deck = decks.find((d) => d.url === value);
+        if (!deck) {
+            setLoading(true);
+            deck = await FetchDecklist(value);
+            setLoading(false);
+        }
+
         if (!deck) {
             setErrorMessage('Unable to find deck.');
             return;
@@ -59,14 +66,14 @@ export const DeckImport = forwardRef(({ decks, onImport }: DeckImportProps, ref)
             inputProps={{ style: { fontSize: '0.8rem' } }}
             InputProps={{
                 endAdornment: (
-                    <InputAdornment position='end' sx={{ marginRight: '-3px' }}>
+                    <InputAdornment position='end' sx={{ position: 'relative' }}>
                         <InputButton
                             aria-label='import deck'
                             disabled={isDisabled}
                             onClick={doImport}
                             sx={{ color: 'var(--nord14)' }}
                         >
-                            <Add />
+                            {loading ? <CircularProgress size={24} /> : <Add />}
                         </InputButton>
                     </InputAdornment>
                 ),
