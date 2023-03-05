@@ -66,7 +66,7 @@ export const DeckImport = forwardRef(({ decks, onImport }: DeckImportProps, ref)
             inputProps={{ style: { fontSize: '0.8rem' } }}
             InputProps={{
                 endAdornment: (
-                    <InputAdornment position='end' sx={{ position: 'relative' }}>
+                    <InputAdornment position='end' sx={{ marginRight: '-3px' }}>
                         <InputButton
                             aria-label='import deck'
                             disabled={isDisabled}
