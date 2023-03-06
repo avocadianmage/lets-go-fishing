@@ -8,7 +8,7 @@ export interface InputButtonProps extends IconButtonProps {
 export const InputButton = (props: InputButtonProps) => {
     return (
         <Tooltip title={props.tooltip}>
-            <Link href={props.link}>
+            <Link href={props.link} target='_blank'>
                 <IconButton
                     {...props}
                     edge='end'
