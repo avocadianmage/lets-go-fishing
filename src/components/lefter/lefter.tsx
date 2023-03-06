@@ -60,10 +60,13 @@ export const Lefter = ({
     const [selectedIndex, setSelectedIndex] = useState(0);
 
     const updateDecksAndSelection = (index: number, updatedDecks?: DeckInfo[]) => {
+        const anyUpdates = !!updatedDecks;
         updatedDecks = updatedDecks ?? decks;
         const selectedDeck = updatedDecks.length === 0 ? undefined : updatedDecks[index];
         DatabaseService.putSelectedDeckName(selectedDeck?.name ?? '');
         setDecks(updatedDecks);
+
+        if (index === selectedIndex && !anyUpdates) return;
         setSelectedIndex(index);
         onDeckSelect(selectedDeck);
     };

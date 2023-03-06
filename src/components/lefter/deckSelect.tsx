@@ -12,11 +12,6 @@ interface DeckSelectProps {
     onClickPlaceholder(): void;
 }
 
-const fireDeckEdit = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>, deck: DeckInfo) => {
-    e.stopPropagation();
-    window.open(deck.url, '_blank');
-};
-
 export const DeckSelect = ({
     decks,
     selectedIndex,
@@ -50,13 +45,14 @@ export const DeckSelect = ({
                             primaryTypographyProps={{ fontSize: '0.8rem' }}
                         />
                         <InputButton
-                            aria-label='open deck in moxfield'
-                            onClick={(e) => fireDeckEdit(e, deck)}
+                            title='Open in Moxfield'
+                            link={deck.url}
+                            onClick={(e) => e.stopPropagation()}
                         >
                             <OpenInNew />
                         </InputButton>
                         <InputButton
-                            aria-label='remove deck'
+                            title='Remove deck'
                             onClick={(e) => fireDeckRemove(e, index)}
                             sx={{ color: 'var(--nord11)' }}
                         >
