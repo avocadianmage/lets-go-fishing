@@ -70,6 +70,18 @@ h6 {
 }
 
 .verticalWave {
-    animation: verticalWave 1s ease-in-out;
-    animation-iteration-count: infinite;
+    animation: verticalWave 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(-360deg);
+    }
+}
+
+.spin {
+    animation: spin 1s linear infinite;
 }

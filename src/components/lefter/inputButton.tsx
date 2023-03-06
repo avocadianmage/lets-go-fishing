@@ -13,7 +13,7 @@ export const InputButton = (props: InputButtonProps) => {
                     {...props}
                     edge='end'
                     size='small'
-                    sx={{ ...props.sx, borderRadius: '4px' }}
+                    sx={{ color: 'var(--nord4)', borderRadius: '4px', ...props.sx }}
                 >
                     {props.children}
                 </IconButton>

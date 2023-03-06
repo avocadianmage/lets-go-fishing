@@ -1,6 +1,8 @@
-import { ArrowUpward, OpenInNew, Remove } from '@mui/icons-material';
+import { ArrowUpward, Close, OpenInNew, Sync } from '@mui/icons-material';
 import { Box, List, ListItem, ListItemButton, ListItemText } from '@mui/material';
+import { useState } from 'react';
 import { DatabaseService, DeckInfo } from '../../services/dbSvc';
+import { FetchDecklist } from '../../services/deckInfoSvc';
 import { InputButton } from './inputButton';
 
 const DECK_SELECT_HEIGHT = 250;
@@ -18,7 +20,10 @@ export const DeckSelect = ({
     onUpdateDecksAndSelection,
     onClickPlaceholder,
 }: DeckSelectProps) => {
-    const fireDeckRemove = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>, index: number) => {
+    const [syncingIndex, setSyncingIndex] = useState(-1);
+    const [syncErrorIndex, setSyncErrorIndex] = useState(-1);
+
+    const onDeckRemove = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>, index: number) => {
         e.stopPropagation();
 
         const deckToRemove = decks[index].name;
@@ -29,6 +34,32 @@ export const DeckSelect = ({
         selectedIndex =
             selectedIndex <= updatedDeckInfos.length - 1 ? selectedIndex : selectedIndex - 1;
         onUpdateDecksAndSelection(selectedIndex, updatedDeckInfos);
+    };
+
+    const onDeckSync = async (
+        e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+        index: number
+    ) => {
+        e.stopPropagation();
+        setSyncingIndex(index);
+        {
+            const deckToUpdate = decks[index];
+            const updatedDeck = await FetchDecklist(deckToUpdate.url);
+
+            // If deck failed to sync:
+            if (!updatedDeck) {
+                setSyncErrorIndex(index);
+            } else {
+                setSyncErrorIndex(-1);
+                DatabaseService.deleteDeck(deckToUpdate.name);
+                const updatedListOfDecks = decks
+                    .slice(undefined, index)
+                    .concat([updatedDeck!])
+                    .concat(decks.slice(index + 1));
+                onUpdateDecksAndSelection(selectedIndex, updatedListOfDecks);
+            }
+        }
+        setSyncingIndex(-1);
     };
 
     const ListOfDecks = () => (
@@ -45,18 +76,24 @@ export const DeckSelect = ({
                             primaryTypographyProps={{ fontSize: '0.8rem' }}
                         />
                         <InputButton
+                            title='Sync from Moxfield'
+                            onClick={(e) => onDeckSync(e, index)}
+                            sx={{
+                                transform: 'scaleX(-1) rotate(90deg)',
+                                color: syncErrorIndex === index ? 'var(--nord11)' : undefined,
+                            }}
+                        >
+                            <Sync className={syncingIndex === index ? 'spin' : undefined} />
+                        </InputButton>
+                        <InputButton
                             title='Open in Moxfield'
                             link={deck.url}
                             onClick={(e) => e.stopPropagation()}
                         >
                             <OpenInNew />
                         </InputButton>
-                        <InputButton
-                            title='Remove deck'
-                            onClick={(e) => fireDeckRemove(e, index)}
-                            sx={{ color: 'var(--nord11)' }}
-                        >
-                            <Remove />
+                        <InputButton title='Remove deck' onClick={(e) => onDeckRemove(e, index)}>
+                            <Close />
                         </InputButton>
                     </ListItemButton>
                 </ListItem>
