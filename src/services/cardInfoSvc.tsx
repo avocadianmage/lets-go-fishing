@@ -7,6 +7,8 @@ function getPromisedTimeout() {
 }
 
 function getQueryUrl(name: string, set: string) {
+    name = encodeURIComponent(name);
+    set = encodeURIComponent(set);
     return `https://api.scryfall.com/cards/named?exact=${name}&set=${set}`;
 }
 
