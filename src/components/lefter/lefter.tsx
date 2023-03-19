@@ -1,4 +1,4 @@
-import { AttachMoneyRounded, Favorite, GitHub } from '@mui/icons-material';
+import { Coffee, Favorite, GitHub } from '@mui/icons-material';
 import { Box, Divider, Paper } from '@mui/material';
 import { useEffect, useRef, useState } from 'react';
 import { STARTING_LIFE } from '../../global/constants';
@@ -104,7 +104,7 @@ export const Lefter = ({
                         <GitHub />
                     </InputButton>
                     <InputButton tooltip='Buy me a coffee' link={funding}>
-                        <AttachMoneyRounded />
+                        <Coffee />
                     </InputButton>
                 </Box>
                 <h1 style={{ marginTop: 0 }}>Let's Go Fishing</h1>
