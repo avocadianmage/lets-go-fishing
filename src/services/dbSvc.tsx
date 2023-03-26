@@ -1,7 +1,7 @@
 import { openDB } from 'idb';
 
 export interface CardInfo {
-    id: number;
+    id: string;
     name: string;
     set: string;
     commander: boolean;

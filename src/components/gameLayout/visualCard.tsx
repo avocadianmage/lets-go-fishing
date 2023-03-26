@@ -37,7 +37,7 @@ export const VisualCard = ({ zoneCard, faceDown, wiggle }: VisualCardProps) => {
         (wiggle ? ' wiggle' : '');
 
     return (
-        <div className={className} style={imageStyle}>
+        <div id={card?.id} className={className} style={imageStyle}>
             {isLoading ? <CenteredSpinner diameter={80} /> : <div className='card-face' />}
         </div>
     );

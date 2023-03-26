@@ -87,6 +87,10 @@ export const GameLayout = () => {
         [ZoneName.Command]: [],
     });
     const [currentAction, setCurrentAction] = useState<CardActionInfo>();
+    const [hoveredZoneCard, setHoveredZoneCard] = useState<{
+        zoneCard: ZoneCardInfo;
+        zone: ZoneName;
+    }>();
     const [searchingZone, setSearchingZone] = useState(ZoneName.None);
     const [libraryShuffleAnimationRunning, setLibraryShuffleAnimationRunning] = useState(true);
 
@@ -104,7 +108,11 @@ export const GameLayout = () => {
     const getStartingZoneCards = ({ mainboard, commanders }: DeckInfo) => {
         const newLibraryCards = shuffle(mainboard.map((card) => ({ card })));
         const { fromArray, toArray } = sliceEndElements(newLibraryCards, [], STARTING_HAND_SIZE);
-        return { library: fromArray, hand: toArray, command: commanders.map((card) => ({ card })) };
+        return {
+            library: fromArray,
+            hand: toArray,
+            command: commanders.map((card) => ({ card })),
+        };
     };
 
     const animateShuffle = () => {
@@ -182,6 +190,24 @@ export const GameLayout = () => {
         draw();
     };
 
+    const putCardOnLibraryBottom = () => {
+        if (!hoveredZoneCard) return;
+        const { zoneCard, zone } = hoveredZoneCard;
+        const [piece1, piece2] = sliceCardFromZone(zoneCard, zone);
+        if (zone === ZoneName.Library) {
+            const libraryCards = [zoneCard].concat(piece1, piece2);
+            setGameZonesState((g) => ({ ...g, [ZoneName.Library]: libraryCards }));
+        } else {
+            const libraryCards = [zoneCard].concat(gameZonesState[ZoneName.Library]);
+            setGameZonesState((g) => ({
+                ...g,
+                [ZoneName.Library]: libraryCards,
+                [zone]: piece1.concat(piece2),
+            }));
+        }
+        setHoveredZoneCard(undefined);
+    };
+
     const searchZone = (zone: ZoneName, e: KeyboardEvent) => {
         setSearchingZone(zone);
         // Prevent input from proliferating into the search box.
@@ -194,6 +220,7 @@ export const GameLayout = () => {
 
     useGlobalShortcuts(
         {
+            b: putCardOnLibraryBottom,
             d: drawOne,
             e: searchExile,
             g: searchGraveyard,
@@ -221,7 +248,7 @@ export const GameLayout = () => {
         return [cards.slice(0, index), cards.slice(index + 1)];
     };
 
-    const findZoneCard = (action: CardActionInfo) => {
+    const findZoneCard = (action: CardActionInfo): ZoneCardInfo => {
         return gameZonesState[action.sourceZone].find((zc) => zc.card.id === action.card.id)!;
     };
 
@@ -238,7 +265,7 @@ export const GameLayout = () => {
         updateCard(zoneCard, action);
     };
 
-    const getZoneCardAfterAction = (action: CardActionInfo) => {
+    const getZoneCardAfterAction = (action: CardActionInfo): ZoneCardInfo => {
         const { card, node } = action;
         if (toBattlefield(action) || (fromBattlefield(action) && isClick(action))) {
             const { x, y } = node!.getBoundingClientRect();
@@ -305,13 +332,25 @@ export const GameLayout = () => {
     };
 
     const onMouseMove = (e: React.MouseEvent) => {
-        const mouseOverElems = document.elementsFromPoint(e.clientX, e.clientY);
-        const targetElem = mouseOverElems.find((elem) => elem.classList.contains('zone'));
-        setCurrentAction((ca) => {
-            return ca
-                ? { ...ca, targetZone: targetElem ? (targetElem.id as ZoneName) : ZoneName.None }
-                : undefined;
-        });
+        const hoveredElems = document.elementsFromPoint(e.clientX, e.clientY);
+        const getElem = (className: string) =>
+            hoveredElems.find((elem) => elem.classList.contains(className));
+
+        const targetZoneElem = getElem('zone');
+        const targetZone = targetZoneElem ? (targetZoneElem.id as ZoneName) : ZoneName.None;
+        setCurrentAction((ca) => (ca ? { ...ca, targetZone } : undefined));
+
+        const hoveredCardId = getElem('card')?.id;
+        if (hoveredCardId === undefined) {
+            setHoveredZoneCard(undefined);
+            return;
+        }
+        const sourceZone = currentAction?.sourceZone;
+        const zonesToSearch = gameZonesState[targetZone].concat(
+            sourceZone ? gameZonesState[sourceZone] : []
+        );
+        const zoneCard = zonesToSearch.find((zc) => zc.card.id === hoveredCardId);
+        setHoveredZoneCard(zoneCard ? { zoneCard, zone: targetZone } : undefined);
     };
 
     const retrieveCard = (zoneCard?: ZoneCardInfo) => {

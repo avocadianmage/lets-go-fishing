@@ -1,4 +1,4 @@
-import { DatabaseService, DeckInfo } from './dbSvc';
+import { CardInfo, DatabaseService, DeckInfo } from './dbSvc';
 
 interface MoxfieldDeck {
     name: string;
@@ -26,11 +26,11 @@ const parseAndSaveDeck = (
     try {
         let id = 0;
         const toCardList = (moxfieldCardList: MoxfieldCardList, areCommanders: boolean) => {
-            const cardList = [];
+            const cardList: CardInfo[] = [];
             for (let [cardName, entry] of Object.entries(moxfieldCardList)) {
                 for (let i = 0; i < entry.quantity; i++) {
                     cardList[id] = {
-                        id: id++,
+                        id: `card${++id}`,
                         name: cardName,
                         set: entry.card.set,
                         commander: areCommanders,
