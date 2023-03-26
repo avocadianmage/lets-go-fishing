@@ -15,7 +15,7 @@ import SvgManaGreen from '../../assets/mana-green.svg';
 import SvgManaRed from '../../assets/mana-red.svg';
 import SvgManaWhite from '../../assets/mana-white.svg';
 import { Shortcuts } from './shortcuts';
-import { InputButton } from './inputButton';
+import { InputButton } from '../controls/inputButton';
 
 import { repository, funding } from '../../../package.json';
 

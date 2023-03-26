@@ -1,5 +1,3 @@
-import '../css/gameLayout.css';
-
 import { Paper, styled } from '@mui/material';
 import shuffle from 'lodash/shuffle';
 import React, { useState } from 'react';
@@ -13,7 +11,7 @@ import {
 } from '../../global/constants';
 import { DeckInfo } from '../../services/dbSvc';
 import { Lefter } from '../lefter/lefter';
-import { useGlobalShortcuts } from '../util/useKeyDown';
+import { useGlobalShortcuts } from '../hooks/useKeyDown';
 import { BattlefieldZone } from './battlefieldZone';
 import { CardActionInfo } from './draggableCard';
 import { SearchZone } from './searchZone';

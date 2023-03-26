@@ -1,5 +1,3 @@
-import '../css/card.css';
-
 import { useRef, useState } from 'react';
 import Draggable, { ControlPosition } from 'react-draggable';
 import { CardInfo } from '../../services/dbSvc';

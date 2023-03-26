@@ -3,7 +3,7 @@ import { Box, List, ListItem, ListItemButton, ListItemText } from '@mui/material
 import { useState } from 'react';
 import { DatabaseService, DeckInfo } from '../../services/dbSvc';
 import { FetchDecklist } from '../../services/deckInfoSvc';
-import { InputButton } from './inputButton';
+import { InputButton } from '../controls/inputButton';
 
 const DECK_SELECT_HEIGHT = 250;
 

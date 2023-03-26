@@ -1,8 +1,8 @@
 import { forwardRef, useImperativeHandle, useRef } from "react";
 import { CardInfo } from "../../services/dbSvc";
 import { CARD_HEIGHT_PX, CARD_WIDTH_PX, ZONE_BORDER_PX, ZONE_PADDING_PX } from "../../global/constants";
-import { useDebouncedValue } from "../util/useDebouncedValue";
-import { useRect } from "../util/useRect";
+import { useDebouncedValue } from "../hooks/useDebouncedValue";
+import { useRect } from "../hooks/useRect";
 import { CardActionInfo } from "./draggableCard";
 import { Zone, ZoneProps } from "./zone";
 

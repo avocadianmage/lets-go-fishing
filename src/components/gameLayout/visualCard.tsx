@@ -1,10 +1,9 @@
 import cardBack from '../../assets/mtg-card-back.png';
-import '../css/card.css';
 
 import { useEffect, useState } from 'react';
 import { cancelablePromise } from '../../global/helpers';
 import { CardInfoService } from '../../services/cardInfoSvc';
-import { CenteredSpinner } from '../util/centeredSpinner';
+import { CenteredSpinner } from '../controls/centeredSpinner';
 import { ZoneCardInfo } from './zone';
 
 export interface VisualCardProps {

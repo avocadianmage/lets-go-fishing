@@ -1,7 +1,7 @@
 import clamp from 'lodash/clamp';
 import { forwardRef, useImperativeHandle, useRef } from 'react';
 import { CARD_HEIGHT_PX, CARD_WIDTH_PX, ZONE_BORDER_PX } from '../../global/constants';
-import { useRect } from '../util/useRect';
+import { useRect } from '../hooks/useRect';
 import { Zone, ZoneProps } from './zone';
 
 export const BattlefieldZone = forwardRef((props: ZoneProps, ref) => {

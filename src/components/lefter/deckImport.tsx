@@ -3,7 +3,7 @@ import { CircularProgress, InputAdornment, styled, TextField } from '@mui/materi
 import { forwardRef, useState } from 'react';
 import { DeckInfo } from '../../services/dbSvc';
 import { FetchDecklist } from '../../services/deckInfoSvc';
-import { InputButton } from './inputButton';
+import { InputButton } from '../controls/inputButton';
 
 interface DeckImportProps {
     decks: DeckInfo[];
