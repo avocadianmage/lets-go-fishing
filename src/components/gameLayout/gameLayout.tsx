@@ -48,7 +48,6 @@ export interface GameDetailsState {
 }
 
 export enum ZoneName {
-    None = 'none',
     Library = 'library',
     Hand = 'hand',
     Battlefield = 'battlefield',
@@ -58,7 +57,6 @@ export enum ZoneName {
 }
 
 interface GameZonesState {
-    [ZoneName.None]: ZoneCardInfo[];
     [ZoneName.Library]: ZoneCardInfo[];
     [ZoneName.Hand]: ZoneCardInfo[];
     [ZoneName.Battlefield]: ZoneCardInfo[];
@@ -82,7 +80,6 @@ export const GameLayout = () => {
         [ManaColor.Colorless]: 0,
     });
     const [gameZonesState, setGameZonesState] = useState<GameZonesState>({
-        [ZoneName.None]: [],
         [ZoneName.Library]: [],
         [ZoneName.Hand]: [],
         [ZoneName.Battlefield]: [],
@@ -91,7 +88,7 @@ export const GameLayout = () => {
         [ZoneName.Command]: [],
     });
     const [currentAction, setCurrentAction] = useState<CardActionInfo>();
-    const [searchingZone, setSearchingZone] = useState(ZoneName.None);
+    const [searchingZone, setSearchingZone] = useState<ZoneName>();
     const [libraryShuffleAnimationRunning, setLibraryShuffleAnimationRunning] = useState(true);
 
     const fromBattlefield = (action: CardActionInfo) => action.sourceZone === ZoneName.Battlefield;
@@ -137,7 +134,6 @@ export const GameLayout = () => {
             ? getStartingZoneCards(deckInfo)
             : { library: [], hand: [], command: [] };
         setGameZonesState({
-            [ZoneName.None]: [],
             [ZoneName.Library]: library,
             [ZoneName.Hand]: hand,
             [ZoneName.Battlefield]: [],
@@ -204,7 +200,8 @@ export const GameLayout = () => {
         };
 
         const zoneElem = getElem('zone');
-        const zone = zoneElem ? (zoneElem.id as ZoneName) : ZoneName.None;
+        const zone = zoneElem ? (zoneElem.id as ZoneName) : undefined;
+        if (!zone) return undefined;
 
         const hoveredCardId = getElem('card')?.id;
         const zoneCard =
@@ -276,7 +273,9 @@ export const GameLayout = () => {
     };
 
     const findZoneCard = (action: CardActionInfo): ZoneCardInfo => {
-        return gameZonesState[action.sourceZone].find((zc) => zc.card.id === action.card.id)!;
+        return gameZonesState[action.sourceZone].find(
+            (zc) => zc.card.id === action.zoneCard.card.id
+        )!;
     };
 
     const getIncrementedZIndex = (zone: ZoneName) => {
@@ -293,7 +292,7 @@ export const GameLayout = () => {
     };
 
     const getZoneCardAfterAction = (action: CardActionInfo): ZoneCardInfo => {
-        const { card, node } = action;
+        const { card, node } = action.zoneCard;
         if (toBattlefield(action) || fromBattlefield(action)) {
             const { x, y } = node!.getBoundingClientRect();
             const zoneCard = findZoneCard(action);
@@ -335,12 +334,12 @@ export const GameLayout = () => {
             action = currentAction ?? action;
 
             action.targetZone = getHoveredZoneAndCard()?.zone;
-            if (action.targetZone === ZoneName.None) return false;
+            if (!action.targetZone) return false;
 
             const interzoneDrag = isInterzoneDrag(action);
             if (interzoneDrag || (isIntrazoneDrag(action) && fromBattlefield(action))) {
                 // Only allow commanders to be moved to the command zone.
-                if (toCommand(action) && !action.card.commander) return false;
+                if (toCommand(action) && !action.zoneCard.card.commander) return false;
                 updateCardFromAction(action);
             }
             return interzoneDrag;
@@ -353,9 +352,9 @@ export const GameLayout = () => {
         const fromZone = searchingZone;
         const toZone = ZoneName.Hand;
         const isSameZone = fromZone === toZone;
-        setSearchingZone(ZoneName.None);
+        setSearchingZone(undefined);
 
-        if (!zoneCard) return;
+        if (!zoneCard || !fromZone) return;
         setGameZonesState((g) => {
             const [piece1, piece2] = sliceCardFromZone(zoneCard, fromZone);
             const fromZoneContents = piece1.concat(piece2);
@@ -417,7 +416,7 @@ export const GameLayout = () => {
             </div>
             <SearchZone
                 zone={searchingZone}
-                contents={gameZonesState[searchingZone]}
+                contents={searchingZone ? gameZonesState[searchingZone] : []}
                 requestClose={retrieveCard}
             />
         </div>

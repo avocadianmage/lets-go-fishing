@@ -6,7 +6,7 @@ import { VisualCard } from './visualCard';
 import { ZoneCardInfo } from './zone';
 
 interface SearchZoneProps {
-    zone: ZoneName;
+    zone?: ZoneName;
     contents: ZoneCardInfo[];
     requestClose(selection?: ZoneCardInfo): void;
 }
@@ -42,7 +42,7 @@ const transformContents = (contents: ZoneCardInfo[]) => {
 export const SearchZone = ({ zone, contents, requestClose }: SearchZoneProps) => {
     const [selection, setSelection] = useState<ZoneCardInfo>();
     const [accepted, setAccepted] = useState<boolean>();
-    const open = zone !== ZoneName.None;
+    const open = !!zone;
 
     useEffect(() => {
         if (accepted !== undefined) {

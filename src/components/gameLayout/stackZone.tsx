@@ -55,7 +55,7 @@ export const StackZone = forwardRef((props: StackZoneProps, ref) => {
     });
 
     const fireCardMouseEnter = (action: CardActionInfo) => {
-        if (!showTopOnly) setPreviewingCard(action.card);
+        if (!showTopOnly) setPreviewingCard(action.zoneCard.card);
         return onCardMouseEnter ? onCardMouseEnter(action) : true;
     };
 

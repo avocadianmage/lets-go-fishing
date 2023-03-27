@@ -1,51 +1,48 @@
 import { useRef, useState } from 'react';
 import Draggable, { ControlPosition } from 'react-draggable';
-import { CardInfo } from '../../services/dbSvc';
 import { ZoneName } from './gameLayout';
 import { VisualCard, VisualCardProps } from './visualCard';
 import { ZoneCardInfo } from './zone';
 
 export interface CardActionInfo {
-    card: CardInfo;
-    node: Element;
+    zoneCard: ZoneCardInfo;
     sourceZone: ZoneName;
     targetZone?: ZoneName;
 }
 
 interface DraggableCardProps extends VisualCardProps {
     zoneCard: ZoneCardInfo;
-    onDrag: CardActionEventHandler;
-    onDragStop: CardActionEventHandler;
-    onMouseEnter: CardActionEventHandler;
-    onMouseLeave: CardActionEventHandler;
-    onClick: CardActionEventHandler;
-    onDoubleClick: CardActionEventHandler;
+    onDrag: CardEventHandler;
+    onDragStop: CardEventHandler;
+    onMouseEnter: CardEventHandler;
+    onMouseLeave: CardEventHandler;
+    onClick: CardEventHandler;
+    onDoubleClick: CardEventHandler;
 }
 
-export type CardActionEventHandler = (action: CardActionInfo) => boolean;
+export type CardEventHandler = (zoneCard: ZoneCardInfo) => boolean;
 
 export const DraggableCard = (props: DraggableCardProps) => {
     const [manualDragPos, setManualDragPos] = useState<ControlPosition>();
 
+    const { onDrag, onDragStop, onMouseEnter, onMouseLeave, onClick, onDoubleClick } =
+        props;
     const nodeRef = useRef<HTMLDivElement>(null);
+    const { x, y, zIndex } = props.zoneCard;
 
-    const { zoneCard, onDrag, onDragStop, onMouseEnter, onMouseLeave, onClick, onDoubleClick } = props;
-    const { card, x, y, zIndex } = zoneCard;
-
-    const createAction = (): CardActionInfo => ({
-        card,
+    const createUpdatedZoneCard = (): ZoneCardInfo => ({
+        ...props.zoneCard,
         node: nodeRef.current!.firstElementChild!,
-        sourceZone: ZoneName.None,
     });
 
     const fireDrag = () => {
         setManualDragPos({ x: 0, y: 0 });
-        const success = onDrag(createAction());
+        const success = onDrag(createUpdatedZoneCard());
         if (!success) return false;
     };
 
     const fireDragStop = () => {
-        if (!onDragStop(createAction())) {
+        if (!onDragStop(createUpdatedZoneCard())) {
             setManualDragPos({ x: 0, y: 0 });
         }
         // Don't let react-draggable update since the card was dragged to a new zone.
@@ -67,10 +64,10 @@ export const DraggableCard = (props: DraggableCardProps) => {
                 <div
                     className='card-position-layer'
                     style={positionStyle}
-                    onMouseEnter={() => onMouseEnter(createAction())}
-                    onMouseLeave={() => onMouseLeave(createAction())}
-                    onClick={() => onClick(createAction())}
-                    onDoubleClick={() => onDoubleClick(createAction())}
+                    onMouseEnter={() => onMouseEnter(createUpdatedZoneCard())}
+                    onMouseLeave={() => onMouseLeave(createUpdatedZoneCard())}
+                    onClick={() => onClick(createUpdatedZoneCard())}
+                    onDoubleClick={() => onDoubleClick(createUpdatedZoneCard())}
                 >
                     {/* determine if the above needs to move into visual card */}
                     <VisualCard {...props} />

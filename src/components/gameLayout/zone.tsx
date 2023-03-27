@@ -1,10 +1,11 @@
 import { ForwardedRef, forwardRef } from 'react';
 import { CardInfo } from '../../services/dbSvc';
-import { CardActionEventHandler, CardActionInfo, DraggableCard } from './draggableCard';
+import { CardActionInfo, DraggableCard } from './draggableCard';
 import { Pane, ZoneName } from './gameLayout';
 
 export interface ZoneCardInfo {
     card: CardInfo;
+    node?: Element;
     x?: number;
     y?: number;
     zIndex?: number;
@@ -26,6 +27,8 @@ export interface ZoneProps {
     onCardClick?: CardActionEventHandler;
     onCardDoubleClick?: CardActionEventHandler;
 }
+
+export type CardActionEventHandler = (action: CardActionInfo) => boolean;
 
 export const Zone = forwardRef(
     (
@@ -52,14 +55,14 @@ export const Zone = forwardRef(
             (classesToAppend ? ' ' + classesToAppend : '') +
             (isTargetZone ? ' highlight' : '');
 
-        const isCardDragging = (card: CardInfo) => card.id === action?.card.id;
+        const isCardDragging = (card: CardInfo) => card.id === action?.zoneCard.card.id;
         const updatedContents = contents.map((zc) => ({
             ...zc,
             zIndex: isCardDragging(zc.card) ? Number.MAX_SAFE_INTEGER : zc.zIndex,
         }));
 
-        const fireAction = (action: CardActionInfo, handler?: CardActionEventHandler) =>
-            handler ? handler({ ...action, sourceZone: name }) : true;
+        const fireAction = (zoneCard: ZoneCardInfo, handler?: CardActionEventHandler) =>
+            handler ? handler({ zoneCard, sourceZone: name }) : true;
         return (
             <Pane
                 ref={ref}
