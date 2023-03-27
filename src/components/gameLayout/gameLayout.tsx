@@ -1,6 +1,6 @@
 import { Paper, styled } from '@mui/material';
 import shuffle from 'lodash/shuffle';
-import React, { useState } from 'react';
+import { useRef, useState } from 'react';
 import {
     CARD_HEIGHT_PX,
     CARD_WIDTH_PX,
@@ -17,6 +17,7 @@ import { CardActionInfo } from './draggableCard';
 import { SearchZone } from './searchZone';
 import { StackZone } from './stackZone';
 import { ZoneCardInfo } from './zone';
+import useMousePosition from '../hooks/useMousePosition';
 
 export const Pane = styled(Paper)(() => ({
     backgroundImage: 'linear-gradient(rgba(255, 255, 255, 0.11), rgba(255, 255, 255, 0.11))',
@@ -67,6 +68,9 @@ interface GameZonesState {
 }
 
 export const GameLayout = () => {
+    const contentDiv = useRef<HTMLDivElement>(null);
+    const mousePositionInContent = useMousePosition(contentDiv);
+
     const [currentDeckInfo, setCurrentDeckInfo] = useState<DeckInfo>();
     const [gameDetailsState, setGameDetailsState] = useState<GameDetailsState>({
         life: 0,
@@ -87,19 +91,16 @@ export const GameLayout = () => {
         [ZoneName.Command]: [],
     });
     const [currentAction, setCurrentAction] = useState<CardActionInfo>();
-    const [hoveredZoneCard, setHoveredZoneCard] = useState<{
-        zoneCard: ZoneCardInfo;
-        zone: ZoneName;
-    }>();
     const [searchingZone, setSearchingZone] = useState(ZoneName.None);
     const [libraryShuffleAnimationRunning, setLibraryShuffleAnimationRunning] = useState(true);
 
-    const fromLibrary = (action: CardActionInfo) => action.sourceZone === ZoneName.Library;
     const fromBattlefield = (action: CardActionInfo) => action.sourceZone === ZoneName.Battlefield;
     const toBattlefield = (action: CardActionInfo) => action.targetZone === ZoneName.Battlefield;
     const toCommand = (action: CardActionInfo) => action.targetZone === ZoneName.Command;
-    const isClick = (action: CardActionInfo) => !action.targetZone;
-    const isIntrazoneDrag = (action: CardActionInfo) => action.sourceZone === action.targetZone;
+    const isIntrazoneDrag = (action: CardActionInfo) => {
+        const { sourceZone, targetZone } = action;
+        return targetZone === sourceZone || targetZone === undefined;
+    };
     const isInterzoneDrag = (action: CardActionInfo) => {
         const { sourceZone, targetZone } = action;
         return !!targetZone && targetZone !== sourceZone;
@@ -159,6 +160,7 @@ export const GameLayout = () => {
             [ZoneName.Library]: fromArray,
             [ZoneName.Hand]: toArray,
         }));
+        return true;
     };
 
     const shuffleLibrary = () => {
@@ -190,9 +192,35 @@ export const GameLayout = () => {
         draw();
     };
 
+    const getHoveredZoneAndCard = () => {
+        if (!mousePositionInContent) return undefined;
+        const hoveredElems = document.elementsFromPoint(
+            mousePositionInContent.x,
+            mousePositionInContent.y
+        );
+
+        const getElem = (className: string) => {
+            return hoveredElems.find((elem) => elem.classList.contains(className));
+        };
+
+        const zoneElem = getElem('zone');
+        const zone = zoneElem ? (zoneElem.id as ZoneName) : ZoneName.None;
+
+        const hoveredCardId = getElem('card')?.id;
+        const zoneCard =
+            hoveredCardId !== undefined
+                ? gameZonesState[zone].find((zc) => zc.card.id === hoveredCardId)
+                : undefined;
+
+        return { zone, zoneCard };
+    };
+
     const putCardOnLibraryBottom = () => {
-        if (!hoveredZoneCard) return;
-        const { zoneCard, zone } = hoveredZoneCard;
+        const hoveredZoneAndCard = getHoveredZoneAndCard();
+        if (!hoveredZoneAndCard) return;
+        const { zone, zoneCard } = hoveredZoneAndCard;
+        if (!zoneCard) return;
+
         const [piece1, piece2] = sliceCardFromZone(zoneCard, zone);
         if (zone === ZoneName.Library) {
             const libraryCards = [zoneCard].concat(piece1, piece2);
@@ -205,7 +233,6 @@ export const GameLayout = () => {
                 [zone]: piece1.concat(piece2),
             }));
         }
-        setHoveredZoneCard(undefined);
     };
 
     const searchZone = (zone: ZoneName, e: KeyboardEvent) => {
@@ -267,7 +294,7 @@ export const GameLayout = () => {
 
     const getZoneCardAfterAction = (action: CardActionInfo): ZoneCardInfo => {
         const { card, node } = action;
-        if (toBattlefield(action) || (fromBattlefield(action) && isClick(action))) {
+        if (toBattlefield(action) || fromBattlefield(action)) {
             const { x, y } = node!.getBoundingClientRect();
             const zoneCard = findZoneCard(action);
             return { ...zoneCard, x: x - ZONE_BORDER_PX, y: y - ZONE_BORDER_PX };
@@ -283,7 +310,7 @@ export const GameLayout = () => {
         }
 
         const [sourceSlice1, sourceSlice2] = sliceCardFromZone(zoneCard, sourceZone);
-        if (isClick(action) || isIntrazoneDrag(action)) {
+        if (isIntrazoneDrag(action)) {
             const sourceZoneCards = sourceSlice1.concat(zoneCard).concat(sourceSlice2);
             setGameZonesState((g) => ({ ...g, [sourceZone]: sourceZoneCards }));
             return;
@@ -307,17 +334,8 @@ export const GameLayout = () => {
         try {
             action = currentAction ?? action;
 
+            action.targetZone = getHoveredZoneAndCard()?.zone;
             if (action.targetZone === ZoneName.None) return false;
-
-            if (isClick(action)) {
-                if (fromLibrary(action)) {
-                    draw();
-                    return true;
-                } else if (fromBattlefield(action)) {
-                    updateCardFromAction(action);
-                }
-                return false;
-            }
 
             const interzoneDrag = isInterzoneDrag(action);
             if (interzoneDrag || (isIntrazoneDrag(action) && fromBattlefield(action))) {
@@ -329,28 +347,6 @@ export const GameLayout = () => {
         } finally {
             setCurrentAction(undefined);
         }
-    };
-
-    const onMouseMove = (e: React.MouseEvent) => {
-        const hoveredElems = document.elementsFromPoint(e.clientX, e.clientY);
-        const getElem = (className: string) =>
-            hoveredElems.find((elem) => elem.classList.contains(className));
-
-        const targetZoneElem = getElem('zone');
-        const targetZone = targetZoneElem ? (targetZoneElem.id as ZoneName) : ZoneName.None;
-        setCurrentAction((ca) => (ca ? { ...ca, targetZone } : undefined));
-
-        const hoveredCardId = getElem('card')?.id;
-        if (hoveredCardId === undefined) {
-            setHoveredZoneCard(undefined);
-            return;
-        }
-        const sourceZone = currentAction?.sourceZone;
-        const zonesToSearch = gameZonesState[targetZone].concat(
-            sourceZone ? gameZonesState[sourceZone] : []
-        );
-        const zoneCard = zonesToSearch.find((zc) => zc.card.id === hoveredCardId);
-        setHoveredZoneCard(zoneCard ? { zoneCard, zone: targetZone } : undefined);
     };
 
     const retrieveCard = (zoneCard?: ZoneCardInfo) => {
@@ -372,7 +368,7 @@ export const GameLayout = () => {
 
     const zoneProps = { action: currentAction, onCardDrag, onCardDragStop };
     return (
-        <div className='gameLayout' onMouseMove={onMouseMove}>
+        <div ref={contentDiv} className='gameLayout'>
             <div style={{ display: 'flex', flex: 1 }}>
                 <Lefter
                     gameDetailsState={gameDetailsState}
@@ -383,7 +379,7 @@ export const GameLayout = () => {
                     {...zoneProps}
                     name={ZoneName.Battlefield}
                     contents={gameZonesState[ZoneName.Battlefield]}
-                    onCardDoubleClick={(action) => toggleTap(action)}
+                    onCardDoubleClick={toggleTap}
                 />
                 <StackZone
                     {...zoneProps}
@@ -410,6 +406,7 @@ export const GameLayout = () => {
                     faceDown={true}
                     showTopOnly={true}
                     wiggleCards={libraryShuffleAnimationRunning}
+                    onCardClick={drawOne}
                 />
                 <StackZone
                     {...zoneProps}

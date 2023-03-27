@@ -18,6 +18,7 @@ interface DraggableCardProps extends VisualCardProps {
     onDragStop: CardActionEventHandler;
     onMouseEnter: CardActionEventHandler;
     onMouseLeave: CardActionEventHandler;
+    onClick: CardActionEventHandler;
     onDoubleClick: CardActionEventHandler;
 }
 
@@ -28,7 +29,7 @@ export const DraggableCard = (props: DraggableCardProps) => {
 
     const nodeRef = useRef<HTMLDivElement>(null);
 
-    const { zoneCard, onDrag, onDragStop, onMouseEnter, onMouseLeave, onDoubleClick } = props;
+    const { zoneCard, onDrag, onDragStop, onMouseEnter, onMouseLeave, onClick, onDoubleClick } = props;
     const { card, x, y, zIndex } = zoneCard;
 
     const createAction = (): CardActionInfo => ({
@@ -68,6 +69,7 @@ export const DraggableCard = (props: DraggableCardProps) => {
                     style={positionStyle}
                     onMouseEnter={() => onMouseEnter(createAction())}
                     onMouseLeave={() => onMouseLeave(createAction())}
+                    onClick={() => onClick(createAction())}
                     onDoubleClick={() => onDoubleClick(createAction())}
                 >
                     {/* determine if the above needs to move into visual card */}

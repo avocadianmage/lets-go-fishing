@@ -23,6 +23,7 @@ export interface ZoneProps {
     onCardDragStop?: CardActionEventHandler;
     onCardMouseEnter?: CardActionEventHandler;
     onCardMouseLeave?: CardActionEventHandler;
+    onCardClick?: CardActionEventHandler;
     onCardDoubleClick?: CardActionEventHandler;
 }
 
@@ -39,6 +40,7 @@ export const Zone = forwardRef(
             onCardDragStop,
             onCardMouseEnter,
             onCardMouseLeave,
+            onCardClick,
             onCardDoubleClick,
         }: ZoneProps,
         ref: ForwardedRef<HTMLDivElement>
@@ -76,6 +78,7 @@ export const Zone = forwardRef(
                         onDragStop={(action) => fireAction(action, onCardDragStop)}
                         onMouseEnter={(action) => fireAction(action, onCardMouseEnter)}
                         onMouseLeave={(action) => fireAction(action, onCardMouseLeave)}
+                        onClick={(action) => fireAction(action, onCardClick)}
                         onDoubleClick={(action) => fireAction(action, onCardDoubleClick)}
                     />
                 ))}
