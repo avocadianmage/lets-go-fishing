@@ -293,7 +293,7 @@ export const GameLayout = () => {
 
     const getZoneCardAfterAction = (action: CardActionInfo): ZoneCardInfo => {
         const { card, node } = action.zoneCard;
-        if (toBattlefield(action) || fromBattlefield(action)) {
+        if (toBattlefield(action)) {
             const { x, y } = node!.getBoundingClientRect();
             const zoneCard = findZoneCard(action);
             return { ...zoneCard, x: x - ZONE_BORDER_PX, y: y - ZONE_BORDER_PX };
