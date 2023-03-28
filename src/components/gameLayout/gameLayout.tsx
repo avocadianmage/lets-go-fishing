@@ -177,12 +177,6 @@ export const GameLayout = () => {
         }));
     };
 
-    const toggleTap = (action: CardActionInfo) => {
-        const zoneCard = findZoneCard(action);
-        updateCard({ ...zoneCard, tapped: !zoneCard.tapped }, action);
-        return true;
-    };
-
     const takeNextTurn = () => {
         untapAll();
         draw();
@@ -212,11 +206,25 @@ export const GameLayout = () => {
         return { zone, zoneCard };
     };
 
+    const tapHoveredCard = () => {
+        const hoveredZoneAndCard = getHoveredZoneAndCard();
+        if (!hoveredZoneAndCard || !hoveredZoneAndCard.zoneCard) return undefined;
+        const { zone, zoneCard } = hoveredZoneAndCard;
+
+        if (zone !== ZoneName.Battlefield) return;
+        toggleTap({ zoneCard, sourceZone: zone });
+    };
+
+    const toggleTap = (action: CardActionInfo) => {
+        const zoneCard = findZoneCard(action);
+        updateCard({ ...zoneCard, tapped: !zoneCard.tapped }, action);
+        return true;
+    };
+
     const putCardOnLibraryBottom = () => {
         const hoveredZoneAndCard = getHoveredZoneAndCard();
-        if (!hoveredZoneAndCard) return;
+        if (!hoveredZoneAndCard || !hoveredZoneAndCard.zoneCard) return undefined;
         const { zone, zoneCard } = hoveredZoneAndCard;
-        if (!zoneCard) return;
 
         const [piece1, piece2] = sliceCardFromZone(zoneCard, zone);
         if (zone === ZoneName.Library) {
@@ -230,6 +238,7 @@ export const GameLayout = () => {
                 [zone]: piece1.concat(piece2),
             }));
         }
+        updateZoneCardAfterAction({ zoneCard, sourceZone: zone, targetZone: ZoneName.Library });
     };
 
     const searchZone = (zone: ZoneName, e: KeyboardEvent) => {
@@ -253,6 +262,7 @@ export const GameLayout = () => {
             n: takeNextTurn,
             r: restartGame,
             s: shuffleLibrary,
+            t: tapHoveredCard,
             u: untapAll,
         },
         () => currentAction === undefined
@@ -286,19 +296,15 @@ export const GameLayout = () => {
         return highestIndex + 1;
     };
 
-    const updateCardFromAction = (action: CardActionInfo) => {
-        const zoneCard = getZoneCardAfterAction(action);
-        updateCard(zoneCard, action);
-    };
-
-    const getZoneCardAfterAction = (action: CardActionInfo): ZoneCardInfo => {
+    const updateZoneCardAfterAction = (action: CardActionInfo) => {
         const { card, node } = action.zoneCard;
+        let zoneCard: ZoneCardInfo = { card };
         if (toBattlefield(action)) {
             const { x, y } = node!.getBoundingClientRect();
-            const zoneCard = findZoneCard(action);
-            return { ...zoneCard, x: x - ZONE_BORDER_PX, y: y - ZONE_BORDER_PX };
+            zoneCard = findZoneCard(action);
+            zoneCard = { ...zoneCard, x: x - ZONE_BORDER_PX, y: y - ZONE_BORDER_PX };
         }
-        return { card };
+        updateCard(zoneCard, action);
     };
 
     const updateCard = (zoneCard: ZoneCardInfo, action: CardActionInfo) => {
@@ -340,7 +346,7 @@ export const GameLayout = () => {
             if (interzoneDrag || (isIntrazoneDrag(action) && fromBattlefield(action))) {
                 // Only allow commanders to be moved to the command zone.
                 if (toCommand(action) && !action.zoneCard.card.commander) return false;
-                updateCardFromAction(action);
+                updateZoneCardAfterAction(action);
             }
             return interzoneDrag;
         } finally {
