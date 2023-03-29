@@ -13,7 +13,6 @@ import { DeckInfo } from '../../services/dbSvc';
 import { Lefter } from '../lefter/lefter';
 import { useGlobalShortcuts } from '../hooks/useKeyDown';
 import { BattlefieldZone } from './battlefieldZone';
-import { CardActionInfo } from './draggableCard';
 import { SearchZone } from './searchZone';
 import { StackZone } from './stackZone';
 import { ZoneCardInfo } from './zone';
@@ -56,6 +55,11 @@ export enum ZoneName {
     Command = 'command',
 }
 
+export interface CurrentDragInfo {
+    zoneCard: ZoneCardInfo;
+    sourceZone: ZoneName;
+}
+
 interface GameZonesState {
     [ZoneName.Library]: ZoneCardInfo[];
     [ZoneName.Hand]: ZoneCardInfo[];
@@ -68,7 +72,8 @@ interface GameZonesState {
 export const GameLayout = () => {
     const contentDiv = useRef<HTMLDivElement>(null);
     const mousePosInContent = useMousePosition(contentDiv);
-    const [hoveredZone, setHoveredZone] = useState<ZoneName>();
+    const [currentDrag, setCurrentDrag] = useState<CurrentDragInfo>();
+    const [currentDragTargetZone, setCurrentDragTargetZone] = useState<ZoneName>();
 
     const [currentDeckInfo, setCurrentDeckInfo] = useState<DeckInfo>();
     const [gameDetailsState, setGameDetailsState] = useState<GameDetailsState>({
@@ -88,21 +93,25 @@ export const GameLayout = () => {
         [ZoneName.Exile]: [],
         [ZoneName.Command]: [],
     });
-    const [currentAction, setCurrentAction] = useState<CardActionInfo>();
     const [searchingZone, setSearchingZone] = useState<ZoneName>();
     const [libraryShuffleAnimationRunning, setLibraryShuffleAnimationRunning] = useState(true);
 
-    const fromBattlefield = (action: CardActionInfo) => action.sourceZone === ZoneName.Battlefield;
-    const toBattlefield = (action: CardActionInfo) => action.targetZone === ZoneName.Battlefield;
-    const toCommand = (action: CardActionInfo) => action.targetZone === ZoneName.Command;
-    const isIntrazoneDrag = (action: CardActionInfo) => {
-        const { sourceZone, targetZone } = action;
-        return targetZone === sourceZone || targetZone === undefined;
+    const isMoveWithinZone = (): boolean => {
+        return !!currentDrag && currentDrag.sourceZone === currentDragTargetZone;
     };
-    const isInterzoneDrag = (action: CardActionInfo) => {
-        const { sourceZone, targetZone } = action;
-        return !!targetZone && targetZone !== sourceZone;
+
+    const isMoveToNewZone = (): boolean => {
+        return (
+            !!currentDrag &&
+            !!currentDragTargetZone &&
+            currentDrag.sourceZone !== currentDragTargetZone
+        );
     };
+
+    const resetZoneCard = (zoneCard: ZoneCardInfo): ZoneCardInfo => {
+        const { card, node } = zoneCard;
+        return { card, node };
+    }
 
     const getStartingZoneCards = ({ mainboard, commanders }: DeckInfo) => {
         const newLibraryCards = shuffle(mainboard.map((card) => ({ card })));
@@ -211,39 +220,36 @@ export const GameLayout = () => {
         return { zone, zoneCard };
     };
 
-    const tapHoveredCard = () => {
+    const toggleCardTap = () => {
         const hoveredZoneAndCard = getHoveredZoneAndCard();
-        if (!hoveredZoneAndCard || !hoveredZoneAndCard.zoneCard) return undefined;
+        if (!hoveredZoneAndCard || !hoveredZoneAndCard.zoneCard) return false;
         const { zone, zoneCard } = hoveredZoneAndCard;
+        if (zone !== ZoneName.Battlefield) return false;
 
-        if (zone !== ZoneName.Battlefield) return;
-        toggleTap({ zoneCard, sourceZone: zone });
-    };
-
-    const toggleTap = (action: CardActionInfo) => {
-        const zoneCard = findZoneCard(action);
-        updateCard({ ...zoneCard, tapped: !zoneCard.tapped }, action);
+        const [piece1, piece2] = sliceCardFromZone(zoneCard, zone);
+        zoneCard.tapped = !zoneCard.tapped;
+        setGameZonesState((g) => ({ ...g, [zone]: piece1.concat(zoneCard, piece2) }));
         return true;
     };
 
     const putCardOnLibraryBottom = () => {
         const hoveredZoneAndCard = getHoveredZoneAndCard();
-        if (!hoveredZoneAndCard || !hoveredZoneAndCard.zoneCard) return undefined;
+        if (!hoveredZoneAndCard || !hoveredZoneAndCard.zoneCard) return;
         const { zone, zoneCard } = hoveredZoneAndCard;
 
         const [piece1, piece2] = sliceCardFromZone(zoneCard, zone);
+        const updatedZoneCard = resetZoneCard(zoneCard);
         if (zone === ZoneName.Library) {
-            const libraryCards = [zoneCard].concat(piece1, piece2);
+            const libraryCards = [updatedZoneCard].concat(piece1, piece2);
             setGameZonesState((g) => ({ ...g, [ZoneName.Library]: libraryCards }));
         } else {
-            const libraryCards = [zoneCard].concat(gameZonesState[ZoneName.Library]);
+            const libraryCards = [updatedZoneCard].concat(gameZonesState[ZoneName.Library]);
             setGameZonesState((g) => ({
                 ...g,
                 [ZoneName.Library]: libraryCards,
                 [zone]: piece1.concat(piece2),
             }));
         }
-        updateZoneCardAfterAction({ zoneCard, sourceZone: zone, targetZone: ZoneName.Library });
     };
 
     const searchZone = (zone: ZoneName, e: KeyboardEvent) => {
@@ -267,10 +273,10 @@ export const GameLayout = () => {
             n: takeNextTurn,
             r: restartGame,
             s: shuffleLibrary,
-            t: tapHoveredCard,
+            t: toggleCardTap,
             u: untapAll,
         },
-        () => currentAction === undefined
+        () => currentDrag === undefined
     );
 
     const sliceEndElements = (fromArray: any[], toArray: any[], num: number) => {
@@ -287,7 +293,7 @@ export const GameLayout = () => {
         return [cards.slice(0, index), cards.slice(index + 1)];
     };
 
-    const findZoneCard = (action: CardActionInfo): ZoneCardInfo => {
+    const findZoneCard = (action: CurrentDragInfo): ZoneCardInfo => {
         return gameZonesState[action.sourceZone].find(
             (zc) => zc.card.id === action.zoneCard.card.id
         )!;
@@ -301,10 +307,10 @@ export const GameLayout = () => {
         return highestIndex + 1;
     };
 
-    const updateZoneCardAfterAction = (action: CardActionInfo) => {
+    const updateZoneCardAfterAction = (action: CurrentDragInfo) => {
         const { card, node } = action.zoneCard;
         let zoneCard: ZoneCardInfo = { card };
-        if (toBattlefield(action)) {
+        if (currentDragTargetZone === ZoneName.Battlefield) {
             const { x, y } = node!.getBoundingClientRect();
             zoneCard = findZoneCard(action);
             zoneCard = { ...zoneCard, x: x - ZONE_BORDER_PX, y: y - ZONE_BORDER_PX };
@@ -312,53 +318,51 @@ export const GameLayout = () => {
         updateCard(zoneCard, action);
     };
 
-    const updateCard = (zoneCard: ZoneCardInfo, action: CardActionInfo) => {
-        const { sourceZone, targetZone } = action;
-        if (toBattlefield(action)) {
+    const updateCard = (zoneCard: ZoneCardInfo, action: CurrentDragInfo) => {
+        const { sourceZone } = action;
+        if (currentDragTargetZone === ZoneName.Battlefield) {
             const zIndex = getIncrementedZIndex(ZoneName.Battlefield);
             zoneCard = { ...zoneCard, zIndex };
         }
 
         const [sourceSlice1, sourceSlice2] = sliceCardFromZone(zoneCard, sourceZone);
-        if (isIntrazoneDrag(action)) {
+        if (isMoveWithinZone()) {
             const sourceZoneCards = sourceSlice1.concat(zoneCard).concat(sourceSlice2);
             setGameZonesState((g) => ({ ...g, [sourceZone]: sourceZoneCards }));
             return;
         }
 
         const sourceZoneCards = sourceSlice1.concat(sourceSlice2);
-        const targetZoneCards = gameZonesState[targetZone!].concat(zoneCard);
+        const targetZoneCards = gameZonesState[currentDragTargetZone!].concat(zoneCard);
         setGameZonesState((g) => ({
             ...g,
             [sourceZone]: sourceZoneCards,
-            [targetZone!]: targetZoneCards,
+            [currentDragTargetZone!]: targetZoneCards,
         }));
     };
 
-    const onCardDrag = (action: CardActionInfo) => {
-        setHoveredZone(getHoveredZone());
-        if (!currentAction) setCurrentAction(action);
+    const onCardDrag = (action: CurrentDragInfo) => {
+        if (!currentDrag) setCurrentDrag(action);
+        setCurrentDragTargetZone(getHoveredZone());
         return true;
     };
 
-    const onCardDragStop = (action: CardActionInfo) => {
+    const onCardDragStop = (action: CurrentDragInfo) => {
         try {
-            setHoveredZone(undefined);
-
-            action = currentAction ?? action;
-
-            action.targetZone = getHoveredZoneAndCard()?.zone;
-            if (!action.targetZone) return false;
-
-            const interzoneDrag = isInterzoneDrag(action);
-            if (interzoneDrag || (isIntrazoneDrag(action) && fromBattlefield(action))) {
+            const draggedToNewZone = isMoveToNewZone();
+            const draggedWithinBattlefield =
+                isMoveWithinZone() && action.sourceZone === ZoneName.Battlefield;
+            if (draggedToNewZone || draggedWithinBattlefield) {
                 // Only allow commanders to be moved to the command zone.
-                if (toCommand(action) && !action.zoneCard.card.commander) return false;
+                if (currentDragTargetZone === ZoneName.Command && !action.zoneCard.card.commander) {
+                    return false;
+                }
                 updateZoneCardAfterAction(action);
             }
-            return interzoneDrag;
+            return draggedToNewZone;
         } finally {
-            setCurrentAction(undefined);
+            setCurrentDrag(undefined);
+            setCurrentDragTargetZone(undefined);
         }
     };
 
@@ -379,7 +383,7 @@ export const GameLayout = () => {
         if (fromZone === ZoneName.Library) shuffleLibrary();
     };
 
-    const zoneProps = { action: currentAction, hoveredZone, onCardDrag, onCardDragStop };
+    const zoneProps = { action: currentDrag, currentDragTargetZone, onCardDrag, onCardDragStop };
     return (
         <div ref={contentDiv} className='gameLayout'>
             <div style={{ display: 'flex', flex: 1 }}>
@@ -392,7 +396,7 @@ export const GameLayout = () => {
                     {...zoneProps}
                     name={ZoneName.Battlefield}
                     contents={gameZonesState[ZoneName.Battlefield]}
-                    onCardDoubleClick={toggleTap}
+                    onCardDoubleClick={toggleCardTap}
                 />
                 <StackZone
                     {...zoneProps}

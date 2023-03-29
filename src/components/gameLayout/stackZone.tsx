@@ -3,8 +3,8 @@ import { CardInfo } from "../../services/dbSvc";
 import { CARD_HEIGHT_PX, CARD_WIDTH_PX, ZONE_BORDER_PX, ZONE_PADDING_PX } from "../../global/constants";
 import { useDebouncedValue } from "../hooks/useDebouncedValue";
 import { useRect } from "../hooks/useRect";
-import { CardActionInfo } from "./draggableCard";
 import { Zone, ZoneProps } from "./zone";
+import { CurrentDragInfo } from "./gameLayout";
 
 interface StackZoneProps extends ZoneProps {
     showTopOnly?: boolean;
@@ -54,7 +54,7 @@ export const StackZone = forwardRef((props: StackZoneProps, ref) => {
         return { ...zc, x, y, previewing };
     });
 
-    const fireCardMouseEnter = (action: CardActionInfo) => {
+    const fireCardMouseEnter = (action: CurrentDragInfo) => {
         if (!showTopOnly) setPreviewingCard(action.zoneCard.card);
         return onCardMouseEnter ? onCardMouseEnter(action) : true;
     };

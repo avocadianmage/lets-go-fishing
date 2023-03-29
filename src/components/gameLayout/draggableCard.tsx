@@ -4,12 +4,6 @@ import { ZoneName } from './gameLayout';
 import { VisualCard, VisualCardProps } from './visualCard';
 import { ZoneCardInfo } from './zone';
 
-export interface CardActionInfo {
-    zoneCard: ZoneCardInfo;
-    sourceZone: ZoneName;
-    targetZone?: ZoneName;
-}
-
 interface DraggableCardProps extends VisualCardProps {
     zoneCard: ZoneCardInfo;
     onDrag: CardEventHandler;

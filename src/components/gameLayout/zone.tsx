@@ -1,7 +1,7 @@
 import { ForwardedRef, forwardRef } from 'react';
 import { CardInfo } from '../../services/dbSvc';
-import { CardActionInfo, DraggableCard } from './draggableCard';
-import { Pane, ZoneName } from './gameLayout';
+import { DraggableCard } from './draggableCard';
+import { CurrentDragInfo, Pane, ZoneName } from './gameLayout';
 
 export interface ZoneCardInfo {
     card: CardInfo;
@@ -18,9 +18,9 @@ export interface ZoneProps {
     contents: ZoneCardInfo[];
     classesToAppend?: string;
     faceDown?: boolean;
-    action?: CardActionInfo;
     wiggleCards?: boolean;
-    hoveredZone?: ZoneName;
+    action?: CurrentDragInfo;
+    currentDragTargetZone?: ZoneName;
     onCardDrag?: CardActionEventHandler;
     onCardDragStop?: CardActionEventHandler;
     onCardMouseEnter?: CardActionEventHandler;
@@ -29,7 +29,7 @@ export interface ZoneProps {
     onCardDoubleClick?: CardActionEventHandler;
 }
 
-export type CardActionEventHandler = (action: CardActionInfo) => boolean;
+export type CardActionEventHandler = (action: CurrentDragInfo) => boolean;
 
 export const Zone = forwardRef(
     (
@@ -40,7 +40,7 @@ export const Zone = forwardRef(
             faceDown,
             action,
             wiggleCards,
-            hoveredZone,
+            currentDragTargetZone,
             onCardDrag,
             onCardDragStop,
             onCardMouseEnter,
@@ -50,11 +50,12 @@ export const Zone = forwardRef(
         }: ZoneProps,
         ref: ForwardedRef<HTMLDivElement>
     ) => {
-        const isSourceZone = action?.sourceZone === name;
+        const isSourceZone = name === action?.sourceZone;
+        const isTargetZone = name === currentDragTargetZone;
         const className =
             'zone' +
             (classesToAppend ? ' ' + classesToAppend : '') +
-            (hoveredZone === name ? ' highlight' : '');
+            (isTargetZone ? ' highlight' : '');
 
         const isCardDragging = (card: CardInfo) => card.id === action?.zoneCard.card.id;
         const updatedContents = contents.map((zc) => ({
