@@ -108,10 +108,7 @@ export const GameLayout = () => {
         );
     };
 
-    const resetZoneCard = (zoneCard: ZoneCardInfo): ZoneCardInfo => {
-        const { card, node } = zoneCard;
-        return { card, node };
-    }
+    const resetZoneCard = (zoneCard: ZoneCardInfo): ZoneCardInfo => ({ card: zoneCard.card });
 
     const getStartingZoneCards = ({ mainboard, commanders }: DeckInfo) => {
         const newLibraryCards = shuffle(mainboard.map((card) => ({ card })));
