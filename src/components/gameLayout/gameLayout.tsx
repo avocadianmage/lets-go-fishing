@@ -96,11 +96,11 @@ export const GameLayout = () => {
     const [searchingZone, setSearchingZone] = useState<ZoneName>();
     const [libraryShuffleAnimationRunning, setLibraryShuffleAnimationRunning] = useState(true);
 
-    const isMoveWithinZone = (): boolean => {
+    const isDragWithinZone = (): boolean => {
         return !!currentDrag && currentDrag.sourceZone === currentDragTargetZone;
     };
 
-    const isMoveToNewZone = (): boolean => {
+    const isDragToNewZone = (): boolean => {
         return (
             !!currentDrag &&
             !!currentDragTargetZone &&
@@ -290,12 +290,6 @@ export const GameLayout = () => {
         return [cards.slice(0, index), cards.slice(index + 1)];
     };
 
-    const findZoneCard = (action: CurrentDragInfo): ZoneCardInfo => {
-        return gameZonesState[action.sourceZone].find(
-            (zc) => zc.card.id === action.zoneCard.card.id
-        )!;
-    };
-
     const getIncrementedZIndex = (zone: ZoneName) => {
         const cards = gameZonesState[zone];
         const highestIndex = cards.some(() => true)
@@ -309,7 +303,6 @@ export const GameLayout = () => {
         let zoneCard: ZoneCardInfo = { card };
         if (currentDragTargetZone === ZoneName.Battlefield) {
             const { x, y } = node!.getBoundingClientRect();
-            zoneCard = findZoneCard(action);
             zoneCard = { ...zoneCard, x: x - ZONE_BORDER_PX, y: y - ZONE_BORDER_PX };
         }
         updateCard(zoneCard, action);
@@ -323,7 +316,7 @@ export const GameLayout = () => {
         }
 
         const [sourceSlice1, sourceSlice2] = sliceCardFromZone(zoneCard, sourceZone);
-        if (isMoveWithinZone()) {
+        if (isDragWithinZone()) {
             const sourceZoneCards = sourceSlice1.concat(zoneCard).concat(sourceSlice2);
             setGameZonesState((g) => ({ ...g, [sourceZone]: sourceZoneCards }));
             return;
@@ -346,9 +339,9 @@ export const GameLayout = () => {
 
     const onCardDragStop = (action: CurrentDragInfo) => {
         try {
-            const draggedToNewZone = isMoveToNewZone();
+            const draggedToNewZone = isDragToNewZone();
             const draggedWithinBattlefield =
-                isMoveWithinZone() && action.sourceZone === ZoneName.Battlefield;
+                isDragWithinZone() && action.sourceZone === ZoneName.Battlefield;
             if (draggedToNewZone || draggedWithinBattlefield) {
                 // Only allow commanders to be moved to the command zone.
                 if (currentDragTargetZone === ZoneName.Command && !action.zoneCard.card.commander) {
@@ -380,7 +373,7 @@ export const GameLayout = () => {
         if (fromZone === ZoneName.Library) shuffleLibrary();
     };
 
-    const zoneProps = { action: currentDrag, currentDragTargetZone, onCardDrag, onCardDragStop };
+    const zoneProps = { currentDrag, currentDragTargetZone, onCardDrag, onCardDragStop };
     return (
         <div ref={contentDiv} className='gameLayout'>
             <div style={{ display: 'flex', flex: 1 }}>

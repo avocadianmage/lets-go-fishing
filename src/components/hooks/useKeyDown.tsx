@@ -8,7 +8,7 @@ export const useGlobalShortcuts = (
 ) => {
     const handler = useCallback(
         (e: KeyboardEvent) => {
-            const action = shortcutMap[e.key];
+            const action = shortcutMap[e.key.toLowerCase()] ?? shortcutMap[e.key.toUpperCase()];
             const noInputFocus = document.activeElement!.tagName !== 'INPUT';
             if (action && noInputFocus && validator()) action(e);
         },
