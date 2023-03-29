@@ -298,23 +298,16 @@ export const GameLayout = () => {
         return highestIndex + 1;
     };
 
-    const updateZoneCardAfterAction = (action: CurrentDragInfo) => {
+    const updateZoneCardAfterDrag = (action: CurrentDragInfo) => {
         const { card, node } = action.zoneCard;
         let zoneCard: ZoneCardInfo = { card };
         if (currentDragTargetZone === ZoneName.Battlefield) {
             const { x, y } = node!.getBoundingClientRect();
-            zoneCard = { ...zoneCard, x: x - ZONE_BORDER_PX, y: y - ZONE_BORDER_PX };
-        }
-        updateCard(zoneCard, action);
-    };
-
-    const updateCard = (zoneCard: ZoneCardInfo, action: CurrentDragInfo) => {
-        const { sourceZone } = action;
-        if (currentDragTargetZone === ZoneName.Battlefield) {
             const zIndex = getIncrementedZIndex(ZoneName.Battlefield);
-            zoneCard = { ...zoneCard, zIndex };
+            zoneCard = { ...zoneCard, x: x - ZONE_BORDER_PX, y: y - ZONE_BORDER_PX, zIndex };
         }
 
+        const { sourceZone } = action;
         const [sourceSlice1, sourceSlice2] = sliceCardFromZone(zoneCard, sourceZone);
         if (isDragWithinZone()) {
             const sourceZoneCards = sourceSlice1.concat(zoneCard).concat(sourceSlice2);
@@ -347,7 +340,7 @@ export const GameLayout = () => {
                 if (currentDragTargetZone === ZoneName.Command && !action.zoneCard.card.commander) {
                     return false;
                 }
-                updateZoneCardAfterAction(action);
+                updateZoneCardAfterDrag(action);
             }
             return draggedToNewZone;
         } finally {
