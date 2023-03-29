@@ -67,7 +67,8 @@ interface GameZonesState {
 
 export const GameLayout = () => {
     const contentDiv = useRef<HTMLDivElement>(null);
-    const mousePositionInContent = useMousePosition(contentDiv);
+    const mousePosInContent = useMousePosition(contentDiv);
+    const [hoveredZone, setHoveredZone] = useState<ZoneName>();
 
     const [currentDeckInfo, setCurrentDeckInfo] = useState<DeckInfo>();
     const [gameDetailsState, setGameDetailsState] = useState<GameDetailsState>({
@@ -182,22 +183,26 @@ export const GameLayout = () => {
         draw();
     };
 
+    const getFirstElemByClass = (elems: Element[], className: string): Element | undefined => {
+        return elems.find((elem) => elem.classList.contains(className));
+    };
+
+    const getHoveredElems = (): Element[] => {
+        if (!mousePosInContent) return [];
+        return document.elementsFromPoint(mousePosInContent.x, mousePosInContent.y);
+    };
+
+    const getHoveredZone = (hoveredElems = getHoveredElems()): ZoneName | undefined => {
+        const zoneElem = getFirstElemByClass(hoveredElems, 'zone');
+        return zoneElem ? (zoneElem.id as ZoneName) : undefined;
+    };
+
     const getHoveredZoneAndCard = () => {
-        if (!mousePositionInContent) return undefined;
-        const hoveredElems = document.elementsFromPoint(
-            mousePositionInContent.x,
-            mousePositionInContent.y
-        );
-
-        const getElem = (className: string) => {
-            return hoveredElems.find((elem) => elem.classList.contains(className));
-        };
-
-        const zoneElem = getElem('zone');
-        const zone = zoneElem ? (zoneElem.id as ZoneName) : undefined;
+        const hoveredElems = getHoveredElems();
+        const zone = getHoveredZone(hoveredElems);
         if (!zone) return undefined;
 
-        const hoveredCardId = getElem('card')?.id;
+        const hoveredCardId = getFirstElemByClass(hoveredElems, 'card')?.id;
         const zoneCard =
             hoveredCardId !== undefined
                 ? gameZonesState[zone].find((zc) => zc.card.id === hoveredCardId)
@@ -331,12 +336,15 @@ export const GameLayout = () => {
     };
 
     const onCardDrag = (action: CardActionInfo) => {
+        setHoveredZone(getHoveredZone());
         if (!currentAction) setCurrentAction(action);
         return true;
     };
 
     const onCardDragStop = (action: CardActionInfo) => {
         try {
+            setHoveredZone(undefined);
+
             action = currentAction ?? action;
 
             action.targetZone = getHoveredZoneAndCard()?.zone;
@@ -371,7 +379,7 @@ export const GameLayout = () => {
         if (fromZone === ZoneName.Library) shuffleLibrary();
     };
 
-    const zoneProps = { action: currentAction, onCardDrag, onCardDragStop };
+    const zoneProps = { action: currentAction, hoveredZone, onCardDrag, onCardDragStop };
     return (
         <div ref={contentDiv} className='gameLayout'>
             <div style={{ display: 'flex', flex: 1 }}>

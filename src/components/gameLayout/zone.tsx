@@ -20,6 +20,7 @@ export interface ZoneProps {
     faceDown?: boolean;
     action?: CardActionInfo;
     wiggleCards?: boolean;
+    hoveredZone?: ZoneName;
     onCardDrag?: CardActionEventHandler;
     onCardDragStop?: CardActionEventHandler;
     onCardMouseEnter?: CardActionEventHandler;
@@ -39,6 +40,7 @@ export const Zone = forwardRef(
             faceDown,
             action,
             wiggleCards,
+            hoveredZone,
             onCardDrag,
             onCardDragStop,
             onCardMouseEnter,
@@ -49,11 +51,10 @@ export const Zone = forwardRef(
         ref: ForwardedRef<HTMLDivElement>
     ) => {
         const isSourceZone = action?.sourceZone === name;
-        const isTargetZone = action?.targetZone === name;
         const className =
             'zone' +
             (classesToAppend ? ' ' + classesToAppend : '') +
-            (isTargetZone ? ' highlight' : '');
+            (hoveredZone === name ? ' highlight' : '');
 
         const isCardDragging = (card: CardInfo) => card.id === action?.zoneCard.card.id;
         const updatedContents = contents.map((zc) => ({
