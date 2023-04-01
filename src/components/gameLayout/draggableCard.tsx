@@ -1,6 +1,5 @@
 import { useRef, useState } from 'react';
 import Draggable, { ControlPosition } from 'react-draggable';
-import { ZoneName } from './gameLayout';
 import { VisualCard, VisualCardProps } from './visualCard';
 import { ZoneCardInfo } from './zone';
 

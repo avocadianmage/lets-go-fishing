@@ -305,8 +305,11 @@ export const GameLayout = () => {
             zoneCard.x = x - ZONE_BORDER_PX;
             zoneCard.y = y - ZONE_BORDER_PX;
             zoneCard.zIndex = getIncrementedZIndex(ZoneName.Battlefield);
+        } else {
+            zoneCard.zIndex = undefined;
+            zoneCard.tapped = false;
         }
-        
+
         const [sourceSlice1, sourceSlice2] = sliceCardFromZone(zoneCard, sourceZone);
         if (isDragWithinZone()) {
             const sourceZoneCards = sourceSlice1.concat(zoneCard).concat(sourceSlice2);
