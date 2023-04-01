@@ -108,7 +108,11 @@ export const GameLayout = () => {
         );
     };
 
-    const resetZoneCard = (zoneCard: ZoneCardInfo): ZoneCardInfo => ({ card: zoneCard.card });
+    const resetZoneCard = (zoneCard: ZoneCardInfo): ZoneCardInfo => ({
+        card: zoneCard.card,
+        tapped: false,
+        node: zoneCard.node,
+    });
 
     const getStartingZoneCards = ({ mainboard, commanders }: DeckInfo) => {
         const newLibraryCards = shuffle(mainboard.map((card) => ({ card })));
@@ -116,7 +120,7 @@ export const GameLayout = () => {
         return {
             library: fromArray,
             hand: toArray,
-            command: commanders.map((card) => ({ card })),
+            command: commanders.map((card) => ({ card, tapped: false })),
         };
     };
 
@@ -299,15 +303,15 @@ export const GameLayout = () => {
     };
 
     const updateZoneCardAfterDrag = (action: CurrentDragInfo) => {
-        const { zoneCard, sourceZone } = action;
+        const { sourceZone } = action;
+        let zoneCard = { ...action.zoneCard };
         if (currentDragTargetZone === ZoneName.Battlefield) {
             const { x, y } = zoneCard.node!.getBoundingClientRect();
             zoneCard.x = x - ZONE_BORDER_PX;
             zoneCard.y = y - ZONE_BORDER_PX;
             zoneCard.zIndex = getIncrementedZIndex(ZoneName.Battlefield);
         } else {
-            zoneCard.zIndex = undefined;
-            zoneCard.tapped = false;
+            zoneCard = resetZoneCard(zoneCard);
         }
 
         const [sourceSlice1, sourceSlice2] = sliceCardFromZone(zoneCard, sourceZone);

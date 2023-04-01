@@ -5,12 +5,12 @@ import { CurrentDragInfo, Pane, ZoneName } from './gameLayout';
 
 export interface ZoneCardInfo {
     card: CardInfo;
+    tapped: boolean;
     node?: Element;
     x?: number;
     y?: number;
     zIndex?: number;
     previewing?: boolean;
-    tapped?: boolean;
 }
 
 export interface ZoneProps {
