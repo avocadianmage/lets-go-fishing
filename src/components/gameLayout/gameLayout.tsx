@@ -114,6 +114,48 @@ export const GameLayout = () => {
         node: zoneCard.node,
     });
 
+    const getFirstElemByClass = (elems: Element[], className: string): Element | undefined => {
+        return elems.find((elem) => elem.classList.contains(className));
+    };
+
+    const getHoveredElems = (): Element[] => {
+        if (!mousePosInContent) return [];
+        return document.elementsFromPoint(mousePosInContent.x, mousePosInContent.y);
+    };
+
+    const getHoveredZone = (hoveredElems = getHoveredElems()): ZoneName | undefined => {
+        const zoneElem = getFirstElemByClass(hoveredElems, 'zone');
+        return zoneElem ? (zoneElem.id as ZoneName) : undefined;
+    };
+
+    const getHoveredZoneAndCard = () => {
+        const hoveredElems = getHoveredElems();
+        const zone = getHoveredZone(hoveredElems);
+        if (!zone) return undefined;
+
+        const hoveredCardId = getFirstElemByClass(hoveredElems, 'card')?.id;
+        const zoneCard =
+            hoveredCardId !== undefined
+                ? gameZonesState[zone].find((zc) => zc.card.id === hoveredCardId)
+                : undefined;
+
+        return { zone, zoneCard };
+    };
+
+    const sliceEndElements = (fromArray: any[], toArray: any[], num: number) => {
+        const cutIndex = fromArray.length - num;
+        return {
+            fromArray: fromArray.slice(0, cutIndex),
+            toArray: toArray.concat(fromArray.slice(cutIndex)),
+        };
+    };
+
+    const sliceCardFromZone = (zoneCard: ZoneCardInfo, zone: ZoneName) => {
+        const cards = gameZonesState[zone];
+        const index = cards.findIndex((zc) => zc.card.id === zoneCard.card.id);
+        return [cards.slice(0, index), cards.slice(index + 1)];
+    };
+
     const getStartingZoneCards = ({ mainboard, commanders }: DeckInfo) => {
         const newLibraryCards = shuffle(mainboard.map((card) => ({ card })));
         const { fromArray, toArray } = sliceEndElements(newLibraryCards, [], STARTING_HAND_SIZE);
@@ -193,34 +235,6 @@ export const GameLayout = () => {
         draw();
     };
 
-    const getFirstElemByClass = (elems: Element[], className: string): Element | undefined => {
-        return elems.find((elem) => elem.classList.contains(className));
-    };
-
-    const getHoveredElems = (): Element[] => {
-        if (!mousePosInContent) return [];
-        return document.elementsFromPoint(mousePosInContent.x, mousePosInContent.y);
-    };
-
-    const getHoveredZone = (hoveredElems = getHoveredElems()): ZoneName | undefined => {
-        const zoneElem = getFirstElemByClass(hoveredElems, 'zone');
-        return zoneElem ? (zoneElem.id as ZoneName) : undefined;
-    };
-
-    const getHoveredZoneAndCard = () => {
-        const hoveredElems = getHoveredElems();
-        const zone = getHoveredZone(hoveredElems);
-        if (!zone) return undefined;
-
-        const hoveredCardId = getFirstElemByClass(hoveredElems, 'card')?.id;
-        const zoneCard =
-            hoveredCardId !== undefined
-                ? gameZonesState[zone].find((zc) => zc.card.id === hoveredCardId)
-                : undefined;
-
-        return { zone, zoneCard };
-    };
-
     const toggleCardTap = () => {
         const hoveredZoneAndCard = getHoveredZoneAndCard();
         if (!hoveredZoneAndCard || !hoveredZoneAndCard.zoneCard) return false;
@@ -251,47 +265,6 @@ export const GameLayout = () => {
                 [zone]: piece1.concat(piece2),
             }));
         }
-    };
-
-    const searchZone = (zone: ZoneName, e: KeyboardEvent) => {
-        setSearchingZone(zone);
-        // Prevent input from proliferating into the search box.
-        e.preventDefault();
-    };
-    const searchExile = (e: KeyboardEvent) => searchZone(ZoneName.Exile, e);
-    const searchGraveyard = (e: KeyboardEvent) => searchZone(ZoneName.Graveyard, e);
-    const searchHand = (e: KeyboardEvent) => searchZone(ZoneName.Hand, e);
-    const searchLibrary = (e: KeyboardEvent) => searchZone(ZoneName.Library, e);
-
-    useGlobalShortcuts(
-        {
-            b: putCardOnLibraryBottom,
-            d: drawOne,
-            e: searchExile,
-            g: searchGraveyard,
-            h: searchHand,
-            l: searchLibrary,
-            n: takeNextTurn,
-            r: restartGame,
-            s: shuffleLibrary,
-            t: toggleCardTap,
-            u: untapAll,
-        },
-        () => currentDrag === undefined
-    );
-
-    const sliceEndElements = (fromArray: any[], toArray: any[], num: number) => {
-        const cutIndex = fromArray.length - num;
-        return {
-            fromArray: fromArray.slice(0, cutIndex),
-            toArray: toArray.concat(fromArray.slice(cutIndex)),
-        };
-    };
-
-    const sliceCardFromZone = (zoneCard: ZoneCardInfo, zone: ZoneName) => {
-        const cards = gameZonesState[zone];
-        const index = cards.findIndex((zc) => zc.card.id === zoneCard.card.id);
-        return [cards.slice(0, index), cards.slice(index + 1)];
     };
 
     const getIncrementedZIndex = (zone: ZoneName) => {
@@ -355,6 +328,16 @@ export const GameLayout = () => {
         }
     };
 
+    const searchZone = (zone: ZoneName, e: KeyboardEvent) => {
+        setSearchingZone(zone);
+        // Prevent input from proliferating into the search box.
+        e.preventDefault();
+    };
+    const searchExile = (e: KeyboardEvent) => searchZone(ZoneName.Exile, e);
+    const searchGraveyard = (e: KeyboardEvent) => searchZone(ZoneName.Graveyard, e);
+    const searchHand = (e: KeyboardEvent) => searchZone(ZoneName.Hand, e);
+    const searchLibrary = (e: KeyboardEvent) => searchZone(ZoneName.Library, e);
+
     const retrieveCard = (zoneCard?: ZoneCardInfo) => {
         const fromZone = searchingZone;
         const toZone = ZoneName.Hand;
@@ -372,6 +355,23 @@ export const GameLayout = () => {
         if (fromZone === ZoneName.Library) shuffleLibrary();
     };
 
+    useGlobalShortcuts(
+        {
+            b: putCardOnLibraryBottom,
+            d: drawOne,
+            e: searchExile,
+            g: searchGraveyard,
+            h: searchHand,
+            l: searchLibrary,
+            n: takeNextTurn,
+            r: restartGame,
+            s: shuffleLibrary,
+            t: toggleCardTap,
+            u: untapAll,
+        },
+        () => currentDrag === undefined
+    );
+    
     const zoneProps = { currentDrag, currentDragTargetZone, onCardDrag, onCardDragStop };
     return (
         <div ref={contentDiv} className='gameLayout'>
