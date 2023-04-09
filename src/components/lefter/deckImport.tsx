@@ -1,5 +1,5 @@
 import { Add } from '@mui/icons-material';
-import { CircularProgress, InputAdornment, styled, TextField } from '@mui/material';
+import { CircularProgress, FormGroup, TextField } from '@mui/material';
 import { forwardRef, useState } from 'react';
 import { DeckInfo } from '../../services/dbSvc';
 import { FetchDecklist } from '../../services/deckInfoSvc';
@@ -9,14 +9,6 @@ interface DeckImportProps {
     decks: DeckInfo[];
     onImport(value: DeckInfo): void;
 }
-
-const CssTextField = styled(TextField)({
-    '& .MuiOutlinedInput-root': {
-        '& fieldset': {
-            borderColor: 'transparent',
-        },
-    },
-});
 
 export const DeckImport = forwardRef(({ decks, onImport }: DeckImportProps, ref) => {
     const [value, setValue] = useState('');
@@ -60,31 +52,27 @@ export const DeckImport = forwardRef(({ decks, onImport }: DeckImportProps, ref)
     };
 
     return (
-        <CssTextField
-            inputRef={ref}
-            placeholder='Enter Moxfield deck address'
-            inputProps={{ style: { fontSize: '0.8rem' } }}
-            InputProps={{
-                endAdornment: (
-                    <InputAdornment position='end' sx={{ marginRight: '-3px' }}>
-                        <InputButton
-                            aria-label='import deck'
-                            disabled={isDisabled}
-                            onClick={doImport}
-                            sx={{ color: 'var(--nord14)' }}
-                        >
-                            {loading ? <CircularProgress size={24} /> : <Add />}
-                        </InputButton>
-                    </InputAdornment>
-                ),
-            }}
-            sx={{ width: '100%' }}
-            value={value}
-            error={!!errorMessage}
-            helperText={errorMessage}
-            FormHelperTextProps={{ sx: { marginBottom: '4px' } }}
-            onChange={(e) => updateInput(e.target.value)}
-            onKeyDown={fireKeyDown}
-        />
+        <FormGroup row>
+            <TextField
+                inputRef={ref}
+                placeholder='Enter Moxfield deck URL'
+                inputProps={{ style: { fontSize: '0.8rem' } }}
+                sx={{ flex: 1, '& fieldset': { borderColor: 'transparent' } }}
+                value={value}
+                error={!!errorMessage}
+                helperText={errorMessage}
+                FormHelperTextProps={{ sx: { marginBottom: '4px' } }}
+                onChange={(e) => updateInput(e.target.value)}
+                onKeyDown={fireKeyDown}
+            />
+            <InputButton
+                tooltip='Import deck'
+                disabled={isDisabled}
+                onClick={doImport}
+                sx={{ color: 'var(--nord14)' }}
+            >
+                {loading ? <CircularProgress size={24} /> : <Add />}
+            </InputButton>
+        </FormGroup>
     );
 });

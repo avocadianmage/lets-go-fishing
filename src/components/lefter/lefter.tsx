@@ -116,7 +116,6 @@ export const Lefter = ({
                         decks={decks}
                         selectedIndex={selectedIndex}
                         onUpdateDecksAndSelection={updateDecksAndSelection}
-                        onClickPlaceholder={() => deckImportRef.current?.focus()}
                     />
                 </Paper>
 

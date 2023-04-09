@@ -1,23 +1,22 @@
-import { IconButtonProps, IconButton, Tooltip, Link } from '@mui/material';
+import { Tooltip, Link, ButtonProps, Button } from '@mui/material';
 
-export interface InputButtonProps extends IconButtonProps {
+export interface InputButtonProps extends ButtonProps {
     tooltip?: string;
     link?: string;
 }
 
 export const InputButton = (props: InputButtonProps) => {
-    return (
-        <Tooltip title={props.tooltip}>
-            <Link href={props.link} target='_blank'>
-                <IconButton
-                    {...props}
-                    edge='end'
-                    size='small'
-                    sx={{ color: 'var(--nord4)', borderRadius: '4px', ...props.sx }}
-                >
-                    {props.children}
-                </IconButton>
+    const Clickable = (
+        <Button
+            aria-label={props.tooltip}
+            {...props}
+            sx={{ color: 'var(--nord4)', minWidth: 0, ...props.sx }}
+        >
+            <Link href={props.link} target='_blank' sx={{ height: '24px', color: 'inherit' }}>
+                {props.children}
             </Link>
-        </Tooltip>
+        </Button>
     );
+
+    return props.disabled ? Clickable : <Tooltip title={props.tooltip}>{Clickable}</Tooltip>;
 };
