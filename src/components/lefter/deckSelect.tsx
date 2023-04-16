@@ -67,7 +67,7 @@ export const DeckSelect = ({
                 sx={{
                     flex: 1,
                     fontSize: '0.8rem',
-                    '.MuiOutlinedInput-notchedOutline': { borderColor: 'transparent' },
+                    '& fieldset': { borderColor: 'transparent' },
                 }}
                 onChange={handleChange}
             >
@@ -78,7 +78,7 @@ export const DeckSelect = ({
                 ))}
             </Select>
             <InputButton
-                tooltip='Sync from Moxfield'
+                tooltip={isSyncError ? 'Sync failed' : 'Sync from Moxfield'}
                 disabled={disabled}
                 sx={{ color: isSyncError ? 'var(--nord11)' : 'var(--nord14)' }}
                 onClick={syncDeck}
