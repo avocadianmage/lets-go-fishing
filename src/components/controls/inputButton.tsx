@@ -7,15 +7,15 @@ export interface InputButtonProps extends ButtonProps {
 
 export const InputButton = (props: InputButtonProps) => {
     const Clickable = (
-        <Button
-            aria-label={props.tooltip}
-            {...props}
-            sx={{ color: 'var(--nord4)', minWidth: 0, ...props.sx }}
-        >
-            <Link href={props.link} target='_blank' sx={{ height: '24px', color: 'inherit' }}>
+        <a href={props.link} target='_blank'>
+            <Button
+                aria-label={props.tooltip}
+                {...props}
+                sx={{ minWidth: 0, height: '100%', color: 'var(--nord4)', ...props.sx }}
+            >
                 {props.children}
-            </Link>
-        </Button>
+            </Button>
+        </a>
     );
 
     return props.disabled ? Clickable : <Tooltip title={props.tooltip}>{Clickable}</Tooltip>;

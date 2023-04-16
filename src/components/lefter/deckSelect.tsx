@@ -76,7 +76,7 @@ export const DeckSelect = ({
                 sx={{ color: isSyncError ? 'var(--nord11)' : 'var(--nord14)' }}
                 onClick={syncDeck}
             >
-                <div style={{ transform: 'scaleX(-1)' }}>
+                <div style={{ transform: 'scaleX(-1)', height: '24px' }}>
                     <Sync className={isSyncing ? 'spin' : undefined} />
                 </div>
             </InputButton>
@@ -87,7 +87,7 @@ export const DeckSelect = ({
             >
                 <OpenInNew />
             </InputButton>
-            <InputButton tooltip='Remove deck' disabled={disabled} onClick={removeDeck}>
+            <InputButton tooltip='Remove' disabled={disabled} onClick={removeDeck}>
                 <Close />
             </InputButton>
         </FormGroup>
