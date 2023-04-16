@@ -1,9 +1,10 @@
 import { Close, OpenInNew, Sync } from '@mui/icons-material';
-import { FormGroup, MenuItem, Select, SelectChangeEvent } from '@mui/material';
+import { FormGroup, MenuItem } from '@mui/material';
 import { useState } from 'react';
 import { DatabaseService, DeckInfo } from '../../services/dbSvc';
 import { FetchDecklist } from '../../services/deckInfoSvc';
 import { InputButton } from '../controls/inputButton';
+import { StyledTextField } from '../controls/styledTextField';
 
 interface DeckSelectProps {
     decks: DeckInfo[];
@@ -54,29 +55,21 @@ export const DeckSelect = ({
         setIsSyncing(false);
     };
 
-    const handleChange = (e: SelectChangeEvent) => {
-        onUpdateDecksAndSelection(+e.target.value);
-    };
-
     const disabled = decks.length === 0;
     return (
         <FormGroup row>
-            <Select
+            <StyledTextField
+                select
                 value={disabled ? '' : selectedIndex.toString()}
                 disabled={disabled}
-                sx={{
-                    flex: 1,
-                    fontSize: '0.8rem',
-                    '& fieldset': { borderColor: 'transparent' },
-                }}
-                onChange={handleChange}
+                onChange={(e) => onUpdateDecksAndSelection(+e.target.value)}
             >
                 {decks.map((deck, index) => (
-                    <MenuItem key={index} value={index}>
+                    <MenuItem key={index} value={index} sx={{ fontSize: '0.8rem' }}>
                         {deck.name}
                     </MenuItem>
                 ))}
-            </Select>
+            </StyledTextField>
             <InputButton
                 tooltip={isSyncError ? 'Sync failed' : 'Sync from Moxfield'}
                 disabled={disabled}

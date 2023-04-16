@@ -4,6 +4,7 @@ import { forwardRef, useState } from 'react';
 import { DeckInfo } from '../../services/dbSvc';
 import { FetchDecklist } from '../../services/deckInfoSvc';
 import { InputButton } from '../controls/inputButton';
+import { StyledTextField } from '../controls/styledTextField';
 
 interface DeckImportProps {
     decks: DeckInfo[];
@@ -53,11 +54,9 @@ export const DeckImport = forwardRef(({ decks, onImport }: DeckImportProps, ref)
 
     return (
         <FormGroup row>
-            <TextField
+            <StyledTextField
                 inputRef={ref}
                 placeholder='Enter Moxfield deck URL'
-                inputProps={{ style: { fontSize: '0.8rem' } }}
-                sx={{ flex: 1, '& fieldset': { borderColor: 'transparent' } }}
                 value={value}
                 error={!!errorMessage}
                 helperText={errorMessage}
