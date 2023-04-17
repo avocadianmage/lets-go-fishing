@@ -63,6 +63,11 @@ export const DeckImport = forwardRef(({ decks, onImport }: DeckImportProps, ref)
                 FormHelperTextProps={{ sx: { marginBottom: '4px' } }}
                 onChange={(e) => updateInput(e.target.value)}
                 onKeyDown={fireKeyDown}
+                sx={{
+                    '& .MuiInputBase-root:not(.Mui-focused)': {
+                        animation: decks.length === 0 ? 'pulse 1.3s ease-in-out infinite' : '',
+                    },
+                }}
             />
             <InputButton
                 tooltip='Import deck'

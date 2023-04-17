@@ -95,6 +95,18 @@ h6 {
     }
 }
 
+@keyframes pulse {
+    0% {
+        background-color: rgba(144, 202, 249, 0);
+    }
+    50% {
+        background-color: rgba(144, 202, 249, 0.16);
+    }
+    100% {
+        background-color: rgba(144, 202, 249, 0);
+    }
+}
+
 /***************/
 /* Page layout */
 /***************/
