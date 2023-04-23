@@ -2,9 +2,9 @@ import cardBack from '../../assets/mtg-card-back.png';
 
 import { useEffect, useState } from 'react';
 import { cancelablePromise } from '../../global/helpers';
-import { CardInfoService } from '../../services/cardInfoSvc';
 import { CenteredSpinner } from '../controls/centeredSpinner';
 import { ZoneCardInfo } from './zone';
+import { GetCardImageUrl } from '../../services/cardInfoSvc';
 
 export interface VisualCardProps {
     zoneCard?: ZoneCardInfo;
@@ -23,7 +23,7 @@ export const VisualCard = ({ zoneCard, faceDown, wiggle }: VisualCardProps) => {
     useEffect(() => {
         setImageUrl('');
         if (!card) return;
-        const { promise, cancel } = cancelablePromise(CardInfoService.getCardImageUrl(card));
+        const { promise, cancel } = cancelablePromise(GetCardImageUrl(card));
         promise.then((url) => setImageUrl(url)).catch(() => {});
         return cancel;
     }, [card]);

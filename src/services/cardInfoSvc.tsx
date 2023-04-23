@@ -1,67 +1,44 @@
 import { CardInfo, DatabaseService } from './dbSvc';
 
-const MS_QUERY_RATE = 80;
+const QUERY_THROTTLE_MS = 100;
 
-function getPromisedTimeout() {
-    return new Promise((r) => setTimeout(r, MS_QUERY_RATE));
-}
+const memoryCache: { [cardName: string]: string } = {};
+let promiseChain: Promise<string> = Promise.resolve('');
 
-function getQueryUrl(name: string, set: string) {
+const getPromisedTimeout = () => new Promise((r) => setTimeout(r, QUERY_THROTTLE_MS));
+
+const getQueryUrl = (name: string, set: string): string => {
     name = encodeURIComponent(name);
     set = encodeURIComponent(set);
     return `https://api.scryfall.com/cards/named?exact=${name}&set=${set}`;
-}
+};
 
-class CardInfoSvc {
-    private outgoingThrottle: Promise<any> = Promise.resolve();
-    private cache: any = {};
+const processBlob = (cardName: string, blob: Blob): string => {
+    const url = URL.createObjectURL(blob);
+    memoryCache[cardName] = url;
+    return url;
+};
 
-    processBlob(name: string, blob: Blob) {
-        const url = URL.createObjectURL(blob);
-        this.cache[name] = url;
-        return url;
-    }
+export const GetCardImageUrl = async ({ name, set }: CardInfo): Promise<string> => {
+    // Check if the URL is already stored in the local cache.
+    const cachedUrl = memoryCache[name];
+    if (cachedUrl) return cachedUrl;
 
-    getCardImageUrl({ name, set }: CardInfo) {
-        return new Promise(async (resolve) => {
-            // Check if the URL is already stored in the local cache.
-            const cachedUrl = this.cache[name];
-            if (cachedUrl) {
-                resolve(cachedUrl);
-                return;
-            }
+    // Check if the blob is already stored in the IndexedDB.
+    const blob = await DatabaseService.getCardBlob(name, set);
+    if (blob) return processBlob(name, blob);
 
-            // Check if the blob is already stored in the IndexedDB.
-            const blobFromIDB = await DatabaseService.getCardBlob(name, set);
-            if (blobFromIDB) {
-                resolve(this.processBlob(name, blobFromIDB));
-                return;
-            }
-
-            this.outgoingThrottle = this.outgoingThrottle
-                // Fetch card information from external site.
-                .then(() => fetch(getQueryUrl(name, set)))
-                .then((result) => result.json())
-                // Store the fetched image to the database as a blob.
-                .then((json) => {
-                    this.outgoingThrottle = this.outgoingThrottle
-                        .then(getPromisedTimeout)
-                        .then(() => {
-                            const image_uris = json.card_faces
-                                ? json.card_faces[0].image_uris ?? json.image_uris
-                                : json.image_uris;
-                            return fetch(image_uris.normal);
-                        })
-                        .then((response) => response.blob())
-                        .then((blob) => {
-                            DatabaseService.putCardBlob(blob, name, set);
-                            resolve(this.processBlob(name, blob));
-                        });
-                })
-                // Ensure the next request is throttled.
-                .then(getPromisedTimeout);
-        });
-    }
-}
-
-export const CardInfoService = new CardInfoSvc();
+    // Fetch card from external web service.
+    promiseChain = promiseChain.then(getPromisedTimeout).then(async () => {
+        const result = await fetch(getQueryUrl(name, set));
+        const json = await result.json();
+        const image_uris = json.card_faces
+            ? json.card_faces[0].image_uris ?? json.image_uris
+            : json.image_uris;
+        const cardImage = await fetch(image_uris.normal);
+        const blob = await cardImage.blob();
+        DatabaseService.putCardBlob(blob, name, set);
+        return processBlob(name, blob);
+    });
+    return promiseChain;
+};
