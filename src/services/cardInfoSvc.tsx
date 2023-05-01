@@ -1,9 +1,9 @@
-import { CardInfo, DatabaseService } from './dbSvc';
+import { DatabaseService } from './dbSvc';
 
 const QUERY_THROTTLE_MS = 100;
 
-const memoryCache: { [cardName: string]: string } = {};
-let promiseChain: Promise<string> = Promise.resolve('');
+const memoryCache: { [cardKey: string]: string } = {};
+let promiseChain: Promise<string | undefined> = Promise.resolve(undefined);
 
 const getPromisedTimeout = () => new Promise((r) => setTimeout(r, QUERY_THROTTLE_MS));
 
@@ -13,32 +13,52 @@ const getQueryUrl = (name: string, set: string): string => {
     return `https://api.scryfall.com/cards/named?exact=${name}&set=${set}`;
 };
 
-const processBlob = (cardName: string, blob: Blob): string => {
+const processBlob = (blob: Blob, name: string, set: string, isTransformed: boolean): string => {
     const url = URL.createObjectURL(blob);
-    memoryCache[cardName] = url;
+    memoryCache[DatabaseService.getCardImageKey(name, set, isTransformed)] = url;
     return url;
 };
 
-export const GetCardImageUrl = async ({ name, set }: CardInfo): Promise<string> => {
+const saveToBlob = async (
+    imageUrl: string,
+    name: string,
+    set: string,
+    isTransformed: boolean
+): Promise<string> => {
+    const cardImage = await fetch(imageUrl);
+    const blob = await cardImage.blob();
+    DatabaseService.putCardBlob(blob, name, set, isTransformed);
+    return processBlob(blob, name, set, isTransformed);
+};
+
+export const GetCardImageUrl = async (
+    name: string,
+    set: string,
+    isTransformed: boolean
+): Promise<string | undefined> => {
     // Check if the URL is already stored in the local cache.
-    const cachedUrl = memoryCache[name];
+    const cachedUrl = memoryCache[DatabaseService.getCardImageKey(name, set, isTransformed)];
     if (cachedUrl) return cachedUrl;
 
     // Check if the blob is already stored in the IndexedDB.
-    const blob = await DatabaseService.getCardBlob(name, set);
-    if (blob) return processBlob(name, blob);
+    const blob = await DatabaseService.getCardBlob(name, set, isTransformed);
+    if (blob) return processBlob(blob, name, set, isTransformed);
 
     // Fetch card from external web service.
     promiseChain = promiseChain.then(getPromisedTimeout).then(async () => {
         const result = await fetch(getQueryUrl(name, set));
         const json = await result.json();
-        const image_uris = json.card_faces
-            ? json.card_faces[0].image_uris ?? json.image_uris
-            : json.image_uris;
-        const cardImage = await fetch(image_uris.normal);
-        const blob = await cardImage.blob();
-        DatabaseService.putCardBlob(blob, name, set);
-        return processBlob(name, blob);
+        const cardFaces = json.card_faces;
+        const cardUrl = saveToBlob(
+            cardFaces ? cardFaces[0].image_uris.normal : json.image_uris.normal,
+            name,
+            set,
+            false
+        );
+        const transformedCardUrl = cardFaces
+            ? saveToBlob(cardFaces[1].image_uris.normal, name, set, true)
+            : undefined;
+        return isTransformed ? transformedCardUrl : cardUrl;
     });
     return promiseChain;
 };

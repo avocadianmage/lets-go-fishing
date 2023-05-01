@@ -42,16 +42,28 @@ const dbPromise = openDB(dbName, dbVersion, {
 });
 
 class DbSvc {
-    private getCardKey(name: string, set: string): string {
-        return JSON.stringify({ name, set });
+    getCardImageKey(name: string, set: string, isTransformed: boolean): string {
+        return JSON.stringify({ name, set, isTransformed });
     }
 
-    async getCardBlob(name: string, set: string): Promise<Blob> {
-        return (await dbPromise).get(StoreNames.Card, this.getCardKey(name, set));
+    async getCardBlob(name: string, set: string, isTransformed: boolean): Promise<Blob> {
+        return (await dbPromise).get(
+            StoreNames.Card,
+            this.getCardImageKey(name, set, isTransformed)
+        );
     }
 
-    async putCardBlob(blob: Blob, name: string, set: string): Promise<void> {
-        (await dbPromise).put(StoreNames.Card, blob, this.getCardKey(name, set));
+    async putCardBlob(
+        blob: Blob,
+        name: string,
+        set: string,
+        isTransformed: boolean
+    ): Promise<void> {
+        (await dbPromise).put(
+            StoreNames.Card,
+            blob,
+            this.getCardImageKey(name, set, isTransformed)
+        );
     }
 
     async getDecks(): Promise<DeckInfo[]> {

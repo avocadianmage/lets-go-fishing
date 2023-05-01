@@ -23,7 +23,7 @@ export const VisualCard = ({ zoneCard, faceDown, wiggle }: VisualCardProps) => {
     useEffect(() => {
         setImageUrl('');
         if (!card) return;
-        const { promise, cancel } = cancelablePromise(GetCardImageUrl(card));
+        const { promise, cancel } = cancelablePromise(GetCardImageUrl(card.name, card.set, false));
         promise.then((url) => setImageUrl(url)).catch(() => {});
         return cancel;
     }, [card]);
