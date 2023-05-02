@@ -9,26 +9,34 @@ import { GetCardImageUrl } from '../../services/cardInfoSvc';
 export interface VisualCardProps {
     zoneCard?: ZoneCardInfo;
     faceDown?: boolean;
+    transformed?: boolean;
     wiggle?: boolean;
 }
 
-export const VisualCard = ({ zoneCard, faceDown, wiggle }: VisualCardProps) => {
-    const [imageUrl, setImageUrl] = useState('');
+export const VisualCard = ({ zoneCard, faceDown, transformed, wiggle }: VisualCardProps) => {
+    const [frontImageUrl, setFrontImageUrl] = useState<string>('');
+    const [backImageUrl, setBackImageUrl] = useState<string | undefined>(undefined);
 
     faceDown = zoneCard ? faceDown : true;
-    const isLoading = !imageUrl && !faceDown;
+    const isLoading = !frontImageUrl && !faceDown;
     const faceUpAndLoaded = !isLoading && !faceDown;
 
     const card = zoneCard?.card;
     useEffect(() => {
-        setImageUrl('');
         if (!card) return;
-        const { promise, cancel } = cancelablePromise(GetCardImageUrl(card.name, card.set, false));
-        promise.then((url) => setImageUrl(url)).catch(() => {});
+        const { promise, cancel } = cancelablePromise(GetCardImageUrl(card.name, card.set));
+        promise
+            .then(([front, back]) => {
+                setFrontImageUrl(front);
+                setBackImageUrl(back);
+            })
+            .catch(() => {});
         return cancel;
     }, [card]);
 
-    const imageStyle = { backgroundImage: `url(${isLoading || faceDown ? cardBack : imageUrl})` };
+    const imageStyle = {
+        backgroundImage: `url(${isLoading || faceDown ? cardBack : frontImageUrl})`,
+    };
     const className =
         'card' +
         (isLoading ? ' loading' : '') +

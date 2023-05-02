@@ -3,7 +3,7 @@ import { DatabaseService } from './dbSvc';
 const QUERY_THROTTLE_MS = 100;
 
 const memoryCache: { [cardKey: string]: string } = {};
-let promiseChain: Promise<string | undefined> = Promise.resolve(undefined);
+let promiseChain: Promise<[front: string, back?: string]> = Promise.resolve(['', undefined]);
 
 const getPromisedTimeout = () => new Promise((r) => setTimeout(r, QUERY_THROTTLE_MS));
 
@@ -27,38 +27,46 @@ const saveToBlob = async (
 ): Promise<string> => {
     const cardImage = await fetch(imageUrl);
     const blob = await cardImage.blob();
-    DatabaseService.putCardBlob(blob, name, set, isTransformed);
+    await DatabaseService.putCardBlob(blob, name, set, isTransformed);
     return processBlob(blob, name, set, isTransformed);
 };
 
 export const GetCardImageUrl = async (
     name: string,
-    set: string,
-    isTransformed: boolean
-): Promise<string | undefined> => {
+    set: string
+): Promise<[front: string, back?: string]> => {
     // Check if the URL is already stored in the local cache.
-    const cachedUrl = memoryCache[DatabaseService.getCardImageKey(name, set, isTransformed)];
-    if (cachedUrl) return cachedUrl;
+    const frontUrlFromMemory = memoryCache[DatabaseService.getCardImageKey(name, set, false)];
+    const backUrlFromMemory = memoryCache[DatabaseService.getCardImageKey(name, set, true)];
+    if (frontUrlFromMemory) {
+        return [frontUrlFromMemory, backUrlFromMemory];
+    }
 
     // Check if the blob is already stored in the IndexedDB.
-    const blob = await DatabaseService.getCardBlob(name, set, isTransformed);
-    if (blob) return processBlob(blob, name, set, isTransformed);
+    const frontBlob = await DatabaseService.getCardBlob(name, set, false);
+    if (frontBlob) {
+        const backBlob = await DatabaseService.getCardBlob(name, set, true);
+        const frontUrlFromBlob = processBlob(frontBlob, name, set, false);
+        const backUrlFromBlob = backBlob ? processBlob(frontBlob, name, set, true) : undefined;
+        return [frontUrlFromBlob, backUrlFromBlob];
+    }
 
     // Fetch card from external web service.
     promiseChain = promiseChain.then(getPromisedTimeout).then(async () => {
         const result = await fetch(getQueryUrl(name, set));
         const json = await result.json();
         const cardFaces = json.card_faces;
-        const cardUrl = saveToBlob(
+        // Ensure back card is saved first to prevent desyncing.
+        const backUrl = cardFaces
+            ? await saveToBlob(cardFaces[1].image_uris.normal, name, set, true)
+            : undefined;
+        const frontUrl = await saveToBlob(
             cardFaces ? cardFaces[0].image_uris.normal : json.image_uris.normal,
             name,
             set,
             false
         );
-        const transformedCardUrl = cardFaces
-            ? saveToBlob(cardFaces[1].image_uris.normal, name, set, true)
-            : undefined;
-        return isTransformed ? transformedCardUrl : cardUrl;
+        return [frontUrl, backUrl];
     });
     return promiseChain;
 };
