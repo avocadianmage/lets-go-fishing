@@ -111,6 +111,7 @@ export const GameLayout = () => {
     const resetZoneCard = (zoneCard: ZoneCardInfo): ZoneCardInfo => ({
         card: zoneCard.card,
         tapped: false,
+        transformed: zoneCard.transformed,
         node: zoneCard.node,
     });
 
@@ -156,13 +157,18 @@ export const GameLayout = () => {
         return [cards.slice(0, index), cards.slice(index + 1)];
     };
 
+    const updateCardStateInZone = (zoneCard: ZoneCardInfo, zone: ZoneName) => {
+        const [piece1, piece2] = sliceCardFromZone(zoneCard, zone);
+        setGameZonesState((g) => ({ ...g, [zone]: piece1.concat(zoneCard, piece2) }));
+    };
+
     const getStartingZoneCards = ({ mainboard, commanders }: DeckInfo) => {
         const newLibraryCards = shuffle(mainboard.map((card) => ({ card })));
         const { fromArray, toArray } = sliceEndElements(newLibraryCards, [], STARTING_HAND_SIZE);
         return {
             library: fromArray,
             hand: toArray,
-            command: commanders.map((card) => ({ card, tapped: false })),
+            command: commanders.map((card) => ({ card, tapped: false, transformed: false })),
         };
     };
 
@@ -235,21 +241,27 @@ export const GameLayout = () => {
         draw();
     };
 
-    const toggleCardTap = () => {
+    const tapCard = () => {
         const hoveredZoneAndCard = getHoveredZoneAndCard();
-        if (!hoveredZoneAndCard || !hoveredZoneAndCard.zoneCard) return false;
+        if (!hoveredZoneAndCard?.zoneCard) return false;
         const { zone, zoneCard } = hoveredZoneAndCard;
         if (zone !== ZoneName.Battlefield) return false;
-
-        const [piece1, piece2] = sliceCardFromZone(zoneCard, zone);
         zoneCard.tapped = !zoneCard.tapped;
-        setGameZonesState((g) => ({ ...g, [zone]: piece1.concat(zoneCard, piece2) }));
+        updateCardStateInZone(zoneCard, zone);
         return true;
+    };
+
+    const transformCard = () => {
+        const hoveredZoneAndCard = getHoveredZoneAndCard();
+        if (!hoveredZoneAndCard?.zoneCard) return;
+        const { zone, zoneCard } = hoveredZoneAndCard;
+        zoneCard.transformed = !zoneCard.transformed;
+        updateCardStateInZone(zoneCard, zone);
     };
 
     const putCardOnLibraryBottom = () => {
         const hoveredZoneAndCard = getHoveredZoneAndCard();
-        if (!hoveredZoneAndCard || !hoveredZoneAndCard.zoneCard) return;
+        if (!hoveredZoneAndCard?.zoneCard) return;
         const { zone, zoneCard } = hoveredZoneAndCard;
 
         const [piece1, piece2] = sliceCardFromZone(zoneCard, zone);
@@ -366,12 +378,12 @@ export const GameLayout = () => {
             n: takeNextTurn,
             r: restartGame,
             s: shuffleLibrary,
-            t: toggleCardTap,
+            t: transformCard,
             u: untapAll,
         },
         () => currentDrag === undefined
     );
-    
+
     const zoneProps = { currentDrag, currentDragTargetZone, onCardDrag, onCardDragStop };
     return (
         <div ref={contentDiv} className='gameLayout'>
@@ -385,7 +397,7 @@ export const GameLayout = () => {
                     {...zoneProps}
                     name={ZoneName.Battlefield}
                     contents={gameZonesState[ZoneName.Battlefield]}
-                    onCardDoubleClick={toggleCardTap}
+                    onCardDoubleClick={tapCard}
                 />
                 <StackZone
                     {...zoneProps}

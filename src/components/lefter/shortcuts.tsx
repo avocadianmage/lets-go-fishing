@@ -52,7 +52,7 @@ export const Shortcuts = () => (
                 <SingleShortcut shortcutKey='U' description='untap all' />
                 <SingleShortcut shortcutKey='D' description='draw one' />
                 <SingleShortcut shortcutKey='B' description='put card on bottom' />
-                <SingleShortcut shortcutKey='T' description='tap card' />
+                <SingleShortcut shortcutKey='T' description='transform card' />
             </Box>
         </Box>
     </Paper>

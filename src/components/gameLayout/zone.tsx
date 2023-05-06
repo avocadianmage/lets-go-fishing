@@ -6,6 +6,7 @@ import { CurrentDragInfo, Pane, ZoneName } from './gameLayout';
 export interface ZoneCardInfo {
     card: CardInfo;
     tapped: boolean;
+    transformed: boolean;
     node?: Element;
     x?: number;
     y?: number;

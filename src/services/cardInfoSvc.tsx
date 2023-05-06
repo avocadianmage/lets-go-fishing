@@ -3,7 +3,7 @@ import { DatabaseService } from './dbSvc';
 const QUERY_THROTTLE_MS = 100;
 
 const memoryCache: { [cardKey: string]: string } = {};
-let promiseChain: Promise<[front: string, back?: string]> = Promise.resolve(['', undefined]);
+let promiseChain: Promise<[front: string, back: string]> = Promise.resolve(['', '']);
 
 const getPromisedTimeout = () => new Promise((r) => setTimeout(r, QUERY_THROTTLE_MS));
 
@@ -34,7 +34,7 @@ const saveToBlob = async (
 export const GetCardImageUrl = async (
     name: string,
     set: string
-): Promise<[front: string, back?: string]> => {
+): Promise<[front: string, back: string]> => {
     // Check if the URL is already stored in the local cache.
     const frontUrlFromMemory = memoryCache[DatabaseService.getCardImageKey(name, set, false)];
     const backUrlFromMemory = memoryCache[DatabaseService.getCardImageKey(name, set, true)];
@@ -47,7 +47,7 @@ export const GetCardImageUrl = async (
     if (frontBlob) {
         const backBlob = await DatabaseService.getCardBlob(name, set, true);
         const frontUrlFromBlob = processBlob(frontBlob, name, set, false);
-        const backUrlFromBlob = backBlob ? processBlob(frontBlob, name, set, true) : undefined;
+        const backUrlFromBlob = backBlob ? processBlob(backBlob, name, set, true) : '';
         return [frontUrlFromBlob, backUrlFromBlob];
     }
 
@@ -59,7 +59,7 @@ export const GetCardImageUrl = async (
         // Ensure back card is saved first to prevent desyncing.
         const backUrl = cardFaces
             ? await saveToBlob(cardFaces[1].image_uris.normal, name, set, true)
-            : undefined;
+            : '';
         const frontUrl = await saveToBlob(
             cardFaces ? cardFaces[0].image_uris.normal : json.image_uris.normal,
             name,
