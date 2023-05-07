@@ -2,7 +2,7 @@ import { Autocomplete, Modal, TextField } from '@mui/material';
 import { SxProps, Theme } from '@mui/system';
 import { useEffect, useState } from 'react';
 import { Pane, ZoneName } from './gameLayout';
-import { VisualCard } from './visualCard';
+import { IsCardTransformable, VisualCard } from './visualCard';
 import { ZoneCardInfo } from './zone';
 
 interface SearchZoneProps {
@@ -42,6 +42,13 @@ const transformContents = (contents: ZoneCardInfo[]) => {
 export const SearchZone = ({ zone, contents, requestClose }: SearchZoneProps) => {
     const [selection, setSelection] = useState<ZoneCardInfo>();
     const [accepted, setAccepted] = useState<boolean>();
+
+    const createZoneCard = (transformed: boolean): ZoneCardInfo | undefined => {
+        return selection ? { ...selection, transformed } : undefined;
+    };
+
+    const frontCard = createZoneCard(false);
+    const backCard = selection && IsCardTransformable(selection) ? createZoneCard(true) : undefined;
     const open = !!zone;
 
     useEffect(() => {
@@ -54,7 +61,10 @@ export const SearchZone = ({ zone, contents, requestClose }: SearchZoneProps) =>
     return (
         <Modal open={open} onClose={() => requestClose()}>
             <Pane sx={{ ...style, display: 'flex', gap: '12px' }}>
-                <VisualCard zoneCard={selection} />
+                <div style={{ display: 'flex', flexDirection: 'column' }}>
+                    <VisualCard zoneCard={frontCard} />
+                    <VisualCard zoneCard={backCard} />
+                </div>
                 <Autocomplete
                     sx={{ width: 600 }}
                     autoSelect
@@ -76,6 +86,7 @@ export const SearchZone = ({ zone, contents, requestClose }: SearchZoneProps) =>
                             </div>
                         </li>
                     )}
+                    ListboxProps={{ style: { maxHeight: '60vh' } }}
                     onHighlightChange={(_, value) => setSelection(value?.zoneCard)}
                     onChange={(_, value) => setSelection(value?.zoneCard)}
                     onClose={(_, reason) => setAccepted(reason === 'selectOption')}

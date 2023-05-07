@@ -12,6 +12,10 @@ export interface VisualCardProps {
     wiggle?: boolean;
 }
 
+export const IsCardTransformable = (zoneCard: ZoneCardInfo) => {
+    return zoneCard.card.name.includes('//');
+};
+
 export const EnableCardAnimation = (zoneCard: ZoneCardInfo) => {
     sessionStorage.setItem(zoneCard.card.id + 'animate', 'true');
 };
