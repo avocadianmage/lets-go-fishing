@@ -17,6 +17,7 @@ import { SearchZone } from './searchZone';
 import { StackZone } from './stackZone';
 import { ZoneCardInfo } from './zone';
 import useMousePosition from '../hooks/useMousePosition';
+import { EnableCardAnimation } from './visualCard';
 
 export const Pane = styled(Paper)(() => ({
     backgroundImage: 'linear-gradient(rgba(255, 255, 255, 0.11), rgba(255, 255, 255, 0.11))',
@@ -158,6 +159,7 @@ export const GameLayout = () => {
     };
 
     const updateCardStateInZone = (zoneCard: ZoneCardInfo, zone: ZoneName) => {
+        EnableCardAnimation(zoneCard);
         const [piece1, piece2] = sliceCardFromZone(zoneCard, zone);
         setGameZonesState((g) => ({ ...g, [zone]: piece1.concat(zoneCard, piece2) }));
     };

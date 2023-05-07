@@ -12,6 +12,18 @@ export interface VisualCardProps {
     wiggle?: boolean;
 }
 
+export const EnableCardAnimation = (zoneCard: ZoneCardInfo) => {
+    sessionStorage.setItem(zoneCard.card.id + 'animate', 'true');
+};
+
+const queryCardAnimation = (zoneCard?: ZoneCardInfo): boolean => {
+    if (!zoneCard) return false;
+    const key = zoneCard.card.id + 'animate';
+    const enabled = !!sessionStorage.getItem(key);
+    if (enabled) setTimeout(() => sessionStorage.removeItem(key), 200);
+    return enabled;
+};
+
 export const VisualCard = ({ zoneCard, faceDown, wiggle }: VisualCardProps) => {
     const [frontImageUrl, setFrontImageUrl] = useState<string>('');
     const [backImageUrl, setBackImageUrl] = useState<string>('');
@@ -62,10 +74,11 @@ export const VisualCard = ({ zoneCard, faceDown, wiggle }: VisualCardProps) => {
 
     const rotate = zoneCard?.tapped ? 90 : 0;
     const rotateY = transformed ? 180 : 0;
-    const transformCss = `rotate(${rotate}deg) rotateY(${rotateY}deg)`;
+    const transform = `rotate(${rotate}deg) rotateY(${rotateY}deg)`;
+    const transition = queryCardAnimation(zoneCard) ? 'transform 0.2s ease-in-out' : 'unset';
     return (
         <div className='flip-card'>
-            <div className='flip-card-inner' style={{ transform: transformCss }}>
+            <div className='flip-card-inner' style={{ transform, transition }}>
                 {createCardFace(true)}
                 {createCardFace(false)}
             </div>
