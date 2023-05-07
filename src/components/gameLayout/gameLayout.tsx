@@ -229,6 +229,7 @@ export const GameLayout = () => {
     };
 
     const untapAll = () => {
+        gameZonesState[ZoneName.Battlefield].forEach(zc => EnableCardAnimation(zc));
         setGameZonesState((g) => ({
             ...g,
             [ZoneName.Battlefield]: g[ZoneName.Battlefield].map((zc) => ({
