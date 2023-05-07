@@ -72,7 +72,9 @@ export const VisualCard = ({ zoneCard, faceDown, wiggle }: VisualCardProps) => {
                     setCanTransform(true);
                 }
             })
-            .catch(() => {});
+            .catch((err) => {
+                if (!err.isCanceled) console.log(err);
+            });
         return cancel;
     }, [card]);
 
