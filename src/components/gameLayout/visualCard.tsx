@@ -33,10 +33,11 @@ export const VisualCard = ({ zoneCard, faceDown, wiggle }: VisualCardProps) => {
     const [backImageUrl, setBackImageUrl] = useState<string>('');
     const [canTransform, setCanTransform] = useState(false);
 
-    faceDown = zoneCard ? faceDown : true;
     const transformed = zoneCard?.transformed && canTransform;
 
     const createCardFace = (isFront: boolean) => {
+        faceDown = zoneCard ? faceDown : true;
+
         const imageUrl = isFront ? frontImageUrl : backImageUrl;
         const isLoading = !imageUrl && !faceDown;
         const faceUpAndLoaded = !isLoading && !faceDown;
@@ -82,11 +83,13 @@ export const VisualCard = ({ zoneCard, faceDown, wiggle }: VisualCardProps) => {
     const rotateY = transformed ? 180 : 0;
     const transform = `rotate(${rotate}deg) rotateY(${rotateY}deg)`;
     const transition = queryCardAnimation(zoneCard) ? 'transform 0.2s ease-in-out' : 'unset';
+    const frontCardFace = createCardFace(true);
+    const backCardFace = createCardFace(false);
     return (
         <div className='flip-card'>
             <div className='flip-card-inner' style={{ transform, transition }}>
-                {createCardFace(true)}
-                {createCardFace(false)}
+                {frontCardFace}
+                {backCardFace}
             </div>
         </div>
     );

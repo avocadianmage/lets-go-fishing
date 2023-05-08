@@ -59,15 +59,17 @@ export const GetCardImageUrl = async (
 
         let frontUrlRemote = '';
         let backUrl = '';
-        if (cardFaces) {
+        if (cardFaces && cardFaces[0].image_uris) {
             frontUrlRemote = cardFaces[0].image_uris.normal;
             const backUrlRemote = cardFaces[1].image_uris.normal;
+            // Esnure back image is saved before front to avoid loading interruptions causing 
+            // desyncs.
             backUrl = await saveToBlob(backUrlRemote, name, set, true);
         } else {
             frontUrlRemote = json.image_uris.normal;
         }
         const frontUrl = await saveToBlob(frontUrlRemote, name, set, false);
-        
+
         return [frontUrl, backUrl];
     });
     return promiseChain;
