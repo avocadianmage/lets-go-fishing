@@ -56,11 +56,18 @@ export const GetCardImageUrl = async (
         const result = await fetch(getQueryUrl(name, set));
         const json = await result.json();
         const cardFaces = json.card_faces;
-        const frontUrlRemote = cardFaces ? cardFaces[0].image_uris.normal : json.image_uris.normal;
-        const backUrlRemote = cardFaces ? cardFaces[1].image_uris.normal : '';
+
+        let frontUrlRemote = '';
         let backUrl = '';
-        if (backUrlRemote) backUrl = await saveToBlob(backUrlRemote, name, set, true);
+        if (cardFaces) {
+            frontUrlRemote = cardFaces[0].image_uris.normal;
+            const backUrlRemote = cardFaces[1].image_uris.normal;
+            backUrl = await saveToBlob(backUrlRemote, name, set, true);
+        } else {
+            frontUrlRemote = json.image_uris.normal;
+        }
         const frontUrl = await saveToBlob(frontUrlRemote, name, set, false);
+        
         return [frontUrl, backUrl];
     });
     return promiseChain;
