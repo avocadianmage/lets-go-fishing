@@ -29,10 +29,11 @@ const queryCardAnimation = (zoneCard?: ZoneCardInfo): boolean => {
 };
 
 export const VisualCard = ({ zoneCard, faceDown, wiggle }: VisualCardProps) => {
-    const [frontImageUrl, setFrontImageUrl] = useState<string>('');
-    const [backImageUrl, setBackImageUrl] = useState<string>('');
+    const [frontImageUrl, setFrontImageUrl] = useState('');
+    const [backImageUrl, setBackImageUrl] = useState('');
     const [canTransform, setCanTransform] = useState(false);
 
+    const card = zoneCard?.card;
     const transformed = zoneCard?.transformed && canTransform;
 
     const createCardFace = (isFront: boolean) => {
@@ -61,8 +62,10 @@ export const VisualCard = ({ zoneCard, faceDown, wiggle }: VisualCardProps) => {
         );
     };
 
-    const card = zoneCard?.card;
     useEffect(() => {
+        setFrontImageUrl('');
+        setBackImageUrl('');
+        setCanTransform(false);
         if (!card) return;
         const { promise, cancel } = cancelablePromise(GetCardImageUrl(card.name, card.set));
         promise
