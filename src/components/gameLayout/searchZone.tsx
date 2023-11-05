@@ -1,11 +1,12 @@
-import { Card, List, ListItem, ListItemButton, ListItemText, Modal, Paper } from '@mui/material';
+import { Card, ListItem, ListItemButton, ListItemText, Modal, Paper } from '@mui/material';
 import { SxProps, Theme } from '@mui/system';
-import { useState } from 'react';
+import { createRef, useState } from 'react';
 import { Pane, ZoneName } from './gameLayout';
 import { IsCardTransformable, VisualCard } from './visualCard';
 import { ZoneCardInfo } from './zone';
 import { StyledTextField } from '../controls/styledTextField';
 import { CARD_HEIGHT_PX } from '../../global/constants';
+import { FixedSizeList, ListChildComponentProps } from 'react-window';
 
 interface SearchZoneProps {
     zone?: ZoneName;
@@ -44,10 +45,13 @@ const transformContents = (contents: ZoneCardInfo[]) => {
 export const SearchZone = ({ zone, contents, requestClose }: SearchZoneProps) => {
     const [searchString, setSearchString] = useState('');
     const [selectedIndex, setSelectedIndex] = useState<number>(0);
+
     const options = transformContents(contents).filter((c) =>
         c.label.toLowerCase().includes(searchString)
     );
     const selectedZoneCard = options.length > 0 ? options[selectedIndex].zoneCard : undefined;
+
+    const listRef = createRef<FixedSizeList>();
 
     const createZoneCard = (transformed: boolean): ZoneCardInfo | undefined => {
         return selectedZoneCard ? { ...selectedZoneCard, transformed } : undefined;
@@ -73,12 +77,32 @@ export const SearchZone = ({ zone, contents, requestClose }: SearchZoneProps) =>
                 if (selectedZoneCard) close(selectedIndex);
                 break;
             case 'ArrowUp':
-                setSelectedIndex((si) => Math.max(0, si - 1));
+                setSelectedIndex((si) => {
+                    const newIndex = Math.max(0, si - 1);
+                    listRef.current?.scrollToItem(newIndex);
+                    return newIndex;
+                });
                 break;
             case 'ArrowDown':
-                setSelectedIndex((si) => Math.min(options.length - 1, si + 1));
+                setSelectedIndex((si) => {
+                    const newIndex = Math.min(options.length - 1, si + 1);
+                    listRef.current?.scrollToItem(newIndex);
+                    return newIndex;
+                });
                 break;
         }
+    };
+
+    const renderRow = (props: ListChildComponentProps) => {
+        const { index, style } = props;
+        const { label, count } = options[index];
+        return (
+            <ListItem style={style} key={index} disablePadding>
+                <ListItemButton selected={index === selectedIndex} onClick={() => close(index)}>
+                    <ListItemText primary={label} secondary={count > 1 ? `x${count}` : undefined} />
+                </ListItemButton>
+            </ListItem>
+        );
     };
 
     return (
@@ -101,23 +125,15 @@ export const SearchZone = ({ zone, contents, requestClose }: SearchZoneProps) =>
                         />
                     </Paper>
                     <Card sx={{ marginBottom: '1px' }}>
-                        <List sx={{ height: '100%', overflowY: 'auto' }} disablePadding dense>
-                            {options.map(({ label, count }, index) => {
-                                return (
-                                    <ListItem disablePadding key={label}>
-                                        <ListItemButton
-                                            selected={index === selectedIndex}
-                                            onClick={() => close(index)}
-                                        >
-                                            <ListItemText
-                                                primary={label}
-                                                secondary={count > 1 ? `x${count}` : undefined}
-                                            />
-                                        </ListItemButton>
-                                    </ListItem>
-                                );
-                            })}
-                        </List>
+                        <FixedSizeList
+                            ref={listRef}
+                            itemCount={options.length}
+                            itemSize={48}
+                            width={400}
+                            height={CARD_HEIGHT_PX * 2 - 8 - 56}
+                        >
+                            {renderRow}
+                        </FixedSizeList>
                     </Card>
                 </div>
             </Pane>
