@@ -1,9 +1,11 @@
-import { Autocomplete, Modal, TextField } from '@mui/material';
+import { Card, List, ListItem, ListItemButton, ListItemText, Modal, Paper } from '@mui/material';
 import { SxProps, Theme } from '@mui/system';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Pane, ZoneName } from './gameLayout';
 import { IsCardTransformable, VisualCard } from './visualCard';
 import { ZoneCardInfo } from './zone';
+import { StyledTextField } from '../controls/styledTextField';
+import { CARD_HEIGHT_PX } from '../../global/constants';
 
 interface SearchZoneProps {
     zone?: ZoneName;
@@ -40,57 +42,87 @@ const transformContents = (contents: ZoneCardInfo[]) => {
 };
 
 export const SearchZone = ({ zone, contents, requestClose }: SearchZoneProps) => {
-    const [selection, setSelection] = useState<ZoneCardInfo>();
-    const [accepted, setAccepted] = useState<boolean>();
+    const [searchString, setSearchString] = useState('');
+    const [selectedIndex, setSelectedIndex] = useState<number>(0);
+    const options = transformContents(contents).filter((c) =>
+        c.label.toLowerCase().includes(searchString)
+    );
+    const selectedZoneCard = options.length > 0 ? options[selectedIndex].zoneCard : undefined;
 
     const createZoneCard = (transformed: boolean): ZoneCardInfo | undefined => {
-        return selection ? { ...selection, transformed } : undefined;
+        return selectedZoneCard ? { ...selectedZoneCard, transformed } : undefined;
     };
 
     const frontCard = createZoneCard(false);
-    const backCard = selection && IsCardTransformable(selection) ? createZoneCard(true) : undefined;
-    const open = !!zone;
+    const backCard =
+        selectedZoneCard && IsCardTransformable(selectedZoneCard)
+            ? createZoneCard(true)
+            : undefined;
+    let open = !!zone;
 
-    useEffect(() => {
-        if (accepted !== undefined) {
-            setAccepted(undefined);
-            requestClose(accepted ? selection : undefined);
+    const close = (accepted: boolean) => {
+        requestClose(accepted ? selectedZoneCard : undefined);
+
+        setSearchString('');
+        setSelectedIndex(0);
+    };
+
+    const processKeys = (key: string) => {
+        switch (key) {
+            case 'Enter':
+                if (selectedZoneCard) close(true);
+                break;
+            case 'ArrowUp':
+                setSelectedIndex((si) => Math.max(0, si - 1));
+                break;
+            case 'ArrowDown':
+                setSelectedIndex((si) => Math.min(options.length - 1, si + 1));
+                break;
         }
-    }, [accepted, selection, requestClose]);
+    };
 
     return (
-        <Modal open={open} onClose={() => requestClose()}>
-            <Pane sx={{ ...style, display: 'flex', gap: '12px' }}>
+        <Modal open={open} onClose={() => close(false)}>
+            <Pane
+                sx={{ ...style, display: 'flex', gap: '12px', height: `${CARD_HEIGHT_PX * 2}px` }}
+            >
                 <div style={{ display: 'flex', flexDirection: 'column' }}>
                     <VisualCard zoneCard={frontCard} />
                     <VisualCard zoneCard={backCard} />
                 </div>
-                <Autocomplete
-                    sx={{ width: 600 }}
-                    autoSelect
-                    autoHighlight
-                    forcePopupIcon={false}
-                    open={open}
-                    options={transformContents(contents)}
-                    isOptionEqualToValue={(option, value) => option.label === value.label}
-                    renderInput={(props) => (
-                        <TextField {...props} placeholder={`Search ${zone}`} autoFocus />
-                    )}
-                    renderOption={(props, { label, count }) => (
-                        <li {...props}>
-                            <div style={{ width: '100%' }}>
-                                {label}
-                                <span style={{ float: 'right' }}>
-                                    <span style={{ fontSize: '0.8em' }}>x</span>&nbsp;{count}
-                                </span>
-                            </div>
-                        </li>
-                    )}
-                    ListboxProps={{ style: { maxHeight: '60vh' } }}
-                    onHighlightChange={(_, value) => setSelection(value?.zoneCard)}
-                    onChange={(_, value) => setSelection(value?.zoneCard)}
-                    onClose={(_, reason) => setAccepted(reason === 'selectOption')}
-                />
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                    <Paper>
+                        <StyledTextField
+                            sx={{ width: 400 }}
+                            placeholder={`Search ${zone}`}
+                            autoFocus
+                            onChange={(e) => setSearchString(e.target.value.toLowerCase())}
+                            onKeyDown={(e) => processKeys(e.key)}
+                        />
+                    </Paper>
+                    <Card sx={{ marginBottom: '1px' }}>
+                        <List sx={{ height: '100%', overflowY: 'auto' }} disablePadding dense>
+                            {options.map(({ label, count }, index) => {
+                                return (
+                                    <ListItem disablePadding key={label}>
+                                        <ListItemButton
+                                            selected={index === selectedIndex}
+                                            onClick={() => {
+                                                setSelectedIndex(index);
+                                                close(true);
+                                            }}
+                                        >
+                                            <ListItemText
+                                                primary={label}
+                                                secondary={count > 1 ? `x${count}` : undefined}
+                                            />
+                                        </ListItemButton>
+                                    </ListItem>
+                                );
+                            })}
+                        </List>
+                    </Card>
+                </div>
             </Pane>
         </Modal>
     );

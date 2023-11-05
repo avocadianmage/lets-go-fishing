@@ -60,6 +60,7 @@ export const DeckSelect = ({
         <FormGroup row>
             <StyledTextField
                 select
+                SelectProps={{ style: { fontSize: '0.8rem' } }}
                 value={disabled ? '' : selectedIndex.toString()}
                 disabled={disabled}
                 onChange={(e) => onUpdateDecksAndSelection(+e.target.value)}

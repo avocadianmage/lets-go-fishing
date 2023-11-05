@@ -1,5 +1,5 @@
 import { Add } from '@mui/icons-material';
-import { CircularProgress, FormGroup, TextField } from '@mui/material';
+import { CircularProgress, FormGroup } from '@mui/material';
 import { forwardRef, useState } from 'react';
 import { DeckInfo } from '../../services/dbSvc';
 import { FetchDecklist } from '../../services/deckInfoSvc';
@@ -56,6 +56,7 @@ export const DeckImport = forwardRef(({ decks, onImport }: DeckImportProps, ref)
         <FormGroup row>
             <StyledTextField
                 inputRef={ref}
+                inputProps={{ style: { fontSize: '0.8rem' } }}
                 placeholder='Enter Moxfield deck URL'
                 value={value}
                 error={!!errorMessage}
