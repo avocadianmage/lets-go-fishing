@@ -60,8 +60,8 @@ export const SearchZone = ({ zone, contents, requestClose }: SearchZoneProps) =>
             : undefined;
     let open = !!zone;
 
-    const close = (accepted: boolean) => {
-        requestClose(accepted ? selectedZoneCard : undefined);
+    const close = (cardIndexToSend?: number) => {
+        requestClose(cardIndexToSend !== undefined ? options[cardIndexToSend].zoneCard : undefined);
 
         setSearchString('');
         setSelectedIndex(0);
@@ -70,7 +70,7 @@ export const SearchZone = ({ zone, contents, requestClose }: SearchZoneProps) =>
     const processKeys = (key: string) => {
         switch (key) {
             case 'Enter':
-                if (selectedZoneCard) close(true);
+                if (selectedZoneCard) close(selectedIndex);
                 break;
             case 'ArrowUp':
                 setSelectedIndex((si) => Math.max(0, si - 1));
@@ -82,7 +82,7 @@ export const SearchZone = ({ zone, contents, requestClose }: SearchZoneProps) =>
     };
 
     return (
-        <Modal open={open} onClose={() => close(false)}>
+        <Modal open={open} onClose={() => close(undefined)}>
             <Pane
                 sx={{ ...style, display: 'flex', gap: '12px', height: `${CARD_HEIGHT_PX * 2}px` }}
             >
@@ -107,10 +107,7 @@ export const SearchZone = ({ zone, contents, requestClose }: SearchZoneProps) =>
                                     <ListItem disablePadding key={label}>
                                         <ListItemButton
                                             selected={index === selectedIndex}
-                                            onClick={() => {
-                                                setSelectedIndex(index);
-                                                close(true);
-                                            }}
+                                            onClick={() => close(index)}
                                         >
                                             <ListItemText
                                                 primary={label}
