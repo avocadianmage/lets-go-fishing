@@ -97,19 +97,23 @@ export const SearchZone = ({ zone, contents, requestClose }: SearchZoneProps) =>
         const { index, style } = props;
         const { label, count } = options[index];
         return (
-            <ListItem style={style} key={index} disablePadding>
+            <ListItem style={style} key={index} disablePadding dense>
                 <ListItemButton selected={index === selectedIndex} onClick={() => close(index)}>
-                    <ListItemText primary={label} secondary={count > 1 ? `x${count}` : undefined} />
+                    <ListItemText>
+                        {label}
+                        {count > 1 && (
+                            <span style={{ float: 'right', color: 'var(--nord13)' }}>x{count}</span>
+                        )}
+                    </ListItemText>
                 </ListItemButton>
             </ListItem>
         );
     };
 
+    const height = CARD_HEIGHT_PX * 2;
     return (
         <Modal open={open} onClose={() => close(undefined)}>
-            <Pane
-                sx={{ ...style, display: 'flex', gap: '12px', height: `${CARD_HEIGHT_PX * 2}px` }}
-            >
+            <Pane sx={{ ...style, display: 'flex', gap: '12px', height: `${height}px` }}>
                 <div style={{ display: 'flex', flexDirection: 'column' }}>
                     <VisualCard zoneCard={frontCard} />
                     <VisualCard zoneCard={backCard} />
@@ -128,9 +132,9 @@ export const SearchZone = ({ zone, contents, requestClose }: SearchZoneProps) =>
                         <FixedSizeList
                             ref={listRef}
                             itemCount={options.length}
-                            itemSize={48}
+                            itemSize={36}
                             width={400}
-                            height={CARD_HEIGHT_PX * 2 - 8 - 56}
+                            height={height - 8 - 56}
                         >
                             {renderRow}
                         </FixedSizeList>
