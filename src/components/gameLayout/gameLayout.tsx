@@ -4,6 +4,7 @@ import { useRef, useState } from 'react';
 import {
     CARD_HEIGHT_PX,
     CARD_WIDTH_PX,
+    PaneBgStyle,
     STARTING_HAND_SIZE,
     STARTING_LIFE,
     ZONE_BORDER_PX,
@@ -20,7 +21,7 @@ import useMousePosition from '../hooks/useMousePosition';
 import { EnableCardAnimation } from './visualCard';
 
 export const Pane = styled(Paper)(() => ({
-    backgroundImage: 'linear-gradient(rgba(255, 255, 255, 0.11), rgba(255, 255, 255, 0.11))',
+    ...PaneBgStyle,
     minWidth: CARD_WIDTH_PX,
     minHeight: CARD_HEIGHT_PX,
     position: 'relative',
@@ -229,7 +230,7 @@ export const GameLayout = () => {
     };
 
     const untapAll = () => {
-        gameZonesState[ZoneName.Battlefield].forEach(zc => EnableCardAnimation(zc));
+        gameZonesState[ZoneName.Battlefield].forEach((zc) => EnableCardAnimation(zc));
         setGameZonesState((g) => ({
             ...g,
             [ZoneName.Battlefield]: g[ZoneName.Battlefield].map((zc) => ({

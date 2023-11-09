@@ -1,45 +1,58 @@
-import { Box, Divider, Paper, Theme, Typography, TypographyProps } from '@mui/material';
+import {
+    Box,
+    BoxProps,
+    Divider,
+    Paper,
+    SxProps,
+    Theme,
+    Typography,
+    TypographyProps,
+} from '@mui/material';
+import { CSSProperties } from 'react';
+import { LightestBgStyle } from '../../global/constants';
 
 const grayText = (theme: Theme) => theme.palette.grey[600];
-const shortcutTypographyProps: TypographyProps = {
+const textProps: TypographyProps = {
     variant: 'overline',
-    lineHeight: 1,
+    textTransform: 'none',
+    height: '14px',
 };
-const shortcutColProps = {
+const keyCharStyle: CSSProperties = {
+    ...LightestBgStyle,
+    padding: '2px 5px',
+    marginRight: '8px',
+    borderRadius: '2px',
+};
+const cardSx: SxProps = {
+    p: '0px 12px 22px 12px',
+    position: 'absolute',
+    bottom: '16px',
+    left: '16px',
+    width: 'calc(100% - 56px)',
+};
+const colProps: BoxProps = {
     flexGrow: 1,
     display: 'flex',
     flexDirection: 'column',
-    gap: '6px',
-    p: '8px 0',
+    gap: '8px',
 };
 
 const SingleShortcut = (props: { shortcutKey: string; description: string }) => (
-    <Typography {...shortcutTypographyProps}>
-        {props.shortcutKey}
-        <Typography {...shortcutTypographyProps} color={grayText}>
-            {'\u{00A0}\u{2014}\u{00A0}'}
-        </Typography>
-        {props.description}
+    <Typography {...textProps}>
+        <code style={keyCharStyle}>{props.shortcutKey}</code>
+        <Typography {...textProps}>{props.description}</Typography>
     </Typography>
 );
 
 export const Shortcuts = () => (
-    <Paper
-        sx={{
-            p: '4px 12px',
-            position: 'absolute',
-            bottom: '16px',
-            left: '16px',
-            width: 'calc(100% - 56px)',
-        }}
-    >
+    <Paper sx={cardSx}>
         <Typography variant='overline' color={grayText}>
             Keyboard shortcuts
         </Typography>
-        <Divider sx={{ marginBottom: '3px' }} />
+        <Divider sx={{ marginBottom: '4px' }} />
 
         <Box sx={{ display: 'flex' }}>
-            <Box sx={shortcutColProps}>
+            <Box sx={colProps}>
                 <SingleShortcut shortcutKey='R' description='restart game' />
                 <SingleShortcut shortcutKey='L' description='search library' />
                 <SingleShortcut shortcutKey='G' description='search graveyard' />
@@ -47,7 +60,7 @@ export const Shortcuts = () => (
                 <SingleShortcut shortcutKey='H' description='search hand' />
                 <SingleShortcut shortcutKey='S' description='shuffle library' />
             </Box>
-            <Box sx={shortcutColProps}>
+            <Box sx={colProps}>
                 <SingleShortcut shortcutKey='N' description='next turn' />
                 <SingleShortcut shortcutKey='U' description='untap all' />
                 <SingleShortcut shortcutKey='D' description='draw one' />
