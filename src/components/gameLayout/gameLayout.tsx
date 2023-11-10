@@ -114,6 +114,7 @@ export const GameLayout = () => {
         card: zoneCard.card,
         tapped: false,
         transformed: zoneCard.transformed,
+        counters: 0,
         node: zoneCard.node,
     });
 
@@ -165,13 +166,23 @@ export const GameLayout = () => {
         setGameZonesState((g) => ({ ...g, [zone]: piece1.concat(zoneCard, piece2) }));
     };
 
-    const getStartingZoneCards = ({ mainboard, commanders }: DeckInfo) => {
+    const getStartingZoneCards = ({
+        mainboard,
+        commanders,
+    }: DeckInfo): { library: any[]; hand: any[]; command: ZoneCardInfo[] } => {
         const newLibraryCards = shuffle(mainboard.map((card) => ({ card })));
         const { fromArray, toArray } = sliceEndElements(newLibraryCards, [], STARTING_HAND_SIZE);
         return {
             library: fromArray,
             hand: toArray,
-            command: commanders.map((card) => ({ card, tapped: false, transformed: false })),
+            command: commanders.map(
+                (card): ZoneCardInfo => ({
+                    card,
+                    tapped: false,
+                    transformed: false,
+                    counters: 0,
+                })
+            ),
         };
     };
 
@@ -283,6 +294,15 @@ export const GameLayout = () => {
         }
     };
 
+    const modifyCounters = (amount: number, relative: boolean) => {
+        const hoveredZoneAndCard = getHoveredZoneAndCard();
+        if (!hoveredZoneAndCard?.zoneCard) return;
+        const { zone, zoneCard } = hoveredZoneAndCard;
+        if (zone !== ZoneName.Battlefield) return;
+        zoneCard.counters = relative ? (zoneCard.counters ?? 0) + amount : amount;
+        updateCardStateInZone(zoneCard, zone);
+    };
+
     const getIncrementedZIndex = (zone: ZoneName) => {
         const cards = gameZonesState[zone];
         const highestIndex = cards.some(() => true)
@@ -384,6 +404,9 @@ export const GameLayout = () => {
             s: shuffleLibrary,
             t: transformCard,
             u: untapAll,
+            '=': () => modifyCounters(1, true),
+            '-': () => modifyCounters(-1, true),
+            '0': () => modifyCounters(0, false),
         },
         () => currentDrag === undefined
     );

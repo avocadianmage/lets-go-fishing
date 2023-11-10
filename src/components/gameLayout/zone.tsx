@@ -7,6 +7,7 @@ export interface ZoneCardInfo {
     card: CardInfo;
     tapped: boolean;
     transformed: boolean;
+    counters: number;
     node?: Element;
     x?: number;
     y?: number;

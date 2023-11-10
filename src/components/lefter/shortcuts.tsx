@@ -59,13 +59,16 @@ export const Shortcuts = () => (
                 <SingleShortcut shortcutKey='E' description='search exile' />
                 <SingleShortcut shortcutKey='H' description='search hand' />
                 <SingleShortcut shortcutKey='S' description='shuffle library' />
+                <SingleShortcut shortcutKey='N' description='next turn' />
             </Box>
             <Box sx={colProps}>
-                <SingleShortcut shortcutKey='N' description='next turn' />
                 <SingleShortcut shortcutKey='U' description='untap all' />
                 <SingleShortcut shortcutKey='D' description='draw one' />
                 <SingleShortcut shortcutKey='B' description='put card on bottom' />
                 <SingleShortcut shortcutKey='T' description='transform card' />
+                <SingleShortcut shortcutKey='=' description='add +1/+1 counter' />
+                <SingleShortcut shortcutKey='-' description='add -1/-1 counter' />
+                <SingleShortcut shortcutKey='0' description='remove counters' />
             </Box>
         </Box>
     </Paper>
