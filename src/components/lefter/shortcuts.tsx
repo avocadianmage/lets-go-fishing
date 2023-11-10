@@ -67,7 +67,7 @@ export const Shortcuts = () => (
                 <SingleShortcut shortcutKey='B' description='put card on bottom' />
                 <SingleShortcut shortcutKey='T' description='transform card' />
                 <SingleShortcut shortcutKey='=' description='add +1/+1 counter' />
-                <SingleShortcut shortcutKey='-' description='add -1/-1 counter' />
+                <SingleShortcut shortcutKey='-' description='add −1/−1 counter' />
                 <SingleShortcut shortcutKey='0' description='remove counters' />
             </Box>
         </Box>
