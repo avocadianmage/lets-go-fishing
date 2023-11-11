@@ -5,6 +5,7 @@ import { cancelablePromise } from '../../global/helpers';
 import { CenteredSpinner } from '../controls/centeredSpinner';
 import { ZoneCardInfo } from './zone';
 import { GetCardImageUrl } from '../../services/cardInfoSvc';
+import { Chip, SxProps } from '@mui/material';
 
 export interface VisualCardProps {
     zoneCard?: ZoneCardInfo;
@@ -18,6 +19,20 @@ export const IsCardTransformable = (zoneCard: ZoneCardInfo) => {
 
 export const EnableCardAnimation = (zoneCard: ZoneCardInfo) => {
     sessionStorage.setItem(zoneCard.card.id + 'animate', 'true');
+};
+
+const chipSx: SxProps = {
+    width: 'fit-content',
+    height: 'fit-content',
+    position: 'absolute',
+    zIndex: 1,
+    left: 0,
+    right: 0,
+    top: '25%',
+    m: 'auto',
+    color: 'black',
+    bgcolor: 'rgba(255, 255, 255, 0.7)',
+    fontSize: '2.5rem',
 };
 
 const queryCardAnimation = (zoneCard?: ZoneCardInfo): boolean => {
@@ -35,6 +50,7 @@ export const VisualCard = ({ zoneCard, faceDown, wiggle }: VisualCardProps) => {
 
     const card = zoneCard?.card;
     const transformed = zoneCard?.transformed && canTransform;
+    const counters = zoneCard?.counters;
 
     const createCardFace = (isFront: boolean) => {
         faceDown = zoneCard ? faceDown : true;
@@ -82,15 +98,22 @@ export const VisualCard = ({ zoneCard, faceDown, wiggle }: VisualCardProps) => {
         return cancel;
     }, [card]);
 
+    const transition = queryCardAnimation(zoneCard) ? 'transform 0.2s ease-in-out' : 'unset';
     const rotate = zoneCard?.tapped ? 90 : 0;
     const rotateY = transformed ? 180 : 0;
-    const transform = `rotate(${rotate}deg) rotateY(${rotateY}deg)`;
-    const transition = queryCardAnimation(zoneCard) ? 'transform 0.2s ease-in-out' : 'unset';
+    const cardTransform = `rotate(${rotate}deg) rotateY(${rotateY}deg)`;
+    const counterTransform = `rotate(${rotate}deg)`;
+    const counterLabel = counters ? (counters > 0 ? '+' : '') + counters : '';
     const frontCardFace = createCardFace(true);
     const backCardFace = createCardFace(false);
+
     return (
         <div className='flip-card'>
-            <div className='flip-card-inner' style={{ transform, transition }}>
+            <Chip
+                sx={{ ...chipSx, transform: counterTransform, transition }}
+                label={counterLabel}
+            />
+            <div className='flip-card-inner' style={{ transform: cardTransform, transition }}>
                 {frontCardFace}
                 {backCardFace}
             </div>
