@@ -31,6 +31,12 @@ const saveToBlob = async (
     return processBlob(blob, name, set, isTransformed);
 };
 
+const getImageUrlFromJson = (json: any, imageUrisNode: any): any => {
+    // Log any unexpected response.
+    if (!imageUrisNode) console.log(json);
+    return imageUrisNode.normal;
+}
+
 export const GetCardImageUrl = async (
     name: string,
     set: string
@@ -60,13 +66,13 @@ export const GetCardImageUrl = async (
         let frontUrlRemote = '';
         let backUrl = '';
         if (cardFaces && cardFaces[0].image_uris) {
-            frontUrlRemote = cardFaces[0].image_uris.normal;
-            const backUrlRemote = cardFaces[1].image_uris.normal;
+            frontUrlRemote = getImageUrlFromJson(json, cardFaces[0].image_uris);
+            const backUrlRemote = getImageUrlFromJson(json, cardFaces[1].image_uris);
             // Esnure back image is saved before front to avoid loading interruptions causing 
             // desyncs.
             backUrl = await saveToBlob(backUrlRemote, name, set, true);
         } else {
-            frontUrlRemote = json.image_uris.normal;
+            frontUrlRemote = getImageUrlFromJson(json, json.image_uris);
         }
         const frontUrl = await saveToBlob(frontUrlRemote, name, set, false);
 
