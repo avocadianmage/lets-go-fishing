@@ -112,7 +112,7 @@ export const SearchZone = ({ zone, contents, requestClose }: SearchZoneProps) =>
 
     const height = CARD_HEIGHT_PX * 2;
     return (
-        <Modal open={open} onClose={() => close(undefined)}>
+        <Modal open={open} onClose={() => close(undefined)} disableRestoreFocus>
             <Pane sx={{ ...style, display: 'flex', gap: '12px', height: `${height}px` }}>
                 <div style={{ display: 'flex', flexDirection: 'column' }}>
                     <VisualCard zoneCard={frontCard} />
