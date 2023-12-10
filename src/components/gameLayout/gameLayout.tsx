@@ -19,6 +19,7 @@ import { StackZone } from './stackZone';
 import { ZoneCardInfo } from './zone';
 import useMousePosition from '../hooks/useMousePosition';
 import { EnableCardAnimation } from './visualCard';
+import { RestartPopup } from './restartPopup';
 
 export const Pane = styled(Paper)(() => ({
     ...PaneBgStyle,
@@ -97,6 +98,7 @@ export const GameLayout = () => {
     });
     const [searchingZone, setSearchingZone] = useState<ZoneName>();
     const [libraryShuffleAnimationRunning, setLibraryShuffleAnimationRunning] = useState(true);
+    const [restartPopupOpen, setRestartPopupOpen] = useState(false);
 
     const isDragWithinZone = (): boolean => {
         return !!currentDrag && currentDrag.sourceZone === currentDragTargetZone;
@@ -191,7 +193,12 @@ export const GameLayout = () => {
         setTimeout(() => setLibraryShuffleAnimationRunning(false), 300);
     };
 
-    const restartGame = () => startGame(currentDeckInfo);
+    const restartGame = () => setRestartPopupOpen(true);
+    const onCloseRestartPopup = (confirm: boolean) => {
+        setRestartPopupOpen(false);
+        if (confirm) startGame(currentDeckInfo);
+    };
+
     const startGame = (deckInfo?: DeckInfo) => {
         setCurrentDeckInfo(deckInfo);
         setGameDetailsState({
@@ -465,6 +472,7 @@ export const GameLayout = () => {
                 contents={searchingZone ? gameZonesState[searchingZone] : []}
                 requestClose={retrieveCard}
             />
+            <RestartPopup isOpen={restartPopupOpen} onClose={onCloseRestartPopup} />
         </div>
     );
 };

@@ -1,5 +1,6 @@
 import { ArrowDropDown, ArrowDropUp } from '@mui/icons-material';
-import { Button, ButtonGroup } from '@mui/material';
+import { Button, ButtonGroup, ButtonProps } from '@mui/material';
+import { CSSProperties } from 'react';
 
 interface NumberWheelProps {
     label: string;
@@ -30,9 +31,14 @@ export const NumberWheel = ({
 }: NumberWheelProps) => {
     const increment = (step: number) => updateCount(Math.max(min, Math.min(max, count + step)));
 
-    const buttonProps = {
+    const buttonProps: ButtonProps = {
         sx: { borderStyle: 'none !important' },
         onWheel: (e: React.WheelEvent<HTMLButtonElement>) => increment(-Math.sign(e.deltaY)),
+    };
+    const numberTextProps: CSSProperties = {
+        fontSize: '1.2em',
+        fontWeight: 'bold',
+        color: count === defaultCount ? 'rgba(255, 255, 255, 0.5)' : '#fff',
     };
 
     return (
@@ -52,17 +58,7 @@ export const NumberWheel = ({
                 onClick={() => increment(-1)}
             >
                 <ButtonHalf
-                    item1={
-                        <code
-                            style={{
-                                fontSize: '1.2em',
-                                fontWeight: 'bold',
-                                color: count === defaultCount ? 'rgba(255, 255, 255, 0.5)' : '#fff',
-                            }}
-                        >
-                            {count}
-                        </code>
-                    }
+                    item1={<span style={numberTextProps}>{count}</span>}
                     item2={<ArrowDropDown />}
                 />
             </Button>
