@@ -372,7 +372,6 @@ export const GameLayout = () => {
     };
 
     const searchZone = (zone: ZoneName, e: KeyboardEvent) => {
-        if (restartPopupOpen) return;
         setSearchingZone(zone);
         // Prevent input from proliferating into the search box.
         e.preventDefault();
@@ -399,6 +398,7 @@ export const GameLayout = () => {
         if (fromZone === ZoneName.Library) shuffleLibrary();
     };
 
+    const checkShortcutsEnabled = () => currentDrag === undefined && !restartPopupOpen;
     useGlobalShortcuts(
         {
             b: putCardOnLibraryBottom,
@@ -416,7 +416,7 @@ export const GameLayout = () => {
             '-': () => modifyCounters(-1, true),
             '0': () => modifyCounters(0, false),
         },
-        () => currentDrag === undefined
+        checkShortcutsEnabled
     );
 
     const zoneProps = { currentDrag, currentDragTargetZone, onCardDrag, onCardDragStop };
