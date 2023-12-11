@@ -372,6 +372,7 @@ export const GameLayout = () => {
     };
 
     const searchZone = (zone: ZoneName, e: KeyboardEvent) => {
+        if (restartPopupOpen) return;
         setSearchingZone(zone);
         // Prevent input from proliferating into the search box.
         e.preventDefault();
