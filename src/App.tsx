@@ -23,6 +23,20 @@ const darkTheme = createTheme({
             'sans-serif',
         ].join(','),
     },
+    components: {
+        MuiButton: {
+            styleOverrides: {
+                root: {
+                    '&.Mui-focusVisible': {
+                        backgroundColor: 'color-mix(in srgb, currentColor, transparent 82%)',
+                    },
+                    '& .MuiTouchRipple-root': {
+                        display: 'none',
+                    },
+                },
+            },
+        },
+    },
 });
 
 export default function App() {
