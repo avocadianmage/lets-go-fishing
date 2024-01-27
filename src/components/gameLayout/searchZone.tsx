@@ -65,7 +65,8 @@ export const SearchZone = ({ zone, contents, requestClose }: SearchZoneProps) =>
     let open = !!zone;
 
     const close = (cardIndexToSend?: number) => {
-        requestClose(cardIndexToSend !== undefined ? options[cardIndexToSend].zoneCard : undefined);
+        const isSelectionValid = cardIndexToSend !== undefined && options.length > 0;
+        requestClose(isSelectionValid ? options[cardIndexToSend].zoneCard : undefined);
 
         setSearchString('');
         setSelectedIndex(0);

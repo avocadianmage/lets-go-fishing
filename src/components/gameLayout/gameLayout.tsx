@@ -277,6 +277,7 @@ export const GameLayout = () => {
         const hoveredZoneAndCard = getHoveredZoneAndCard();
         if (!hoveredZoneAndCard?.zoneCard) return;
         const { zone, zoneCard } = hoveredZoneAndCard;
+        if (zone === ZoneName.Library) return;
         zoneCard.transformed = !zoneCard.transformed;
         updateCardStateInZone(zoneCard, zone);
     };
