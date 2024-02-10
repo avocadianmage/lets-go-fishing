@@ -8,6 +8,9 @@ let promiseChain: Promise<[front: string, back: string]> = Promise.resolve(['', 
 const getPromisedTimeout = () => new Promise((r) => setTimeout(r, QUERY_THROTTLE_MS));
 
 const getQueryUrl = (name: string, set: string): string => {
+    // Map set values from Moxfield to Scryfall.
+    if (set.toLowerCase() === 'mb1') set = 'PLST';
+
     name = encodeURIComponent(name);
     set = encodeURIComponent(set);
     return `https://api.scryfall.com/cards/named?exact=${name}&set=${set}`;
