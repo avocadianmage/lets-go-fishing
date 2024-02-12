@@ -49,7 +49,10 @@ export const SearchZone = ({ zone, contents, requestClose }: SearchZoneProps) =>
     const options = transformContents(contents).filter((c) =>
         c.label.toLowerCase().includes(searchString)
     );
-    const selectedZoneCard = options.length > 0 ? options[selectedIndex].zoneCard : undefined;
+    const selectedZoneCard =
+        selectedIndex >= 0 && selectedIndex < options.length
+            ? options[selectedIndex].zoneCard
+            : undefined;
 
     const listRef = createRef<FixedSizeList>();
 
@@ -64,8 +67,8 @@ export const SearchZone = ({ zone, contents, requestClose }: SearchZoneProps) =>
             : undefined;
     let open = !!zone;
 
-    const close = (cardIndexToSend?: number) => {
-        const isSelectionValid = cardIndexToSend !== undefined && options.length > 0;
+    const close = (cardIndexToSend: number) => {
+        const isSelectionValid = cardIndexToSend >= 0 && cardIndexToSend < options.length;
         requestClose(isSelectionValid ? options[cardIndexToSend].zoneCard : undefined);
 
         setSearchString('');
@@ -113,7 +116,7 @@ export const SearchZone = ({ zone, contents, requestClose }: SearchZoneProps) =>
 
     const height = CARD_HEIGHT_PX * 2;
     return (
-        <Modal open={open} onClose={() => close(undefined)} disableRestoreFocus>
+        <Modal open={open} onClose={() => close(-1)} disableRestoreFocus>
             <Pane sx={{ ...style, display: 'flex', gap: '12px', height: `${height}px` }}>
                 <div style={{ display: 'flex', flexDirection: 'column' }}>
                     <VisualCard zoneCard={frontCard} />

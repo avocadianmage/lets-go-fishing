@@ -25,6 +25,7 @@ const saveToBlob = async (
     set: string,
     isTransformed: boolean
 ): Promise<string> => {
+    // No need to throttle image URL fetch as it (scryfall.io) does not have a rate limit.
     const cardImage = await fetch(imageUrl);
     const blob = await cardImage.blob();
     await DatabaseService.putCardBlob(blob, name, set, isTransformed);
