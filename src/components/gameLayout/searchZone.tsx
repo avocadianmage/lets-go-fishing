@@ -44,15 +44,14 @@ const transformContents = (contents: ZoneCardInfo[]) => {
 
 export const SearchZone = ({ zone, contents, requestClose }: SearchZoneProps) => {
     const [searchString, setSearchString] = useState('');
-    const [selectedIndex, setSelectedIndex] = useState<number>(0);
 
     const options = transformContents(contents).filter((c) =>
         c.label.toLowerCase().includes(searchString)
     );
-    const selectedZoneCard =
-        selectedIndex >= 0 && selectedIndex < options.length
-            ? options[selectedIndex].zoneCard
-            : undefined;
+
+    const [selectedIndex, setSelectedIndex] = useState<number>(0);
+    const normalizedIndex = Math.min(selectedIndex, options.length - 1);
+    const selectedZoneCard = normalizedIndex >= 0 ? options[normalizedIndex].zoneCard : undefined;
 
     const listRef = createRef<FixedSizeList>();
 
@@ -78,7 +77,7 @@ export const SearchZone = ({ zone, contents, requestClose }: SearchZoneProps) =>
     const processKeys = (key: string) => {
         switch (key) {
             case 'Enter':
-                if (selectedZoneCard) close(selectedIndex);
+                if (selectedZoneCard) close(normalizedIndex);
                 break;
             case 'ArrowUp':
                 setSelectedIndex((si) => {
@@ -102,7 +101,7 @@ export const SearchZone = ({ zone, contents, requestClose }: SearchZoneProps) =>
         const { label, count } = options[index];
         return (
             <ListItem style={style} key={index} disablePadding dense>
-                <ListItemButton selected={index === selectedIndex} onClick={() => close(index)}>
+                <ListItemButton selected={index === normalizedIndex} onClick={() => close(index)}>
                     <ListItemText>
                         {label}
                         {count > 1 && (
