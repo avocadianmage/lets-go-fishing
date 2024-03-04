@@ -452,6 +452,7 @@ export const GameLayout = () => {
                     {...zoneProps}
                     name={ZoneName.Hand}
                     contents={gameZonesState[ZoneName.Hand]}
+                    disablePreview={true}
                 />
                 <StackZone
                     {...zoneProps}
