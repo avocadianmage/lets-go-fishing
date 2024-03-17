@@ -1,6 +1,6 @@
 import { Coffee, Favorite, GitHub } from '@mui/icons-material';
 import { Box, Divider, Paper } from '@mui/material';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { STARTING_LIFE } from '../../global/constants';
 import { DatabaseService, DeckInfo } from '../../services/dbSvc';
 import { GameDetailsState, ManaColor, Pane } from '../gameLayout/gameLayout';
@@ -53,8 +53,6 @@ export const Lefter = ({
             />
         );
     };
-
-    const deckImportRef = useRef<HTMLInputElement>(null);
 
     const [decks, setDecks] = useState<DeckInfo[]>([]);
     const [selectedIndex, setSelectedIndex] = useState(0);
@@ -110,7 +108,7 @@ export const Lefter = ({
                 <h1 style={{ marginTop: 0 }}>Let's Go Fishing</h1>
 
                 <Paper sx={{ marginBottom: '16px' }}>
-                    <DeckImport ref={deckImportRef} decks={decks} onImport={addDeck} />
+                    <DeckImport decks={decks} onImport={addDeck} />
                     <Divider />
                     <DeckSelect
                         decks={decks}
