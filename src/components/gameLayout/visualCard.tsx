@@ -85,7 +85,7 @@ export const VisualCard = ({ zoneCard, faceDown, wiggle }: VisualCardProps) => {
         setBackImageUrl('');
         setCanTransform(false);
         if (!card) return;
-        const { promise, cancel } = cancelablePromise(GetCardImageUrl(card.name, card.set));
+        const { promise, cancel } = cancelablePromise(GetCardImageUrl(card));
         promise
             .then(([front, back]) => {
                 setFrontImageUrl(front);
@@ -106,12 +106,15 @@ export const VisualCard = ({ zoneCard, faceDown, wiggle }: VisualCardProps) => {
     const cardRotate = zoneCard?.tapped ? 90 : 0;
     const rotateY = transformed ? 180 : 0;
     const cardTransform = `rotate(${cardRotate}deg) rotateY(${rotateY}deg)`;
-    
+
     const counterLabel = counters ? (counters > 0 ? '+' : '') + counters : '';
-    const counterRotate = zoneCard?.tapped ? -90 : 0; // Counteracts the card rotation to keep it shown right-side-up
+    // Counteract the card rotation to keep it shown right-side-up.
+    const counterRotate = zoneCard?.tapped ? -90 : 0;
     const counterTransform = `rotate(${counterRotate}deg)`;
-    const counterScale = transformed ? '-1 1' : 'unset'; // Counteracts the card flip to keep it shown left-to-right
-    const scaleTransition = `scale ${animDurationStyle} steps(2, jump-none)`; // Stays at initial state until halfway, then jumps to final state
+    // Counteract the card flip to keep it shown left-to-right.
+    const counterScale = transformed ? '-1 1' : 'unset';
+    // Stay at initial state until halfway, then jump to final state.
+    const scaleTransition = `scale ${animDurationStyle} steps(2, jump-none)`;
     const counterTransition = doAnimation ? `${generalTransition}, ${scaleTransition}` : 'unset';
 
     const frontCardFace = createCardFace(true);
@@ -119,9 +122,17 @@ export const VisualCard = ({ zoneCard, faceDown, wiggle }: VisualCardProps) => {
 
     return (
         <div className='flip-card'>
-            <div className='flip-card-inner' style={{ transform: cardTransform, transition: generalTransition }}>
+            <div
+                className='flip-card-inner'
+                style={{ transform: cardTransform, transition: generalTransition }}
+            >
                 <Chip
-                    sx={{ ...chipSx, transform: counterTransform, scale: counterScale, transition: counterTransition }}
+                    sx={{
+                        ...chipSx,
+                        transform: counterTransform,
+                        scale: counterScale,
+                        transition: counterTransition,
+                    }}
                     label={counterLabel}
                 />
                 {frontCardFace}

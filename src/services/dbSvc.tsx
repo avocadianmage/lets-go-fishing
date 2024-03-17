@@ -4,6 +4,7 @@ export interface CardInfo {
     id: string;
     name: string;
     set: string;
+    cn: string; // Collector Number.
     commander: boolean;
 }
 
@@ -42,28 +43,17 @@ const dbPromise = openDB(dbName, dbVersion, {
 });
 
 class DbSvc {
-    getCardImageKey(name: string, set: string, isTransformed: boolean): string {
-        return JSON.stringify({ name, set, isTransformed });
+    getCardImageKey(card: CardInfo, isTransformed: boolean): string {
+        const { set, cn } = card;
+        return JSON.stringify({ set, cn, isTransformed });
     }
 
-    async getCardBlob(name: string, set: string, isTransformed: boolean): Promise<Blob> {
-        return (await dbPromise).get(
-            StoreNames.Card,
-            this.getCardImageKey(name, set, isTransformed)
-        );
+    async getCardBlob(card: CardInfo, isTransformed: boolean): Promise<Blob> {
+        return (await dbPromise).get(StoreNames.Card, this.getCardImageKey(card, isTransformed));
     }
 
-    async putCardBlob(
-        blob: Blob,
-        name: string,
-        set: string,
-        isTransformed: boolean
-    ): Promise<void> {
-        (await dbPromise).put(
-            StoreNames.Card,
-            blob,
-            this.getCardImageKey(name, set, isTransformed)
-        );
+    async putCardBlob(blob: Blob, card: CardInfo, isTransformed: boolean): Promise<void> {
+        (await dbPromise).put(StoreNames.Card, blob, this.getCardImageKey(card, isTransformed));
     }
 
     async getDecks(): Promise<DeckInfo[]> {

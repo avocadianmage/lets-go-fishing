@@ -17,6 +17,7 @@ interface MoxfieldDeckEntry {
 
 interface MoxfieldCardInfo {
     set: string;
+    cn: string;
 }
 
 const parseAndSaveDeck = (
@@ -33,6 +34,7 @@ const parseAndSaveDeck = (
                         id: `card${++id}`,
                         name: cardName,
                         set: entry.card.set,
+                        cn: entry.card.cn,
                         commander: areCommanders,
                     };
                 }
