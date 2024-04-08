@@ -14,10 +14,16 @@ export const RestartPopup = (props: RestartPopupProps) => {
                 <DialogContentText>Are you sure you want to restart?</DialogContentText>
             </DialogContent>
             <DialogActions>
-                <Button onClick={() => onClose(true)} disableFocusRipple autoFocus>
+                <Button
+                    onClick={() => onClose(true)}
+                    action={(ref) => ref?.focusVisible()}
+                    disableFocusRipple
+                >
                     RESTART
                 </Button>
-                <Button onClick={() => onClose(false)} disableFocusRipple>CANCEL</Button>
+                <Button onClick={() => onClose(false)} disableFocusRipple>
+                    CANCEL
+                </Button>
             </DialogActions>
         </Dialog>
     );
