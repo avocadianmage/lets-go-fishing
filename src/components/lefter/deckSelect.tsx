@@ -1,10 +1,9 @@
 import { Close, OpenInNew, Sync } from '@mui/icons-material';
-import { FormGroup, MenuItem } from '@mui/material';
+import { List, ListItemButton, ListItemText } from '@mui/material';
 import { useState } from 'react';
 import { DatabaseService, DeckInfo } from '../../services/dbSvc';
 import { FetchDecklist } from '../../services/deckInfoSvc';
 import { InputButton } from '../controls/inputButton';
-import { StyledTextField } from '../controls/styledTextField';
 
 interface DeckSelectProps {
     decks: DeckInfo[];
@@ -17,80 +16,106 @@ export const DeckSelect = ({
     selectedIndex,
     onUpdateDecksAndSelection,
 }: DeckSelectProps) => {
-    const [isSyncing, setIsSyncing] = useState(false);
-    const [isSyncError, setIsSyncError] = useState(false);
+    const [syncingDeckIndex, setSyncingDeckIndex] = useState(-1);
+    const [syncErrorDeckIndex, setSyncErrorDeckIndex] = useState(-1);
 
-    const removeDeck = () => {
-        const deckToRemove = decks[selectedIndex].name;
+    const removeDeck = (index: number) => {
+        const deckToRemove = decks[index].name;
         DatabaseService.deleteDeck(deckToRemove);
 
         const updatedDeckInfos = decks.filter((di: DeckInfo) => di.name !== deckToRemove);
-        let newSelectedIndex = decks.findIndex((di: DeckInfo) => di.name === deckToRemove);
-        newSelectedIndex =
-            newSelectedIndex <= updatedDeckInfos.length - 1
-                ? newSelectedIndex
-                : newSelectedIndex - 1;
+
+        let newSelectedIndex = selectedIndex;
+        if (index <= selectedIndex) {
+            newSelectedIndex = selectedIndex - 1;
+            if (newSelectedIndex === -1 && updatedDeckInfos.length > 0) newSelectedIndex = 0;
+        }
+
         onUpdateDecksAndSelection(newSelectedIndex, updatedDeckInfos);
     };
 
-    const syncDeck = async () => {
-        setIsSyncing(true);
+    const syncDeck = async (index: number) => {
+        // Only allow one deck to sync at a time.
+        if (syncingDeckIndex !== -1) return;
+
+        setSyncingDeckIndex(index);
         {
-            const deckToUpdate = decks[selectedIndex];
+            const deckToUpdate = decks[index];
             const updatedDeck = await FetchDecklist(deckToUpdate.url);
 
-            // If deck failed to sync:
             if (!updatedDeck) {
-                setIsSyncError(true);
+                setSyncErrorDeckIndex(index);
             } else {
-                setIsSyncError(false);
+                setSyncErrorDeckIndex(-1);
                 DatabaseService.deleteDeck(deckToUpdate.name);
                 const updatedListOfDecks = decks
-                    .slice(undefined, selectedIndex)
+                    .slice(undefined, index)
                     .concat([updatedDeck!])
-                    .concat(decks.slice(selectedIndex + 1));
-                onUpdateDecksAndSelection(selectedIndex, updatedListOfDecks);
+                    .concat(decks.slice(index + 1));
+                onUpdateDecksAndSelection(index, updatedListOfDecks);
             }
         }
-        setIsSyncing(false);
+        setSyncingDeckIndex(-1);
     };
 
     const disabled = decks.length === 0;
     return (
-        <FormGroup row>
-            <StyledTextField
-                select
-                SelectProps={{ style: { fontSize: '0.8rem' } }}
-                value={disabled ? '' : selectedIndex.toString()}
-                disabled={disabled}
-                onChange={(e) => onUpdateDecksAndSelection(+e.target.value)}
-            >
-                {decks.map((deck, index) => (
-                    <MenuItem key={index} value={index} sx={{ fontSize: '0.8rem' }}>
-                        {deck.name}
-                    </MenuItem>
-                ))}
-            </StyledTextField>
-            <InputButton
-                tooltip={isSyncError ? 'Sync failed' : 'Sync from Moxfield'}
-                disabled={disabled}
-                sx={{ color: isSyncError ? 'var(--nord11)' : 'var(--nord14)' }}
-                onClick={syncDeck}
-            >
-                <div style={{ transform: 'scaleX(-1)', height: '24px' }}>
-                    <Sync className={isSyncing ? 'spin' : undefined} />
-                </div>
-            </InputButton>
-            <InputButton
-                tooltip='Open in Moxfield'
-                disabled={disabled}
-                link={disabled ? undefined : decks[selectedIndex].url}
-            >
-                <OpenInNew />
-            </InputButton>
-            <InputButton tooltip='Remove' disabled={disabled} onClick={removeDeck}>
-                <Close />
-            </InputButton>
-        </FormGroup>
+        <List
+            component='nav'
+            sx={{ p: disabled ? 0 : '4px 0px', maxHeight: 'calc(36px * 8)', overflowY: 'scroll' }}
+        >
+            {decks.map((deck, index) => {
+                const isSelected = selectedIndex === index;
+                const isSyncing = syncingDeckIndex === index;
+                const hasSyncError = syncErrorDeckIndex === index;
+                return (
+                    <ListItemButton
+                        key={index}
+                        selected={isSelected}
+                        disableRipple
+                        sx={{ p: '0px 0px 0px 14px' }}
+                        onClick={() => onUpdateDecksAndSelection(index)}
+                    >
+                        <ListItemText
+                            primaryTypographyProps={{ fontSize: '0.8rem' }}
+                            primary={deck.name}
+                            sx={{ p: '2px 0px' }}
+                        />
+
+                        <InputButton
+                            tooltip={hasSyncError ? 'Sync failed' : 'Sync from Moxfield'}
+                            disabled={disabled}
+                            sx={{ color: hasSyncError ? 'var(--nord11)' : 'var(--nord14)' }}
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                syncDeck(index);
+                            }}
+                        >
+                            <div style={{ transform: 'scaleX(-1)', height: '24px' }}>
+                                <Sync className={isSyncing ? 'spin' : undefined} />
+                            </div>
+                        </InputButton>
+                        <InputButton
+                            tooltip='Open in Moxfield'
+                            disabled={disabled}
+                            link={disabled ? undefined : decks[index].url}
+                            onClick={(e) => e.stopPropagation()}
+                        >
+                            <OpenInNew />
+                        </InputButton>
+                        <InputButton
+                            tooltip='Remove'
+                            disabled={disabled}
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                removeDeck(index);
+                            }}
+                        >
+                            <Close />
+                        </InputButton>
+                    </ListItemButton>
+                );
+            })}
+        </List>
     );
 };

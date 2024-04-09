@@ -109,7 +109,7 @@ export const Lefter = ({
 
                 <Paper sx={{ marginBottom: '16px' }}>
                     <DeckImport decks={decks} onImport={addDeck} />
-                    <Divider />
+                    {decks.length > 0 && <Divider />}
                     <DeckSelect
                         decks={decks}
                         selectedIndex={selectedIndex}

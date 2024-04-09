@@ -11,12 +11,18 @@ export const InputButton = (props: InputButtonProps) => {
             <Button
                 aria-label={props.tooltip}
                 {...props}
-                sx={{ minWidth: 0, height: '100%', color: 'var(--nord4)', ...props.sx }}
+                sx={{ minWidth: 0, height: '100%', color: 'var(--nord4)', p: '6px', ...props.sx }}
             >
                 {props.children}
             </Button>
         </a>
     );
 
-    return props.disabled ? Clickable : <Tooltip title={props.tooltip}>{Clickable}</Tooltip>;
+    return props.disabled ? (
+        Clickable
+    ) : (
+        <Tooltip title={props.tooltip} disableInteractive>
+            {Clickable}
+        </Tooltip>
+    );
 };
