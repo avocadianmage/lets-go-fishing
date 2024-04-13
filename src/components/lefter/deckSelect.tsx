@@ -1,25 +1,15 @@
 import { Close, OpenInNew, Sync } from '@mui/icons-material';
 import { List, ListItemButton, ListItemText } from '@mui/material';
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import { DatabaseService, DeckInfo } from '../../services/dbSvc';
 import { FetchDecklist } from '../../services/deckInfoSvc';
-import { InputButton, InputButtonProps } from '../controls/inputButton';
+import { InputButton } from '../controls/inputButton';
 
 interface DeckSelectProps {
     decks: DeckInfo[];
     selectedIndex: number;
     onUpdateDecksAndSelection(index: number, updatedDeckInfos?: DeckInfo[]): void;
 }
-
-type ElementLayout = {
-    clientWidth: number;
-    clientHeight: number;
-    scrollWidth: number;
-    scrollHeight: number;
-};
-const isOverflown = ({ clientWidth, clientHeight, scrollWidth, scrollHeight }: ElementLayout) => {
-    return scrollHeight > clientHeight || scrollWidth > clientWidth;
-};
 
 export const DeckSelect = ({
     decks,
@@ -28,10 +18,6 @@ export const DeckSelect = ({
 }: DeckSelectProps) => {
     const [syncingDeckIndex, setSyncingDeckIndex] = useState(-1);
     const [syncErrorDeckIndex, setSyncErrorDeckIndex] = useState(-1);
-
-    const deckNameTextSpan = useRef<HTMLSpanElement>(null);
-    const isDeckNameTextSpanOverflown =
-        deckNameTextSpan.current && isOverflown(deckNameTextSpan.current);
 
     const removeDeck = (index: number) => {
         const deckToRemove = decks[index].name;
