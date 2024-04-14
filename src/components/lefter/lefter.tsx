@@ -1,5 +1,5 @@
 import { Coffee, Favorite, GitHub } from '@mui/icons-material';
-import { Box, Card, Divider } from '@mui/material';
+import { Box, Card, CardHeader, Divider, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { STARTING_LIFE } from '../../global/constants';
 import { DatabaseService, DeckInfo } from '../../services/dbSvc';
@@ -105,7 +105,13 @@ export const Lefter = ({
                         <Coffee />
                     </InputButton>
                 </Box>
-                <h1 style={{ marginTop: 0 }}>Let's Go Fishing</h1>
+                <Typography
+                    variant='h5'
+                    textTransform='uppercase'
+                    sx={{ userSelect: 'none', marginBottom: '16px', color: 'var(--nord13)' }}
+                >
+                    Let's Go Fishing
+                </Typography>
 
                 <Card sx={{ marginBottom: '16px' }}>
                     <DeckImport decks={decks} onImport={addDeck} />
@@ -118,6 +124,15 @@ export const Lefter = ({
                 </Card>
 
                 <Card sx={{ marginBottom: '16px' }}>
+                    <Box sx={{ m: '0 14px' }}>
+                        <CardHeader
+                            title={decks[selectedIndex]?.name}
+                            titleTypographyProps={{ variant: 'overline' }}
+                            sx={{ p: '6px 0 4px 0' }}
+                        />
+                        <Divider />
+                    </Box>
+
                     <Box sx={{ display: 'flex' }}>
                         <NumberWheel
                             label='life'
