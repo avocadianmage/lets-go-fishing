@@ -1,5 +1,5 @@
 import { Coffee, Favorite, GitHub } from '@mui/icons-material';
-import { Box, Divider, Paper } from '@mui/material';
+import { Box, Card, Divider } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { STARTING_LIFE } from '../../global/constants';
 import { DatabaseService, DeckInfo } from '../../services/dbSvc';
@@ -107,7 +107,7 @@ export const Lefter = ({
                 </Box>
                 <h1 style={{ marginTop: 0 }}>Let's Go Fishing</h1>
 
-                <Paper sx={{ marginBottom: '16px' }}>
+                <Card sx={{ marginBottom: '16px' }}>
                     <DeckImport decks={decks} onImport={addDeck} />
                     {decks.length > 0 && <Divider />}
                     <DeckSelect
@@ -115,25 +115,27 @@ export const Lefter = ({
                         selectedIndex={selectedIndex}
                         onUpdateDecksAndSelection={updateDecksAndSelection}
                     />
-                </Paper>
+                </Card>
 
-                <Paper sx={{ marginBottom: '16px', display: 'flex' }}>
-                    <NumberWheel
-                        label='life'
-                        icon={<Favorite sx={{ color: 'var(--nord15)' }} />}
-                        count={gameDetailsState.life}
-                        updateCount={(life) =>
-                            onUpdateGameDetailsState({ ...gameDetailsState, life })
-                        }
-                        defaultCount={STARTING_LIFE}
-                    />
+                <Card sx={{ marginBottom: '16px' }}>
+                    <Box sx={{ display: 'flex' }}>
+                        <NumberWheel
+                            label='life'
+                            icon={<Favorite sx={{ color: 'var(--nord15)' }} />}
+                            count={gameDetailsState.life}
+                            updateCount={(life) =>
+                                onUpdateGameDetailsState({ ...gameDetailsState, life })
+                            }
+                            defaultCount={STARTING_LIFE}
+                        />
 
-                    <Divider orientation='vertical' variant='middle' flexItem />
+                        <Divider orientation='vertical' variant='middle' flexItem />
 
-                    {(Object.keys(ManaColor) as Array<keyof typeof ManaColor>).map((color) => (
-                        <ManaNumberWheel key={color} color={ManaColor[color]} />
-                    ))}
-                </Paper>
+                        {(Object.keys(ManaColor) as Array<keyof typeof ManaColor>).map((color) => (
+                            <ManaNumberWheel key={color} color={ManaColor[color]} />
+                        ))}
+                    </Box>
+                </Card>
 
                 <Shortcuts />
             </Box>

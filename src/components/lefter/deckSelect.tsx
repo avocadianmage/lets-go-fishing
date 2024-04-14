@@ -1,5 +1,5 @@
 import { Close, OpenInNew, Sync } from '@mui/icons-material';
-import { List, ListItemButton, ListItemText } from '@mui/material';
+import { Box, List, ListItemButton, ListItemText } from '@mui/material';
 import { useState } from 'react';
 import { DatabaseService, DeckInfo } from '../../services/dbSvc';
 import { FetchDecklist } from '../../services/deckInfoSvc';
@@ -73,10 +73,7 @@ export const DeckSelect = ({
                 const isSyncing = syncingDeckIndex === index;
                 const hasSyncError = syncErrorDeckIndex === index;
                 return (
-                    <div
-                        key={index}
-                        style={{ borderBottom: '1px solid rgba(255, 255, 255, 0.12)' }}
-                    >
+                    <Box key={index} sx={{ borderBottom: '1px solid rgba(255, 255, 255, 0.12)' }}>
                         <ListItemButton
                             selected={isSelected}
                             disableRipple
@@ -101,12 +98,12 @@ export const DeckSelect = ({
                                     syncDeck(index);
                                 }}
                             >
-                                <div style={{ transform: 'scaleX(-1)', height: '20px' }}>
+                                <Box style={{ transform: 'scaleX(-1)', height: '20px' }}>
                                     <Sync
                                         sx={{ fontSize: 20 }}
                                         className={isSyncing ? 'spin' : undefined}
                                     />
-                                </div>
+                                </Box>
                             </InputButton>
 
                             <InputButton
@@ -131,7 +128,7 @@ export const DeckSelect = ({
                                 <Close sx={{ fontSize: 14 }} />
                             </InputButton>
                         </ListItemButton>
-                    </div>
+                    </Box>
                 );
             })}
         </List>
