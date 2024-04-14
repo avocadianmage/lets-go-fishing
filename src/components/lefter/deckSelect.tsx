@@ -73,64 +73,65 @@ export const DeckSelect = ({
                 const isSyncing = syncingDeckIndex === index;
                 const hasSyncError = syncErrorDeckIndex === index;
                 return (
-                    <ListItemButton
+                    <div
                         key={index}
-                        selected={isSelected}
-                        disableRipple
-                        sx={{
-                            p: '4px 2px 4px 14px',
-                            borderBottom: '1px solid rgba(255, 255, 255, 0.12)',
-                        }}
-                        onClick={() => onUpdateDecksAndSelection(index)}
+                        style={{ borderBottom: '1px solid rgba(255, 255, 255, 0.12)' }}
                     >
-                        <ListItemText
-                            primaryTypographyProps={{ fontSize: '0.8rem', noWrap: true }}
-                            primary={deck.name}
-                            sx={{ overflow: 'hidden', textOverflow: 'ellipsis' }}
-                        />
-
-                        <InputButton
-                            tooltip={hasSyncError ? 'Sync failed' : 'Sync from Moxfield'}
-                            disabled={disabled}
-                            sx={{
-                                p: '2px',
-                                color: hasSyncError ? 'var(--nord11)' : 'var(--nord14)',
-                            }}
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                syncDeck(index);
-                            }}
+                        <ListItemButton
+                            selected={isSelected}
+                            disableRipple
+                            sx={{ p: '4px 2px 4px 14px' }}
+                            onClick={() => onUpdateDecksAndSelection(index)}
                         >
-                            <div style={{ transform: 'scaleX(-1)', height: '20px' }}>
-                                <Sync
-                                    sx={{ fontSize: 20 }}
-                                    className={isSyncing ? 'spin' : undefined}
-                                />
-                            </div>
-                        </InputButton>
+                            <ListItemText
+                                primaryTypographyProps={{ fontSize: '0.8rem', noWrap: true }}
+                                primary={deck.name}
+                                sx={{ overflow: 'hidden', textOverflow: 'ellipsis' }}
+                            />
 
-                        <InputButton
-                            tooltip='Open in Moxfield'
-                            disabled={disabled}
-                            sx={{ p: '2px' }}
-                            link={disabled ? undefined : decks[index].url}
-                            onClick={(e) => e.stopPropagation()}
-                        >
-                            <OpenInNew sx={{ fontSize: 20 }} />
-                        </InputButton>
+                            <InputButton
+                                tooltip={hasSyncError ? 'Sync failed' : 'Sync from Moxfield'}
+                                disabled={disabled}
+                                sx={{
+                                    p: '2px',
+                                    color: hasSyncError ? 'var(--nord11)' : 'var(--nord14)',
+                                }}
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    syncDeck(index);
+                                }}
+                            >
+                                <div style={{ transform: 'scaleX(-1)', height: '20px' }}>
+                                    <Sync
+                                        sx={{ fontSize: 20 }}
+                                        className={isSyncing ? 'spin' : undefined}
+                                    />
+                                </div>
+                            </InputButton>
 
-                        <InputButton
-                            tooltip='Remove'
-                            disabled={disabled}
-                            sx={{ p: '5px', color: 'var(--nord15)' }}
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                removeDeck(index);
-                            }}
-                        >
-                            <Close sx={{ fontSize: 14 }} />
-                        </InputButton>
-                    </ListItemButton>
+                            <InputButton
+                                tooltip='Open in Moxfield'
+                                disabled={disabled}
+                                sx={{ p: '2px' }}
+                                link={disabled ? undefined : decks[index].url}
+                                onClick={(e) => e.stopPropagation()}
+                            >
+                                <OpenInNew sx={{ fontSize: 20 }} />
+                            </InputButton>
+
+                            <InputButton
+                                tooltip='Remove'
+                                disabled={disabled}
+                                sx={{ p: '5px', color: 'var(--nord15)' }}
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    removeDeck(index);
+                                }}
+                            >
+                                <Close sx={{ fontSize: 14 }} />
+                            </InputButton>
+                        </ListItemButton>
+                    </div>
                 );
             })}
         </List>
