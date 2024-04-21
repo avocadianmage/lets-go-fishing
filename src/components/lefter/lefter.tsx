@@ -124,15 +124,6 @@ export const Lefter = ({
                 </Card>
 
                 <Card sx={{ marginBottom: '16px' }}>
-                    <Box sx={{ m: '0 14px' }}>
-                        <CardHeader
-                            title={decks[selectedIndex]?.name}
-                            titleTypographyProps={{ variant: 'overline' }}
-                            sx={{ p: '6px 0 4px 0' }}
-                        />
-                        <Divider />
-                    </Box>
-
                     <Box sx={{ display: 'flex' }}>
                         <NumberWheel
                             label='life'
