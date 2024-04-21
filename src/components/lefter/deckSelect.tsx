@@ -65,7 +65,7 @@ export const DeckSelect = ({
             sx={{
                 p: disabled ? 0 : '0px 0px 4px 0px',
                 maxHeight: 'calc(36px * 8)',
-                overflowY: 'scroll',
+                overflowY: 'auto',
             }}
         >
             {decks.map((deck, index) => {
