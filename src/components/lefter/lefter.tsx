@@ -1,5 +1,5 @@
 import { Coffee, Favorite, GitHub } from '@mui/icons-material';
-import { Box, Card, CardHeader, Divider, Typography } from '@mui/material';
+import { Box, Card, Divider, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { STARTING_LIFE } from '../../global/constants';
 import { DatabaseService, DeckInfo } from '../../services/dbSvc';
