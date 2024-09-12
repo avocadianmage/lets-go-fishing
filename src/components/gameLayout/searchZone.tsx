@@ -49,6 +49,8 @@ export const SearchZone = ({ zone, contents, requestClose }: SearchZoneProps) =>
         c.label.toLowerCase().includes(searchString)
     );
 
+    if (zone == "library") options.sort((a,b) => (a.label.localeCompare(b.label)));
+
     const [selectedIndex, setSelectedIndex] = useState<number>(0);
     const normalizedIndex = Math.min(selectedIndex, options.length - 1);
     const selectedZoneCard = normalizedIndex >= 0 ? options[normalizedIndex].zoneCard : undefined;

@@ -8,11 +8,12 @@ import { CurrentDragInfo } from "./gameLayout";
 
 interface StackZoneProps extends ZoneProps {
     showTopOnly?: boolean;
+    disablePreview?: boolean;
     vertical?: boolean;
 }
 
 export const StackZone = forwardRef((props: StackZoneProps, ref) => {
-    const { contents, showTopOnly, vertical, onCardMouseEnter } = props;
+    const { contents, showTopOnly, disablePreview, vertical, onCardMouseEnter } = props;
 
     const [previewingCard, setPreviewingCard] = useDebouncedValue<CardInfo>(undefined, 100);
 
@@ -55,7 +56,7 @@ export const StackZone = forwardRef((props: StackZoneProps, ref) => {
     });
 
     const fireCardMouseEnter = (action: CurrentDragInfo) => {
-        if (!showTopOnly) setPreviewingCard(action.zoneCard.card);
+        if (!disablePreview) setPreviewingCard(action.zoneCard.card);
         return onCardMouseEnter ? onCardMouseEnter(action) : true;
     };
 

@@ -452,6 +452,7 @@ export const GameLayout = () => {
                     {...zoneProps}
                     name={ZoneName.Hand}
                     contents={gameZonesState[ZoneName.Hand]}
+                    disablePreview={true}
                 />
                 <StackZone
                     {...zoneProps}
@@ -466,6 +467,7 @@ export const GameLayout = () => {
                     {...zoneProps}
                     name={ZoneName.Exile}
                     contents={gameZonesState[ZoneName.Exile]}
+                    disablePreview={true}
                     showTopOnly={true}
                 />
             </div>
