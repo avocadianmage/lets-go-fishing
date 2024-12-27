@@ -79,13 +79,8 @@ export const Lefter = ({
     };
 
     const addDeck = (deckInfo: DeckInfo) => {
-        const existingDeckIndex = decks.findIndex((d) => d.name === deckInfo.name);
-        if (existingDeckIndex >= 0) {
-            updateDecksAndSelection(existingDeckIndex);
-        } else {
-            updateDecksAndSelection(decks.length, decks.concat(deckInfo));
-            DatabaseService.putDeck(deckInfo);
-        }
+        DatabaseService.putDeck(deckInfo);
+        updateDecksAndSelection(decks.length, decks.concat(deckInfo));
     };
 
     useEffect(() => {
