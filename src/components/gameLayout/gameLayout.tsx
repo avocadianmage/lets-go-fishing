@@ -1,15 +1,6 @@
-import { Paper, styled } from '@mui/material';
 import shuffle from 'lodash/shuffle';
 import { useRef, useState } from 'react';
-import {
-    CARD_HEIGHT_PX,
-    CARD_WIDTH_PX,
-    PaneBgStyle,
-    STARTING_HAND_SIZE,
-    STARTING_LIFE,
-    ZONE_BORDER_PX,
-    ZONE_PADDING_PX,
-} from '../../global/constants';
+import { STARTING_HAND_SIZE, STARTING_LIFE, ZONE_BORDER_PX } from '../../global/constants';
 import { DeckInfo } from '../../services/dbSvc';
 import { Lefter } from '../lefter/lefter';
 import { useGlobalShortcuts } from '../hooks/useKeyDown';
@@ -20,15 +11,6 @@ import { ZoneCardInfo } from './zone';
 import useMousePosition from '../hooks/useMousePosition';
 import { EnableCardAnimation } from './visualCard';
 import { RestartPopup } from './restartPopup';
-
-export const Pane = styled(Paper)(() => ({
-    ...PaneBgStyle,
-    minWidth: CARD_WIDTH_PX,
-    minHeight: CARD_HEIGHT_PX,
-    position: 'relative',
-    margin: ZONE_BORDER_PX,
-    padding: ZONE_PADDING_PX,
-}));
 
 export enum ManaColor {
     White = 'White',
@@ -99,6 +81,7 @@ export const GameLayout = () => {
     const [searchingZone, setSearchingZone] = useState<ZoneName>();
     const [libraryShuffleAnimationRunning, setLibraryShuffleAnimationRunning] = useState(true);
     const [restartPopupOpen, setRestartPopupOpen] = useState(false);
+    const [isDeckEditModalOpen, setIsDeckEditModalOpen] = useState(false);
 
     const isDragWithinZone = (): boolean => {
         return !!currentDrag && currentDrag.sourceZone === currentDragTargetZone;
@@ -399,7 +382,15 @@ export const GameLayout = () => {
         if (fromZone === ZoneName.Library) shuffleLibrary();
     };
 
-    const checkShortcutsEnabled = () => currentDrag === undefined && !restartPopupOpen;
+    const checkShortcutsEnabled = () => {
+        return (
+            currentDrag === undefined &&
+            !restartPopupOpen &&
+            searchingZone === undefined &&
+            !isDeckEditModalOpen
+        );
+    };
+
     useGlobalShortcuts(
         {
             b: putCardOnLibraryBottom,
@@ -425,9 +416,11 @@ export const GameLayout = () => {
         <div ref={contentDiv} className='gameLayout'>
             <div style={{ display: 'flex', flex: 1 }}>
                 <Lefter
+                    isDeckEditModalOpen={isDeckEditModalOpen}
                     gameDetailsState={gameDetailsState}
                     onUpdateGameDetailsState={setGameDetailsState}
                     onDeckSelect={startGame}
+                    onDeckEditModalStateChange={setIsDeckEditModalOpen}
                 />
                 <BattlefieldZone
                     {...zoneProps}

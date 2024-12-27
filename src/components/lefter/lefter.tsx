@@ -3,8 +3,7 @@ import { Box, Card, Divider, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { STARTING_LIFE } from '../../global/constants';
 import { DatabaseService, DeckInfo } from '../../services/dbSvc';
-import { GameDetailsState, ManaColor, Pane } from '../gameLayout/gameLayout';
-import { DeckImport } from './deckImport';
+import { GameDetailsState, ManaColor } from '../gameLayout/gameLayout';
 import { DeckSelect } from './deckSelect';
 import { NumberWheel } from './numberWheel';
 
@@ -18,18 +17,28 @@ import { Shortcuts } from './shortcuts';
 import { InputButton } from '../controls/inputButton';
 
 import { repository, funding } from '../../../package.json';
+import { Pane } from '../controls/pane';
 
 interface LefterProps {
+    isDeckEditModalOpen: boolean;
     gameDetailsState: GameDetailsState;
     onUpdateGameDetailsState(state: GameDetailsState): void;
     onDeckSelect(deckInfo?: DeckInfo): void;
+    onDeckEditModalStateChange(open: boolean, updatedDeck?: DeckInfo): void;
 }
 
 export const Lefter = ({
+    isDeckEditModalOpen,
     gameDetailsState,
     onUpdateGameDetailsState,
     onDeckSelect,
+    onDeckEditModalStateChange,
 }: LefterProps) => {
+    const handleDeckEditModalStateChange = (open: boolean, updatedDeck?: DeckInfo) => {
+        onDeckEditModalStateChange(open);
+        if (updatedDeck) addDeck(updatedDeck);
+    };
+
     const SvgManaMap = {
         [ManaColor.White]: SvgManaWhite,
         [ManaColor.Blue]: SvgManaBlue,
@@ -70,11 +79,12 @@ export const Lefter = ({
     };
 
     const addDeck = (deckInfo: DeckInfo) => {
-        const existingDeckIndex = decks.findIndex((d) => d.url === deckInfo.url);
+        const existingDeckIndex = decks.findIndex((d) => d.name === deckInfo.name);
         if (existingDeckIndex >= 0) {
             updateDecksAndSelection(existingDeckIndex);
         } else {
             updateDecksAndSelection(decks.length, decks.concat(deckInfo));
+            DatabaseService.putDeck(deckInfo);
         }
     };
 
@@ -114,12 +124,12 @@ export const Lefter = ({
                 </Typography>
 
                 <Card sx={{ marginBottom: '16px' }}>
-                    <DeckImport decks={decks} onImport={addDeck} />
-                    {decks.length > 0 && <Divider />}
                     <DeckSelect
+                        isDeckEditModalOpen={isDeckEditModalOpen}
                         decks={decks}
                         selectedIndex={selectedIndex}
                         onUpdateDecksAndSelection={updateDecksAndSelection}
+                        onDeckEditModalStateChange={handleDeckEditModalStateChange}
                     />
                 </Card>
 

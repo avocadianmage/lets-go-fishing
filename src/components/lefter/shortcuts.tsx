@@ -1,17 +1,7 @@
-import {
-    Box,
-    BoxProps,
-    Divider,
-    Paper,
-    SxProps,
-    Theme,
-    Typography,
-    TypographyProps,
-} from '@mui/material';
+import { Box, BoxProps, Paper, SxProps, Typography, TypographyProps } from '@mui/material';
 import { CSSProperties } from 'react';
-import { LightestBgStyle } from '../../global/constants';
+import { CardHeaderTypographyProps, LightestBgStyle } from '../../global/constants';
 
-const grayText = (theme: Theme) => theme.palette.grey[600];
 const textProps: TypographyProps = {
     variant: 'overline',
     textTransform: 'none',
@@ -24,11 +14,11 @@ const keyCharStyle: CSSProperties = {
     borderRadius: '2px',
 };
 const cardSx: SxProps = {
-    p: '0px 12px 22px 12px',
+    p: '0px 16px 22px 16px',
     position: 'absolute',
     bottom: '16px',
     left: '16px',
-    width: 'calc(100% - 56px)',
+    width: 'calc(100% - 64px)',
 };
 const colProps: BoxProps = {
     flexGrow: 1,
@@ -46,10 +36,9 @@ const SingleShortcut = (props: { shortcutKey: string; description: string }) => 
 
 export const Shortcuts = () => (
     <Paper sx={cardSx}>
-        <Typography variant='overline' color={grayText}>
+        <Typography {...CardHeaderTypographyProps} sx={{ pt: '12px', pb: '8px' }}>
             Keyboard shortcuts
         </Typography>
-        <Divider sx={{ marginBottom: '4px' }} />
 
         <Box sx={{ display: 'flex' }}>
             <Box sx={colProps}>

@@ -13,8 +13,8 @@ enum IndexNames {
 }
 
 export interface DeckInfo {
-    url: string;
     [IndexNames.Name]: string;
+    url: string;
     mainboard: CardInfo[];
     commanders: CardInfo[];
 }

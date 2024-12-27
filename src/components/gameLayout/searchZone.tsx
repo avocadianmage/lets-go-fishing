@@ -1,12 +1,11 @@
-import { Card, ListItem, ListItemButton, ListItemText, Modal, Paper } from '@mui/material';
-import { SxProps, Theme } from '@mui/system';
+import { Card, ListItem, ListItemButton, ListItemText, Modal, Paper, TextField } from '@mui/material';
 import { createRef, useState } from 'react';
-import { Pane, ZoneName } from './gameLayout';
+import { ZoneName } from './gameLayout';
 import { IsCardTransformable, VisualCard } from './visualCard';
 import { ZoneCardInfo } from './zone';
-import { StyledTextField } from '../controls/styledTextField';
-import { CARD_HEIGHT_PX } from '../../global/constants';
+import { CARD_HEIGHT_PX, ModalStyle } from '../../global/constants';
 import { FixedSizeList, ListChildComponentProps } from 'react-window';
+import { Pane } from '../controls/pane';
 
 interface SearchZoneProps {
     zone?: ZoneName;
@@ -19,15 +18,6 @@ interface CardOptionProps {
     zoneCard: ZoneCardInfo;
     count: number;
 }
-
-const style: SxProps<Theme> = {
-    position: 'absolute' as 'absolute',
-    top: '10%',
-    left: '50%',
-    transform: 'translate(-50%, -10%)',
-    bgcolor: 'background.default',
-    p: '12px',
-};
 
 const transformContents = (contents: ZoneCardInfo[]) => {
     const map: { [label: string]: CardOptionProps } = {};
@@ -116,14 +106,14 @@ export const SearchZone = ({ zone, contents, requestClose }: SearchZoneProps) =>
     const height = CARD_HEIGHT_PX * 2;
     return (
         <Modal open={open} onClose={() => close(-1)} disableRestoreFocus>
-            <Pane sx={{ ...style, display: 'flex', gap: '12px', height: `${height}px` }}>
+            <Pane sx={{ ...ModalStyle, display: 'flex', gap: '12px', height: `${height}px` }}>
                 <div style={{ display: 'flex', flexDirection: 'column' }}>
                     <VisualCard zoneCard={frontCard} />
                     <VisualCard zoneCard={backCard} />
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                     <Paper>
-                        <StyledTextField
+                        <TextField
                             sx={{ width: 400 }}
                             placeholder={`Search ${zone}`}
                             autoFocus

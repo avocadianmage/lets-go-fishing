@@ -15,14 +15,14 @@ export const RestartPopup = (props: RestartPopupProps) => {
             </DialogContent>
             <DialogActions>
                 <Button
+                    variant='contained'
                     onClick={() => onClose(true)}
                     action={(ref) => ref?.focusVisible()}
-                    disableFocusRipple
                 >
-                    RESTART
+                    Restart
                 </Button>
-                <Button onClick={() => onClose(false)} disableFocusRipple>
-                    CANCEL
+                <Button color='secondary' onClick={() => onClose(false)}>
+                    Cancel
                 </Button>
             </DialogActions>
         </Dialog>

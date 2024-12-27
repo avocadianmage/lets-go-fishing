@@ -1,72 +1,60 @@
-import { CardInfo, DatabaseService, DeckInfo } from './dbSvc';
+import { CardInfo, DeckInfo } from './dbSvc';
 
-interface MoxfieldDeck {
+export interface DeckFormData {
     name: string;
-    mainboard: MoxfieldCardList;
-    commanders: MoxfieldCardList;
+    url: string;
+    contents: string;
 }
 
-interface MoxfieldCardList {
-    [cardName: string]: MoxfieldDeckEntry;
-}
+const trimParentheses = (str: string): string => str.replace(/[()]/g, '');
 
-interface MoxfieldDeckEntry {
-    card: MoxfieldCardInfo;
-    quantity: number;
-}
+const parseContentsLine = (
+    line: string
+): { quantity: number; name: string; set: string; cn: string } => {
+    const FoilIndicator = ' *F*';
+    let pieces: string[] = line.split(' ');
+    pieces = line.endsWith(FoilIndicator) ? pieces.slice(0, -1) : pieces;
 
-interface MoxfieldCardInfo {
-    set: string;
-    cn: string;
-}
+    const quantity: number = parseInt(pieces[0]);
+    const name: string = pieces.slice(1, -2).join(' ');
+    const set = trimParentheses(pieces.slice(-2, -1)[0]);
+    const [cn] = pieces.slice(-1);
+    return { quantity, name, set, cn };
+};
 
-const parseAndSaveDeck = (
-    url: string,
-    { name, commanders, mainboard }: MoxfieldDeck
-): DeckInfo | undefined => {
-    try {
-        let id = 0;
-        const toCardList = (moxfieldCardList: MoxfieldCardList, areCommanders: boolean) => {
-            const cardList: CardInfo[] = [];
-            for (let [cardName, entry] of Object.entries(moxfieldCardList)) {
-                for (let i = 0; i < entry.quantity; i++) {
-                    cardList[id] = {
-                        id: `card${++id}`,
-                        name: cardName,
-                        set: entry.card.set,
-                        cn: entry.card.cn,
-                        commander: areCommanders,
-                    };
-                }
-            }
-            return cardList.filter((card) => card !== undefined);
-        };
+const parseContentsToDeck = (
+    contents: string
+): { mainboard: CardInfo[]; commanders: CardInfo[] } => {
+    const lines = contents.split('\n');
+    const commanders: CardInfo[] = [];
+    const mainboard: CardInfo[] = [];
 
-        const deckInfo = {
-            url,
-            name,
-            mainboard: toCardList(mainboard, false),
-            commanders: toCardList(commanders, true),
-        };
-        DatabaseService.putDeck(deckInfo);
-        return deckInfo;
-    } catch {
-        // Return undefined if deck parsing failed.
-        return undefined;
+    let id = 0;
+    const getNextId = (): string => {
+        id++;
+        return 'card' + id;
+    };
+
+    let commander = true;
+    for (let line of lines) {
+        line = line.trim();
+        if (!line) continue;
+        if (line.startsWith('SIDEBOARD:')) break;
+
+        const { quantity, name, set, cn } = parseContentsLine(line);
+        for (let i = 0; i < quantity; i++) {
+            const card: CardInfo = { id: getNextId(), name, set, cn, commander };
+            if (commander) commanders.push(card);
+            else mainboard.push(card);
+        }
+        commander = false;
     }
+
+    return { commanders, mainboard };
 };
 
-const createDeckAggregatorUrl = (moxfieldDeckUrl: string) => {
-    const corsApiUrl = 'https://guarded-brushlands-38173.herokuapp.com/';
-    const deckAggregatorApiUrl = 'https://api.moxfield.com/v2/decks/all/';
-
-    const deckUrlPieces = moxfieldDeckUrl.split('/');
-    return corsApiUrl + deckAggregatorApiUrl + deckUrlPieces[deckUrlPieces.length - 1];
-};
-
-export const FetchDecklist = async (moxfieldDeckUrl: string) => {
-    const deckAggregatorUrl = createDeckAggregatorUrl(moxfieldDeckUrl);
-    const response = await fetch(deckAggregatorUrl);
-    const json = await response.json();
-    return parseAndSaveDeck(moxfieldDeckUrl, json);
+export const GetDeckInfo = (data: DeckFormData): DeckInfo => {
+    const { name, url } = data;
+    const { mainboard, commanders } = parseContentsToDeck(data.contents);
+    return { name, url, mainboard, commanders };
 };

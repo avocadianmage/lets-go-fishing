@@ -1,24 +1,25 @@
-import { Close, OpenInNew, Sync } from '@mui/icons-material';
-import { Box, List, ListItemButton, ListItemText } from '@mui/material';
-import { useState } from 'react';
+import { Add, Close, OpenInNew } from '@mui/icons-material';
+import { List, ListItem, ListItemButton, ListItemText } from '@mui/material';
 import { DatabaseService, DeckInfo } from '../../services/dbSvc';
-import { FetchDecklist } from '../../services/deckInfoSvc';
 import { InputButton } from '../controls/inputButton';
+import { CardHeaderTypographyProps } from '../../global/constants';
+import { DeckEditModal } from './deckEditModal';
 
 interface DeckSelectProps {
+    isDeckEditModalOpen: boolean;
     decks: DeckInfo[];
     selectedIndex: number;
     onUpdateDecksAndSelection(index: number, updatedDeckInfos?: DeckInfo[]): void;
+    onDeckEditModalStateChange(open: boolean, updatedDeck?: DeckInfo): void;
 }
 
 export const DeckSelect = ({
+    isDeckEditModalOpen,
     decks,
     selectedIndex,
     onUpdateDecksAndSelection,
+    onDeckEditModalStateChange,
 }: DeckSelectProps) => {
-    const [syncingDeckIndex, setSyncingDeckIndex] = useState(-1);
-    const [syncErrorDeckIndex, setSyncErrorDeckIndex] = useState(-1);
-
     const removeDeck = (index: number) => {
         const deckToRemove = decks[index].name;
         DatabaseService.deleteDeck(deckToRemove);
@@ -34,50 +35,34 @@ export const DeckSelect = ({
         onUpdateDecksAndSelection(newSelectedIndex, updatedDeckInfos);
     };
 
-    const syncDeck = async (index: number) => {
-        // Only allow one deck to sync at a time.
-        if (syncingDeckIndex !== -1) return;
+    const DeckImport = (
+        <ListItem sx={{ p: '4px', pl: '16px' }}>
+            <ListItemText primaryTypographyProps={CardHeaderTypographyProps} primary='My Decks' />
+            <InputButton
+                tooltip='Import deck'
+                onClick={() => onDeckEditModalStateChange(true)}
+                sx={{ color: 'var(--nord14)' }}
+            >
+                <Add />
+            </InputButton>
+        </ListItem>
+    );
 
-        setSyncingDeckIndex(index);
-        {
-            const deckToUpdate = decks[index];
-            const updatedDeck = await FetchDecklist(deckToUpdate.url);
-
-            if (!updatedDeck) {
-                setSyncErrorDeckIndex(index);
-            } else {
-                setSyncErrorDeckIndex(-1);
-                DatabaseService.deleteDeck(deckToUpdate.name);
-                const updatedListOfDecks = decks
-                    .slice(undefined, index)
-                    .concat([updatedDeck!])
-                    .concat(decks.slice(index + 1));
-                onUpdateDecksAndSelection(index, updatedListOfDecks);
-            }
-        }
-        setSyncingDeckIndex(-1);
-    };
-
-    const disabled = decks.length === 0;
     return (
-        <List
-            component='nav'
-            sx={{
-                p: disabled ? 0 : '0px 0px 4px 0px',
-                maxHeight: 'calc(36px * 8)',
-                overflowY: 'auto',
-            }}
-        >
-            {decks.map((deck, index) => {
-                const isSelected = selectedIndex === index;
-                const isSyncing = syncingDeckIndex === index;
-                const hasSyncError = syncErrorDeckIndex === index;
-                return (
-                    <Box key={index} sx={{ borderBottom: '1px solid rgba(255, 255, 255, 0.12)' }}>
+        <>
+            <List
+                sx={{ p: 0, maxHeight: 'calc(36px * 8)', overflowY: 'auto' }}
+                subheader={DeckImport}
+            >
+                {decks.map((deck, index) => {
+                    const isSelected = selectedIndex === index;
+                    const url = decks[index].url;
+                    return (
                         <ListItemButton
+                            key={index}
                             selected={isSelected}
                             disableRipple
-                            sx={{ p: '4px 2px 4px 14px' }}
+                            sx={{ paddingRight: '12px' }}
                             onClick={() => onUpdateDecksAndSelection(index)}
                         >
                             <ListItemText
@@ -86,51 +71,37 @@ export const DeckSelect = ({
                                 sx={{ overflow: 'hidden', textOverflow: 'ellipsis' }}
                             />
 
-                            <InputButton
-                                tooltip={hasSyncError ? 'Sync failed' : 'Sync from Moxfield'}
-                                disabled={disabled}
-                                sx={{
-                                    p: '2px',
-                                    color: hasSyncError ? 'var(--nord11)' : 'var(--nord14)',
-                                }}
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    syncDeck(index);
-                                }}
-                            >
-                                <Box style={{ transform: 'scaleX(-1)', height: '20px' }}>
-                                    <Sync
-                                        sx={{ fontSize: 20 }}
-                                        className={isSyncing ? 'spin' : undefined}
-                                    />
-                                </Box>
-                            </InputButton>
+                            {/* TODO: add edit functionality */}
 
-                            <InputButton
-                                tooltip='Open in Moxfield'
-                                disabled={disabled}
-                                sx={{ p: '2px' }}
-                                link={disabled ? undefined : decks[index].url}
-                                onClick={(e) => e.stopPropagation()}
-                            >
-                                <OpenInNew sx={{ fontSize: 20 }} />
-                            </InputButton>
+                            {url && (
+                                <InputButton
+                                    tooltip='Open link'
+                                    sx={{ p: '2px' }}
+                                    link={url}
+                                    onClick={(e) => e.stopPropagation()}
+                                >
+                                    <OpenInNew sx={{ fontSize: 20 }} />
+                                </InputButton>
+                            )}
 
                             <InputButton
                                 tooltip='Remove'
-                                disabled={disabled}
-                                sx={{ p: '5px', color: 'var(--nord15)' }}
+                                sx={{ p: '2px', color: 'var(--nord15)' }}
                                 onClick={(e) => {
                                     e.stopPropagation();
                                     removeDeck(index);
                                 }}
                             >
-                                <Close sx={{ fontSize: 14 }} />
+                                <Close sx={{ fontSize: 20 }} />
                             </InputButton>
                         </ListItemButton>
-                    </Box>
-                );
-            })}
-        </List>
+                    );
+                })}
+            </List>
+            <DeckEditModal
+                isOpen={isDeckEditModalOpen}
+                onClose={(deck?: DeckInfo) => onDeckEditModalStateChange(false, deck)}
+            />
+        </>
     );
 };

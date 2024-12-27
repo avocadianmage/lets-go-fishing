@@ -1,7 +1,8 @@
 import { ForwardedRef, forwardRef } from 'react';
 import { CardInfo } from '../../services/dbSvc';
 import { DraggableCard } from './draggableCard';
-import { CurrentDragInfo, Pane, ZoneName } from './gameLayout';
+import { CurrentDragInfo, ZoneName } from './gameLayout';
+import { Pane } from '../controls/pane';
 
 export interface ZoneCardInfo {
     card: CardInfo;
