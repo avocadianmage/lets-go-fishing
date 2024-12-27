@@ -54,7 +54,7 @@ const parseContentsToDeck = (
 };
 
 export const GetDeckInfo = (data: DeckFormData): DeckInfo => {
-    const { name, url } = data;
-    const { mainboard, commanders } = parseContentsToDeck(data.contents);
-    return { name, url, mainboard, commanders };
+    const { name, url, contents } = data;
+    const { mainboard, commanders } = parseContentsToDeck(contents);
+    return { name: name.trim(), url: url.trim(), mainboard, commanders };
 };

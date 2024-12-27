@@ -1,4 +1,4 @@
-import { Add, Close, OpenInNew } from '@mui/icons-material';
+import { Add, Close, Public, SvgIconComponent } from '@mui/icons-material';
 import { List, ListItem, ListItemButton, ListItemText } from '@mui/material';
 import { DatabaseService, DeckInfo } from '../../services/dbSvc';
 import { InputButton } from '../controls/inputButton';
@@ -48,6 +48,27 @@ export const DeckSelect = ({
         </ListItem>
     );
 
+    const DeckButton = (
+        Icon: SvgIconComponent,
+        tooltip: string,
+        url?: string,
+        clickAction?: () => void
+    ) => {
+        return (
+            <InputButton
+                tooltip={tooltip}
+                sx={{ p: '2px' }}
+                link={url}
+                onClick={(e) => {
+                    e.stopPropagation();
+                    clickAction && clickAction();
+                }}
+            >
+                <Icon sx={{ fontSize: 20 }} />
+            </InputButton>
+        );
+    };
+
     return (
         <>
             <List
@@ -71,29 +92,8 @@ export const DeckSelect = ({
                                 sx={{ overflow: 'hidden', textOverflow: 'ellipsis' }}
                             />
 
-                            {/* TODO: add edit functionality */}
-
-                            {url && (
-                                <InputButton
-                                    tooltip='Open link'
-                                    sx={{ p: '2px' }}
-                                    link={url}
-                                    onClick={(e) => e.stopPropagation()}
-                                >
-                                    <OpenInNew sx={{ fontSize: 20 }} />
-                                </InputButton>
-                            )}
-
-                            <InputButton
-                                tooltip='Remove'
-                                sx={{ p: '2px', color: 'var(--nord15)' }}
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    removeDeck(index);
-                                }}
-                            >
-                                <Close sx={{ fontSize: 20 }} />
-                            </InputButton>
+                            {url && DeckButton(Public, 'Open Link', url)}
+                            {DeckButton(Close, 'Remove', undefined, () => removeDeck(index))}
                         </ListItemButton>
                     );
                 })}
