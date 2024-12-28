@@ -16,7 +16,7 @@ const getQueryUrl = (card: CardInfo): string => {
 
 const processBlob = (blob: Blob, card: CardInfo, isTransformed: boolean): string => {
     const url = URL.createObjectURL(blob);
-    memoryCache[DatabaseService.getCardImageKey(card, isTransformed)] = url;
+    memoryCache[DatabaseService.GetCardImageKey(card, isTransformed)] = url;
     return url;
 };
 
@@ -64,8 +64,8 @@ export const GetCardImageUrl = async (card: CardInfo): Promise<[front: string, b
     const { set, cn } = card;
 
     // Check if the URL is already stored in the local cache.
-    const frontUrlFromMemory = memoryCache[DatabaseService.getCardImageKey(card, false)];
-    const backUrlFromMemory = memoryCache[DatabaseService.getCardImageKey(card, true)];
+    const frontUrlFromMemory = memoryCache[DatabaseService.GetCardImageKey(card, false)];
+    const backUrlFromMemory = memoryCache[DatabaseService.GetCardImageKey(card, true)];
     if (frontUrlFromMemory) {
         return [frontUrlFromMemory, backUrlFromMemory];
     }

@@ -43,17 +43,17 @@ const dbPromise = openDB(dbName, dbVersion, {
 });
 
 class DbSvc {
-    private getCardImageKey(card: CardInfo, isTransformed: boolean): string {
+    public GetCardImageKey(card: CardInfo, isTransformed: boolean): string {
         const { set, cn } = card;
         return JSON.stringify({ set, cn, isTransformed });
     }
 
     async getCardBlob(card: CardInfo, isTransformed: boolean): Promise<Blob> {
-        return (await dbPromise).get(StoreNames.Card, this.getCardImageKey(card, isTransformed));
+        return (await dbPromise).get(StoreNames.Card, this.GetCardImageKey(card, isTransformed));
     }
 
     async putCardBlob(blob: Blob, card: CardInfo, isTransformed: boolean): Promise<void> {
-        (await dbPromise).put(StoreNames.Card, blob, this.getCardImageKey(card, isTransformed));
+        (await dbPromise).put(StoreNames.Card, blob, this.GetCardImageKey(card, isTransformed));
     }
 
     public async GetDecks(): Promise<DeckInfo[]> {
@@ -61,7 +61,6 @@ class DbSvc {
     }
 
     public async PutDeck(deckInfo: DeckInfo): Promise<void> {
-        console.log(deckInfo);
         (await dbPromise).put(StoreNames.Deck, deckInfo);
     }
 
