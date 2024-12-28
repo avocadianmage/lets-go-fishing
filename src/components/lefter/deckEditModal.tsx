@@ -1,4 +1,4 @@
-import { Box, Button, Modal, Paper, Stack, TextField, Typography } from '@mui/material';
+import { Box, Button, CircularProgress, Modal, Paper, Stack, TextField, Typography } from '@mui/material';
 import { ModalStyle } from '../../global/constants';
 import { Pane } from '../controls/pane';
 import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
@@ -20,20 +20,24 @@ export const DeckEditModal = ({ isOpen, deckToEdit, onClose }: DeckEditModalProp
     });
 
     const [formValues, setFormValues] = useState<DeckFormData>(getDefaultFormValues());
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-        if (isOpen) {
-            setFormValues(getDefaultFormValues());
-        }
+        setFormValues(getDefaultFormValues());
     }, [isOpen, deckToEdit]);
 
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         setFormValues({ ...formValues, [e.target.name]: e.target.value });
     };
 
-    const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        onClose(GetDeckInfo(formValues));
+
+        setLoading(true);
+        const deckInfo = await GetDeckInfo(formValues);
+        setLoading(false);
+        
+        onClose(deckInfo);
     };
 
     return (
@@ -59,6 +63,7 @@ export const DeckEditModal = ({ isOpen, deckToEdit, onClose }: DeckEditModalProp
                             rows={28}
                             onChange={handleChange}
                             value={formValues.contents}
+                            disabled={loading}
                         />
                     </Paper>
                     <Paper>
@@ -69,6 +74,7 @@ export const DeckEditModal = ({ isOpen, deckToEdit, onClose }: DeckEditModalProp
                             required
                             onChange={handleChange}
                             value={formValues.name}
+                            disabled={loading}
                         />
                     </Paper>
                     <Paper>
@@ -78,6 +84,7 @@ export const DeckEditModal = ({ isOpen, deckToEdit, onClose }: DeckEditModalProp
                             fullWidth
                             onChange={handleChange}
                             value={formValues.url}
+                            disabled={loading}
                         />
                     </Paper>
                     <Stack
@@ -85,10 +92,10 @@ export const DeckEditModal = ({ isOpen, deckToEdit, onClose }: DeckEditModalProp
                         spacing={2}
                         sx={{ display: 'flex', justifyContent: 'flex-end' }}
                     >
-                        <Button type='submit' variant='contained'>
-                            Save
+                        <Button type='submit' variant='contained' disabled={loading}>
+                            {loading ? <CircularProgress size={24} /> : 'Save'}
                         </Button>
-                        <Button color='secondary' onClick={() => onClose()}>
+                        <Button color='secondary' onClick={() => onClose()} disabled={loading}>
                             Cancel
                         </Button>
                     </Stack>

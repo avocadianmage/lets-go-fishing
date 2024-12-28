@@ -1,3 +1,4 @@
+import { PopulateCardExternalInfo } from './cardInfoSvc';
 import { CardInfo, DeckFormData, DeckInfo } from './dbSvc';
 
 const FoilIndicator = '*F*';
@@ -18,9 +19,9 @@ const parseContentsLine = (
     return { quantity, name, set, cn };
 };
 
-const parseContentsToDeck = (
+const parseContentsToDeck = async (
     contents: string
-): { mainboard: CardInfo[]; commanders: CardInfo[] } => {
+): Promise<{ mainboard: CardInfo[]; commanders: CardInfo[] }> => {
     const lines = contents.split('\n');
     const commanders: CardInfo[] = [];
     const mainboard: CardInfo[] = [];
@@ -31,7 +32,7 @@ const parseContentsToDeck = (
         return 'card' + id;
     };
 
-    let commander = true;
+    let checkForCommander = true;
     for (let line of lines) {
         line = line.trim();
         if (!line) continue;
@@ -39,19 +40,29 @@ const parseContentsToDeck = (
 
         const { quantity, name, set, cn } = parseContentsLine(line);
         for (let i = 0; i < quantity; i++) {
-            const card: CardInfo = { id: getNextId(), name, set, cn, commander };
-            if (commander) commanders.push(card);
-            else mainboard.push(card);
+            const card: CardInfo = { id: getNextId(), name, set, cn, commander: false };
+            
+            if (checkForCommander) {
+                await PopulateCardExternalInfo(card);
+                const partner = card.externalInfo!.partner;
+                if (commanders.length === 0 || partner) {
+                    commanders.push({ ...card, commander: true });
+                    checkForCommander = commanders.length < 2 && partner;
+                    continue;
+                }
+                checkForCommander = false;
+            }
+
+            mainboard.push(card);
         }
-        commander = false;
     }
 
     return { commanders, mainboard };
 };
 
-export const GetDeckInfo = (data: DeckFormData): DeckInfo => {
+export const GetDeckInfo = async (data: DeckFormData): Promise<DeckInfo> => {
     const { name, url, contents, key } = data;
-    const { mainboard, commanders } = parseContentsToDeck(contents);
+    const { mainboard, commanders } = await parseContentsToDeck(contents);
 
     return {
         ...(key && { key }),
