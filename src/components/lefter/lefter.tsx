@@ -36,7 +36,7 @@ export const Lefter = ({
 }: LefterProps) => {
     const handleDeckEditModalStateChange = (open: boolean, updatedDeck?: DeckInfo) => {
         onDeckEditModalStateChange(open);
-        if (updatedDeck) addDeck(updatedDeck);
+        if (updatedDeck && !open) addDeck(updatedDeck);
     };
 
     const SvgManaMap = {
@@ -70,7 +70,8 @@ export const Lefter = ({
         const anyUpdates = !!updatedDecks;
         updatedDecks = updatedDecks ?? decks;
         const selectedDeck = updatedDecks.length === 0 ? undefined : updatedDecks[index];
-        DatabaseService.putSelectedDeckName(selectedDeck?.name ?? '');
+
+        DatabaseService.PutSelectedDeckKey(selectedDeck?.key ?? '');
         setDecks(updatedDecks);
 
         if (index === selectedIndex && !anyUpdates) return;
@@ -78,25 +79,41 @@ export const Lefter = ({
         onDeckSelect(selectedDeck);
     };
 
-    const addDeck = (deckInfo: DeckInfo) => {
-        DatabaseService.putDeck(deckInfo);
-        updateDecksAndSelection(decks.length, decks.concat(deckInfo));
+    enum SelectDeckFlags {
+        None,
+        SelectAddedDeck,
+        SelectEditedDeckByKey,
+    }
+
+    const fetchDecks = async (selectDeckFlags: SelectDeckFlags, key?: string) => {
+        const decks = await DatabaseService.GetDecks();
+
+        let indexToSelect;
+        if (selectDeckFlags === SelectDeckFlags.SelectAddedDeck) {
+            indexToSelect = decks.length - 1;
+        } else {
+            const deckKeyToSelect = key ?? DatabaseService.GetSelectedDeckKey();
+            indexToSelect = Math.max(
+                0,
+                decks.findIndex((di) => di.key?.toString() === deckKeyToSelect!.toString())
+            );
+        }
+
+        updateDecksAndSelection(indexToSelect, decks);
+    };
+
+    const addDeck = async (deckInfo: DeckInfo) => {
+        await DatabaseService.PutDeck(deckInfo);
+        fetchDecks(
+            deckInfo.key === undefined
+                ? SelectDeckFlags.SelectAddedDeck
+                : SelectDeckFlags.SelectEditedDeckByKey,
+            deckInfo.key
+        );
     };
 
     useEffect(() => {
-        const fetchDecks = async () => {
-            const decks = await DatabaseService.getDecks();
-            const nameToSelect = DatabaseService.getSelectedDeckName();
-            const indexToSelect = Math.max(
-                0,
-                decks.findIndex((di) => di.name === nameToSelect)
-            );
-            updateDecksAndSelection(indexToSelect, decks);
-        };
-        fetchDecks();
-
-        // Run useEffect only once.
-        // eslint-disable-next-line
+        fetchDecks(SelectDeckFlags.None);
     }, []);
 
     return (

@@ -1,16 +1,17 @@
-import { Add, Close, Public, SvgIconComponent } from '@mui/icons-material';
+import { Add, Close, Edit, Public, SvgIconComponent } from '@mui/icons-material';
 import { List, ListItem, ListItemButton, ListItemText } from '@mui/material';
 import { DatabaseService, DeckInfo } from '../../services/dbSvc';
 import { InputButton } from '../controls/inputButton';
 import { CardHeaderTypographyProps } from '../../global/constants';
 import { DeckEditModal } from './deckEditModal';
+import { useState } from 'react';
 
 interface DeckSelectProps {
     isDeckEditModalOpen: boolean;
     decks: DeckInfo[];
     selectedIndex: number;
     onUpdateDecksAndSelection(index: number, updatedDeckInfos?: DeckInfo[]): void;
-    onDeckEditModalStateChange(open: boolean, updatedDeck?: DeckInfo): void;
+    onDeckEditModalStateChange(open: boolean, deck?: DeckInfo): void;
 }
 
 export const DeckSelect = ({
@@ -20,11 +21,18 @@ export const DeckSelect = ({
     onUpdateDecksAndSelection,
     onDeckEditModalStateChange,
 }: DeckSelectProps) => {
-    const removeDeck = (index: number) => {
-        const deckToRemove = decks[index].name;
-        DatabaseService.deleteDeck(deckToRemove);
+    const [deckToEdit, setDeckToEdit] = useState<DeckInfo | undefined>(undefined);
 
-        const updatedDeckInfos = decks.filter((di: DeckInfo) => di.name !== deckToRemove);
+    const handleDeckEditModalStateChange = (open: boolean, deck?: DeckInfo) => {
+        setDeckToEdit(deck);
+        onDeckEditModalStateChange(open, deck);
+    };
+
+    const removeDeck = (index: number) => {
+        const deckToRemove = decks[index];
+        DatabaseService.DeleteDeck(deckToRemove);
+
+        const updatedDeckInfos = decks.filter((di: DeckInfo) => di.key !== deckToRemove.key);
 
         let newSelectedIndex = selectedIndex;
         if (index <= selectedIndex) {
@@ -40,7 +48,7 @@ export const DeckSelect = ({
             <ListItemText primaryTypographyProps={CardHeaderTypographyProps} primary='My Decks' />
             <InputButton
                 tooltip='Import deck'
-                onClick={() => onDeckEditModalStateChange(true)}
+                onClick={() => handleDeckEditModalStateChange(true)}
                 sx={{ color: 'var(--nord14)' }}
             >
                 <Add />
@@ -93,6 +101,9 @@ export const DeckSelect = ({
                             />
 
                             {url && DeckButton(Public, 'Open Link', url)}
+                            {DeckButton(Edit, 'Edit', undefined, () =>
+                                handleDeckEditModalStateChange(true, deck)
+                            )}
                             {DeckButton(Close, 'Remove', undefined, () => removeDeck(index))}
                         </ListItemButton>
                     );
@@ -100,7 +111,8 @@ export const DeckSelect = ({
             </List>
             <DeckEditModal
                 isOpen={isDeckEditModalOpen}
-                onClose={(deck?: DeckInfo) => onDeckEditModalStateChange(false, deck)}
+                deckToEdit={deckToEdit}
+                onClose={(deck?: DeckInfo) => handleDeckEditModalStateChange(false, deck)}
             />
         </>
     );

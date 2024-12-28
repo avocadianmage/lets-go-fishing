@@ -8,19 +8,20 @@ export interface CardInfo {
     commander: boolean;
 }
 
-enum IndexNames {
-    Name = 'name',
+export interface DeckFormData {
+    key? : string;
+    name: string;
+    url: string;
+    contents: string;
 }
 
-export interface DeckInfo {
-    [IndexNames.Name]: string;
-    url: string;
+export interface DeckInfo extends DeckFormData {
     mainboard: CardInfo[];
     commanders: CardInfo[];
 }
 
 enum LocalStorageKeys {
-    SelectedDeckName = 'selected-deck-name',
+    SelectedDeckKey = 'selected-deck-key',
 }
 
 const dbName = 'lets-go-fishing-db';
@@ -34,16 +35,15 @@ enum StoreNames {
 const dbPromise = openDB(dbName, dbVersion, {
     upgrade(db) {
         db.createObjectStore(StoreNames.Card);
-        const deckStore = db.createObjectStore(StoreNames.Deck, {
-            keyPath: 'id',
+        db.createObjectStore(StoreNames.Deck, {
+            keyPath: 'key',
             autoIncrement: true,
         });
-        deckStore.createIndex(IndexNames.Name, IndexNames.Name);
     },
 });
 
 class DbSvc {
-    getCardImageKey(card: CardInfo, isTransformed: boolean): string {
+    private getCardImageKey(card: CardInfo, isTransformed: boolean): string {
         const { set, cn } = card;
         return JSON.stringify({ set, cn, isTransformed });
     }
@@ -56,26 +56,25 @@ class DbSvc {
         (await dbPromise).put(StoreNames.Card, blob, this.getCardImageKey(card, isTransformed));
     }
 
-    async getDecks(): Promise<DeckInfo[]> {
+    public async GetDecks(): Promise<DeckInfo[]> {
         return (await dbPromise).getAll(StoreNames.Deck);
     }
 
-    async putDeck(deckInfo: DeckInfo): Promise<void> {
+    public async PutDeck(deckInfo: DeckInfo): Promise<void> {
+        console.log(deckInfo);
         (await dbPromise).put(StoreNames.Deck, deckInfo);
     }
 
-    async deleteDeck(name: string): Promise<void> {
-        const db = await dbPromise;
-        const key = await db.getKeyFromIndex(StoreNames.Deck, IndexNames.Name, name);
-        db.delete(StoreNames.Deck, key!);
+    public async DeleteDeck(deckInfo: DeckInfo): Promise<void> {
+        (await dbPromise).delete(StoreNames.Deck, deckInfo.key!);
     }
 
-    getSelectedDeckName(): string | undefined {
-        return localStorage.getItem(LocalStorageKeys.SelectedDeckName) ?? undefined;
+    public GetSelectedDeckKey(): string | undefined {
+        return localStorage.getItem(LocalStorageKeys.SelectedDeckKey) ?? undefined;
     }
 
-    putSelectedDeckName(value: string): void {
-        localStorage.setItem(LocalStorageKeys.SelectedDeckName, value);
+    public PutSelectedDeckKey(value: string): void {
+        localStorage.setItem(LocalStorageKeys.SelectedDeckKey, value.toString());
     }
 }
 

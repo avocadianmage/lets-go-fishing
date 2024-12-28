@@ -1,17 +1,13 @@
-import { CardInfo, DeckInfo } from './dbSvc';
+import { CardInfo, DeckFormData, DeckInfo } from './dbSvc';
 
-export interface DeckFormData {
-    name: string;
-    url: string;
-    contents: string;
-}
+const FoilIndicator = '*F*';
+const SideboardIndicator = 'SIDEBOARD:';
 
 const trimParentheses = (str: string): string => str.replace(/[()]/g, '');
 
 const parseContentsLine = (
     line: string
 ): { quantity: number; name: string; set: string; cn: string } => {
-    const FoilIndicator = ' *F*';
     let pieces: string[] = line.split(' ');
     pieces = line.endsWith(FoilIndicator) ? pieces.slice(0, -1) : pieces;
 
@@ -39,7 +35,7 @@ const parseContentsToDeck = (
     for (let line of lines) {
         line = line.trim();
         if (!line) continue;
-        if (line.startsWith('SIDEBOARD:')) break;
+        if (line.startsWith(SideboardIndicator)) break;
 
         const { quantity, name, set, cn } = parseContentsLine(line);
         for (let i = 0; i < quantity; i++) {
@@ -54,7 +50,15 @@ const parseContentsToDeck = (
 };
 
 export const GetDeckInfo = (data: DeckFormData): DeckInfo => {
-    const { name, url, contents } = data;
+    const { name, url, contents, key } = data;
     const { mainboard, commanders } = parseContentsToDeck(contents);
-    return { name: name.trim(), url: url.trim(), mainboard, commanders };
+
+    return {
+        ...(key && { key }),
+        name: name.trim(),
+        url: url.trim(),
+        contents,
+        mainboard,
+        commanders,
+    };
 };

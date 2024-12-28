@@ -1,21 +1,29 @@
 import { Box, Button, Modal, Paper, Stack, TextField } from '@mui/material';
 import { ModalStyle } from '../../global/constants';
 import { Pane } from '../controls/pane';
-import { ChangeEvent, FormEvent, useState } from 'react';
-import { DeckFormData, GetDeckInfo } from '../../services/deckInfoSvc';
-import { DeckInfo } from '../../services/dbSvc';
+import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
+import { GetDeckInfo } from '../../services/deckInfoSvc';
+import { DeckFormData, DeckInfo } from '../../services/dbSvc';
 
-export interface DeckEditProps {
+export interface DeckEditModalProps {
     isOpen: boolean;
+    deckToEdit?: DeckInfo;
     onClose: (deck?: DeckInfo) => void;
 }
 
-export const DeckEditModal = ({ isOpen, onClose }: DeckEditProps) => {
-    const [formValues, setFormValues] = useState<DeckFormData>({
-        name: '',
-        url: '',
-        contents: '',
+export const DeckEditModal = ({ isOpen, deckToEdit, onClose }: DeckEditModalProps) => {
+    const getDefaultFormValues = (): DeckFormData => ({
+        key: deckToEdit?.key,
+        name: deckToEdit?.name || '',
+        url: deckToEdit?.url || '',
+        contents: deckToEdit?.contents || '',
     });
+
+    const [formValues, setFormValues] = useState<DeckFormData>(getDefaultFormValues());
+
+    useEffect(() => {
+        setFormValues(getDefaultFormValues());
+    }, [deckToEdit]);
 
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         setFormValues({ ...formValues, [e.target.name]: e.target.value });
@@ -42,6 +50,7 @@ export const DeckEditModal = ({ isOpen, onClose }: DeckEditProps) => {
                             required
                             autoFocus
                             onChange={handleChange}
+                            value={formValues.name}
                         />
                     </Paper>
                     <Paper>
@@ -50,6 +59,7 @@ export const DeckEditModal = ({ isOpen, onClose }: DeckEditProps) => {
                             placeholder='External link to deck (optional)'
                             fullWidth
                             onChange={handleChange}
+                            value={formValues.url}
                         />
                     </Paper>
                     <Paper>
@@ -61,6 +71,7 @@ export const DeckEditModal = ({ isOpen, onClose }: DeckEditProps) => {
                             required
                             rows={28}
                             onChange={handleChange}
+                            value={formValues.contents}
                         />
                     </Paper>
                     <Stack
