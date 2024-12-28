@@ -1,11 +1,18 @@
 import { openDB } from 'idb';
 
+export interface CardExternalInfo {
+    frontBlob: Blob;
+    backBlob?: Blob;
+    partner: boolean;
+}
+
 export interface CardInfo {
     id: string;
     name: string;
     set: string;
     cn: string; // Collector Number.
     commander: boolean;
+    externalInfo?: CardExternalInfo;
 }
 
 export interface DeckFormData {
@@ -43,17 +50,17 @@ const dbPromise = openDB(dbName, dbVersion, {
 });
 
 class DbSvc {
-    public GetCardImageKey(card: CardInfo, isTransformed: boolean): string {
+    public GetCardImageKey(card: CardInfo): string {
         const { set, cn } = card;
-        return JSON.stringify({ set, cn, isTransformed });
+        return JSON.stringify({ set, cn });
     }
 
-    async getCardBlob(card: CardInfo, isTransformed: boolean): Promise<Blob> {
-        return (await dbPromise).get(StoreNames.Card, this.GetCardImageKey(card, isTransformed));
+    public async GetCardExternalInfo(card: CardInfo): Promise<CardExternalInfo> {
+        return (await dbPromise).get(StoreNames.Card, this.GetCardImageKey(card));
     }
 
-    async putCardBlob(blob: Blob, card: CardInfo, isTransformed: boolean): Promise<void> {
-        (await dbPromise).put(StoreNames.Card, blob, this.GetCardImageKey(card, isTransformed));
+    public async PutCardExternalInfo(card: CardInfo): Promise<void> {
+        (await dbPromise).put(StoreNames.Card, card.externalInfo!, this.GetCardImageKey(card));
     }
 
     public async GetDecks(): Promise<DeckInfo[]> {

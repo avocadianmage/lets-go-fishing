@@ -1,9 +1,8 @@
-import { CardInfo, DatabaseService } from './dbSvc';
+import { CardExternalInfo, CardInfo, DatabaseService } from './dbSvc';
 
 const QUERY_THROTTLE_MS = 100;
 
-const memoryCache: { [cardKey: string]: string } = {};
-let promiseChain: Promise<[front: string, back: string]> = Promise.resolve(['', '']);
+let promiseChain: Promise<void> = Promise.resolve();
 
 const getPromisedTimeout = () => new Promise((r) => setTimeout(r, QUERY_THROTTLE_MS));
 
@@ -14,72 +13,66 @@ const getQueryUrl = (card: CardInfo): string => {
     return `https://api.scryfall.com/cards/${encodedSet}/${encodedCN}`;
 };
 
-const processBlob = (blob: Blob, card: CardInfo, isTransformed: boolean): string => {
-    const url = URL.createObjectURL(blob);
-    memoryCache[DatabaseService.GetCardImageKey(card, isTransformed)] = url;
-    return url;
+const saveToBlobAndSetExternalCardInfo = async (
+    frontUrlRemote: string,
+    backUrlRemote: string,
+    partner: boolean,
+    card: CardInfo
+): Promise<void> => {
+    // No need to throttle image URL fetch as Scryfall does not have a rate limit for images.
+    const frontImage = await fetch(frontUrlRemote);
+    const frontBlob = await frontImage.blob();
+
+    const backImage: Response | undefined = backUrlRemote ? await fetch(backUrlRemote) : undefined;
+    const backBlob = backImage ? await backImage.blob() : undefined;
+
+    card.externalInfo = { frontBlob, backBlob, partner };
+    await DatabaseService.PutCardExternalInfo(card);
 };
 
-const saveToBlob = async (
-    imageUrl: string,
-    card: CardInfo,
-    isTransformed: boolean
-): Promise<string> => {
-    // No need to throttle image URL fetch as it (scryfall.io) does not have a rate limit.
-    const cardImage = await fetch(imageUrl);
-    const blob = await cardImage.blob();
-    await DatabaseService.putCardBlob(blob, card, isTransformed);
-    return processBlob(blob, card, isTransformed);
-};
-
-const coreGetCardImageUrl = async (card: CardInfo): Promise<[front: string, back: string]> => {
+// Populates the externalInfo property of the card object and stores it in the IndexedDB.
+const fetchCardInfo = async (card: CardInfo): Promise<void> => {
     const result = await fetch(getQueryUrl(card));
 
     if (result.status !== 200) {
         console.log('Card lookup failed for: ' + JSON.stringify(card));
-        return ['', ''];
     }
 
     const json = await result.json();
+    const partner: boolean = json.keywords.includes('Partner');
+
     const jsonNodeForTwoSidedCard = json.card_faces;
     const jsonNodeForOneSidedCardImage = json.image_uris;
 
-    let frontUrlRemote = '';
-    let backUrl = '';
+    let frontUrlRemote: string;
+    let backUrlRemote: string;
     if (jsonNodeForTwoSidedCard && jsonNodeForTwoSidedCard[0].image_uris) {
         frontUrlRemote = jsonNodeForTwoSidedCard[0].image_uris.normal;
-        const backUrlRemote = jsonNodeForTwoSidedCard[1].image_uris.normal;
-        // Esnure back image is saved before front to avoid loading interruptions causing
-        // desyncs.
-        backUrl = await saveToBlob(backUrlRemote, card, true);
+        backUrlRemote = jsonNodeForTwoSidedCard[1].image_uris.normal;
     } else {
         frontUrlRemote = jsonNodeForOneSidedCardImage.normal;
+        backUrlRemote = '';
     }
-    const frontUrl = await saveToBlob(frontUrlRemote, card, false);
 
-    return [frontUrl, backUrl];
+    await saveToBlobAndSetExternalCardInfo(frontUrlRemote, backUrlRemote, partner, card);
 };
 
-export const GetCardImageUrl = async (card: CardInfo): Promise<[front: string, back: string]> => {
-    const { set, cn } = card;
-
+export const PopulateCardExternalInfo = async (card: CardInfo): Promise<void> => {
     // Check if the URL is already stored in the local cache.
-    const frontUrlFromMemory = memoryCache[DatabaseService.GetCardImageKey(card, false)];
-    const backUrlFromMemory = memoryCache[DatabaseService.GetCardImageKey(card, true)];
-    if (frontUrlFromMemory) {
-        return [frontUrlFromMemory, backUrlFromMemory];
-    }
+    if (card.externalInfo) return;
 
-    // Check if the blob is already stored in the IndexedDB.
-    const frontBlob = await DatabaseService.getCardBlob(card, false);
-    if (frontBlob) {
-        const backBlob = await DatabaseService.getCardBlob(card, true);
-        const frontUrlFromBlob = processBlob(frontBlob, card, false);
-        const backUrlFromBlob = backBlob ? processBlob(backBlob, card, true) : '';
-        return [frontUrlFromBlob, backUrlFromBlob];
-    }
+    card.externalInfo = await DatabaseService.GetCardExternalInfo(card);
+    if (card.externalInfo) return;
 
     // Fetch card from external web service.
-    promiseChain = promiseChain.then(getPromisedTimeout).then(() => coreGetCardImageUrl(card));
+    promiseChain = promiseChain.then(getPromisedTimeout).then(() => fetchCardInfo(card));
     return promiseChain;
+};
+
+export const GetCardImageUrls = (
+    externalInfo: CardExternalInfo
+): { frontUrl: string; backUrl?: string } => {
+    const frontUrl = URL.createObjectURL(externalInfo.frontBlob);
+    const backUrl = externalInfo.backBlob ? URL.createObjectURL(externalInfo.backBlob) : undefined;
+    return { frontUrl, backUrl };
 };

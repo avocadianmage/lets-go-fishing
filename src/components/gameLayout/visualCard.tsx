@@ -4,8 +4,8 @@ import { useEffect, useState } from 'react';
 import { cancelablePromise } from '../../global/helpers';
 import { CenteredSpinner } from '../controls/centeredSpinner';
 import { ZoneCardInfo } from './zone';
-import { GetCardImageUrl } from '../../services/cardInfoSvc';
 import { Chip, SxProps } from '@mui/material';
+import { GetCardImageUrls, PopulateCardExternalInfo } from '../../services/cardInfoSvc';
 
 export interface VisualCardProps {
     zoneCard?: ZoneCardInfo;
@@ -85,12 +85,13 @@ export const VisualCard = ({ zoneCard, faceDown, wiggle }: VisualCardProps) => {
         setBackImageUrl('');
         setCanTransform(false);
         if (!card) return;
-        const { promise, cancel } = cancelablePromise(GetCardImageUrl(card));
+        const { promise, cancel } = cancelablePromise(PopulateCardExternalInfo(card));
         promise
-            .then(([front, back]) => {
-                setFrontImageUrl(front);
-                if (back) {
-                    setBackImageUrl(back);
+            .then(() => {
+                const { frontUrl, backUrl } = GetCardImageUrls(card.externalInfo!);
+                setFrontImageUrl(frontUrl);
+                if (backUrl) {
+                    setBackImageUrl(backUrl);
                     setCanTransform(true);
                 }
             })
