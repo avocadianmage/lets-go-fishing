@@ -1,4 +1,4 @@
-import { Box, Button, Modal, Paper, Stack, TextField } from '@mui/material';
+import { Box, Button, Modal, Paper, Stack, TextField, Typography } from '@mui/material';
 import { ModalStyle } from '../../global/constants';
 import { Pane } from '../controls/pane';
 import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
@@ -22,8 +22,10 @@ export const DeckEditModal = ({ isOpen, deckToEdit, onClose }: DeckEditModalProp
     const [formValues, setFormValues] = useState<DeckFormData>(getDefaultFormValues());
 
     useEffect(() => {
-        setFormValues(getDefaultFormValues());
-    }, [deckToEdit]);
+        if (isOpen) {
+            setFormValues(getDefaultFormValues());
+        }
+    }, [isOpen, deckToEdit]);
 
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         setFormValues({ ...formValues, [e.target.name]: e.target.value });
@@ -42,13 +44,29 @@ export const DeckEditModal = ({ isOpen, deckToEdit, onClose }: DeckEditModalProp
                     onSubmit={handleSubmit}
                     sx={{ display: 'flex', flexDirection: 'column', gap: '12px' }}
                 >
+                    <Typography variant='h5' color='text.secondary'>
+                        Deck Editor
+                    </Typography>
+
+                    <Paper>
+                        <TextField
+                            name='contents'
+                            placeholder='Paste deck contents here'
+                            fullWidth
+                            multiline
+                            required
+                            autoFocus
+                            rows={28}
+                            onChange={handleChange}
+                            value={formValues.contents}
+                        />
+                    </Paper>
                     <Paper>
                         <TextField
                             name='name'
                             placeholder='Deck name'
                             fullWidth
                             required
-                            autoFocus
                             onChange={handleChange}
                             value={formValues.name}
                         />
@@ -60,18 +78,6 @@ export const DeckEditModal = ({ isOpen, deckToEdit, onClose }: DeckEditModalProp
                             fullWidth
                             onChange={handleChange}
                             value={formValues.url}
-                        />
-                    </Paper>
-                    <Paper>
-                        <TextField
-                            name='contents'
-                            placeholder='Paste deck contents here'
-                            fullWidth
-                            multiline
-                            required
-                            rows={28}
-                            onChange={handleChange}
-                            value={formValues.contents}
                         />
                     </Paper>
                     <Stack
