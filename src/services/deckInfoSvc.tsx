@@ -1,3 +1,4 @@
+import { DeckType } from '../components/lefter/deckEditModal';
 import { PopulateCardExternalInfo } from './cardInfoSvc';
 import { CardInfo, DeckFormData, DeckInfo } from './dbSvc';
 
@@ -20,7 +21,8 @@ const parseContentsLine = (
 };
 
 const parseContentsToDeck = async (
-    contents: string
+    contents: string,
+    deckType: DeckType
 ): Promise<{ mainboard: CardInfo[]; commanders: CardInfo[] }> => {
     const lines = contents.split('\n');
     const commanders: CardInfo[] = [];
@@ -32,7 +34,7 @@ const parseContentsToDeck = async (
         return 'card' + id;
     };
 
-    let checkForCommander = true;
+    let checkForCommander = deckType === DeckType.Commander;
     for (let line of lines) {
         line = line.trim();
         if (!line) continue;
@@ -41,7 +43,7 @@ const parseContentsToDeck = async (
         const { quantity, name, set, cn } = parseContentsLine(line);
         for (let i = 0; i < quantity; i++) {
             const card: CardInfo = { id: getNextId(), name, set, cn, commander: false };
-            
+
             if (checkForCommander) {
                 await PopulateCardExternalInfo(card);
                 const partner = card.externalInfo!.partner;
@@ -60,9 +62,9 @@ const parseContentsToDeck = async (
     return { commanders, mainboard };
 };
 
-export const GetDeckInfo = async (data: DeckFormData): Promise<DeckInfo> => {
+export const GetDeckInfo = async (data: DeckFormData, deckType: DeckType): Promise<DeckInfo> => {
     const { name, url, contents, key } = data;
-    const { mainboard, commanders } = await parseContentsToDeck(contents);
+    const { mainboard, commanders } = await parseContentsToDeck(contents, deckType);
 
     return {
         ...(key && { key }),

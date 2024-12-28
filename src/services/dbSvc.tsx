@@ -1,4 +1,5 @@
 import { openDB } from 'idb';
+import { DeckType } from '../components/lefter/deckEditModal';
 
 export interface CardExternalInfo {
     frontBlob: Blob;

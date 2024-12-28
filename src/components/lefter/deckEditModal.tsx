@@ -1,4 +1,15 @@
-import { Box, Button, CircularProgress, Modal, Paper, Stack, TextField, Typography } from '@mui/material';
+import {
+    Box,
+    Button,
+    CircularProgress,
+    Modal,
+    Paper,
+    Stack,
+    TextField,
+    ToggleButton,
+    ToggleButtonGroup,
+    Typography,
+} from '@mui/material';
 import { ModalStyle } from '../../global/constants';
 import { Pane } from '../controls/pane';
 import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
@@ -11,6 +22,11 @@ export interface DeckEditModalProps {
     onClose: (deck?: DeckInfo) => void;
 }
 
+export enum DeckType {
+    Commander = 'commander',
+    NotCommander = 'not-commander',
+}
+
 export const DeckEditModal = ({ isOpen, deckToEdit, onClose }: DeckEditModalProps) => {
     const getDefaultFormValues = (): DeckFormData => ({
         key: deckToEdit?.key,
@@ -20,10 +36,12 @@ export const DeckEditModal = ({ isOpen, deckToEdit, onClose }: DeckEditModalProp
     });
 
     const [formValues, setFormValues] = useState<DeckFormData>(getDefaultFormValues());
+    const [deckType, setDeckType] = useState(DeckType.Commander);
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         setFormValues(getDefaultFormValues());
+        setDeckType(DeckType.Commander);
     }, [isOpen, deckToEdit]);
 
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -34,10 +52,16 @@ export const DeckEditModal = ({ isOpen, deckToEdit, onClose }: DeckEditModalProp
         e.preventDefault();
 
         setLoading(true);
-        const deckInfo = await GetDeckInfo(formValues);
+        const deckInfo = await GetDeckInfo(formValues, deckType);
         setLoading(false);
-        
+
         onClose(deckInfo);
+    };
+
+    const handleDeckType = (_: React.MouseEvent<HTMLElement>, newDeckType: DeckType | null) => {
+        if (newDeckType !== null) {
+            setDeckType(newDeckType);
+        }
     };
 
     return (
@@ -66,6 +90,12 @@ export const DeckEditModal = ({ isOpen, deckToEdit, onClose }: DeckEditModalProp
                             disabled={loading}
                         />
                     </Paper>
+
+                    <ToggleButtonGroup exclusive value={deckType} onChange={handleDeckType}>
+                        <ToggleButton value={DeckType.Commander}>Commander</ToggleButton>
+                        <ToggleButton value={DeckType.NotCommander}>Not Commander</ToggleButton>
+                    </ToggleButtonGroup>
+
                     <Paper>
                         <TextField
                             name='name'
@@ -87,6 +117,7 @@ export const DeckEditModal = ({ isOpen, deckToEdit, onClose }: DeckEditModalProp
                             disabled={loading}
                         />
                     </Paper>
+
                     <Stack
                         direction='row'
                         spacing={2}
