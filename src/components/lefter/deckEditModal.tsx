@@ -40,6 +40,7 @@ export const DeckEditModal = ({ isOpen, deckToEdit, onClose }: DeckEditModalProp
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
+        if (!isOpen) return;
         setFormValues(getDefaultFormValues());
         setDeckType(DeckType.Commander);
     }, [isOpen, deckToEdit]);
@@ -65,7 +66,7 @@ export const DeckEditModal = ({ isOpen, deckToEdit, onClose }: DeckEditModalProp
     };
 
     return (
-        <Modal open={isOpen} onClose={() => onClose()} disableRestoreFocus>
+        <Modal open={isOpen || loading} onClose={() => onClose()} disableRestoreFocus>
             <Pane sx={{ ...ModalStyle, width: '50vw' }}>
                 <Box
                     component='form'
@@ -91,7 +92,12 @@ export const DeckEditModal = ({ isOpen, deckToEdit, onClose }: DeckEditModalProp
                         />
                     </Paper>
 
-                    <ToggleButtonGroup exclusive value={deckType} onChange={handleDeckType}>
+                    <ToggleButtonGroup
+                        exclusive
+                        value={deckType}
+                        disabled={loading}
+                        onChange={handleDeckType}
+                    >
                         <ToggleButton value={DeckType.Commander}>Commander</ToggleButton>
                         <ToggleButton value={DeckType.NotCommander}>Not Commander</ToggleButton>
                     </ToggleButtonGroup>

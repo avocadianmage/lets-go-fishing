@@ -52,10 +52,11 @@ const fetchCardInfo = async (card: CardInfo): Promise<CardBlobUrls> => {
 
     if (result.status !== 200) {
         console.log('Card lookup failed for: ' + JSON.stringify(card));
+        return { frontUrl: '', backUrl: '' };
     }
 
     const json = await result.json();
-    const partner: boolean = json.keywords.includes('Partner');
+    const partner: boolean = json.keywords?.includes('Partner') ?? false;
 
     const jsonNodeForTwoSidedCard = json.card_faces;
     const jsonNodeForOneSidedCardImage = json.image_uris;
@@ -85,6 +86,5 @@ export const PopulateCardExternalInfo = async (card: CardInfo): Promise<CardBlob
 
     // Fetch card from external web service.
     promiseChain = promiseChain.then(getPromisedTimeout).then(() => fetchCardInfo(card));
-    console.log('doing a whole external fetch');
     return promiseChain;
 };
