@@ -1,5 +1,4 @@
 import { openDB } from 'idb';
-import { DeckType } from '../components/lefter/deckEditModal';
 
 export interface CardExternalInfo {
     frontBlob: Blob;
@@ -17,7 +16,7 @@ export interface CardInfo {
 }
 
 export interface DeckFormData {
-    key? : string;
+    key?: string;
     name: string;
     url: string;
     contents: string;
@@ -51,17 +50,17 @@ const dbPromise = openDB(dbName, dbVersion, {
 });
 
 class DbSvc {
-    public GetCardImageKey(card: CardInfo): string {
+    public GetCardInfoKey(card: CardInfo): string {
         const { set, cn } = card;
         return JSON.stringify({ set, cn });
     }
 
     public async GetCardExternalInfo(card: CardInfo): Promise<CardExternalInfo> {
-        return (await dbPromise).get(StoreNames.Card, this.GetCardImageKey(card));
+        return (await dbPromise).get(StoreNames.Card, this.GetCardInfoKey(card));
     }
 
     public async PutCardExternalInfo(card: CardInfo): Promise<void> {
-        (await dbPromise).put(StoreNames.Card, card.externalInfo!, this.GetCardImageKey(card));
+        (await dbPromise).put(StoreNames.Card, card.externalInfo!, this.GetCardInfoKey(card));
     }
 
     public async GetDecks(): Promise<DeckInfo[]> {

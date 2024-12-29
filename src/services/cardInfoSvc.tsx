@@ -1,8 +1,15 @@
-import { CardExternalInfo, CardInfo, DatabaseService } from './dbSvc';
+import { CardInfo, DatabaseService } from './dbSvc';
+
+export interface CardBlobUrls {
+    frontUrl: string;
+    backUrl: string;
+}
 
 const QUERY_THROTTLE_MS = 100;
 
-let promiseChain: Promise<void> = Promise.resolve();
+const memoryCache: { [key: string]: CardBlobUrls } = {};
+
+let promiseChain: Promise<CardBlobUrls> = Promise.resolve({ frontUrl: '', backUrl: '' });
 
 const getPromisedTimeout = () => new Promise((r) => setTimeout(r, QUERY_THROTTLE_MS));
 
@@ -12,6 +19,15 @@ const getQueryUrl = (card: CardInfo): string => {
     const encodedCN = encodeURIComponent(cn);
     return `https://api.scryfall.com/cards/${encodedSet}/${encodedCN}`;
 };
+
+const generateCardBlobUrls = (card: CardInfo): CardBlobUrls => {
+    const { frontBlob, backBlob } = card.externalInfo!;
+    const frontUrl = URL.createObjectURL(frontBlob);
+    const backUrl = backBlob ? URL.createObjectURL(backBlob) : '';
+    const cardBlobUrls: CardBlobUrls = { frontUrl, backUrl };
+    memoryCache[DatabaseService.GetCardInfoKey(card)] = cardBlobUrls;
+    return cardBlobUrls;
+}
 
 const saveToBlobAndSetExternalCardInfo = async (
     frontUrlRemote: string,
@@ -31,7 +47,7 @@ const saveToBlobAndSetExternalCardInfo = async (
 };
 
 // Populates the externalInfo property of the card object and stores it in the IndexedDB.
-const fetchCardInfo = async (card: CardInfo): Promise<void> => {
+const fetchCardInfo = async (card: CardInfo): Promise<CardBlobUrls> => {
     const result = await fetch(getQueryUrl(card));
 
     if (result.status !== 200) {
@@ -55,24 +71,20 @@ const fetchCardInfo = async (card: CardInfo): Promise<void> => {
     }
 
     await saveToBlobAndSetExternalCardInfo(frontUrlRemote, backUrlRemote, partner, card);
+    return generateCardBlobUrls(card);
 };
 
-export const PopulateCardExternalInfo = async (card: CardInfo): Promise<void> => {
+export const PopulateCardExternalInfo = async (card: CardInfo): Promise<CardBlobUrls> => {
     // Check if the URL is already stored in the local cache.
-    if (card.externalInfo) return;
+    const cardBlobUrls = memoryCache[DatabaseService.GetCardInfoKey(card)];
+    if (cardBlobUrls) return cardBlobUrls;
 
+    // Check if the card is already stored in the IndexedDB.
     card.externalInfo = await DatabaseService.GetCardExternalInfo(card);
-    if (card.externalInfo) return;
+    if (card.externalInfo) return generateCardBlobUrls(card);
 
     // Fetch card from external web service.
     promiseChain = promiseChain.then(getPromisedTimeout).then(() => fetchCardInfo(card));
+    console.log('doing a whole external fetch');
     return promiseChain;
-};
-
-export const GetCardImageUrls = (
-    externalInfo: CardExternalInfo
-): { frontUrl: string; backUrl?: string } => {
-    const frontUrl = URL.createObjectURL(externalInfo.frontBlob);
-    const backUrl = externalInfo.backBlob ? URL.createObjectURL(externalInfo.backBlob) : undefined;
-    return { frontUrl, backUrl };
 };

@@ -5,7 +5,7 @@ import { cancelablePromise } from '../../global/helpers';
 import { CenteredSpinner } from '../controls/centeredSpinner';
 import { ZoneCardInfo } from './zone';
 import { Chip, SxProps } from '@mui/material';
-import { GetCardImageUrls, PopulateCardExternalInfo } from '../../services/cardInfoSvc';
+import { CardBlobUrls, PopulateCardExternalInfo } from '../../services/cardInfoSvc';
 
 export interface VisualCardProps {
     zoneCard?: ZoneCardInfo;
@@ -87,8 +87,8 @@ export const VisualCard = ({ zoneCard, faceDown, wiggle }: VisualCardProps) => {
         if (!card) return;
         const { promise, cancel } = cancelablePromise(PopulateCardExternalInfo(card));
         promise
-            .then(() => {
-                const { frontUrl, backUrl } = GetCardImageUrls(card.externalInfo!);
+            .then((cardBlobUrls: CardBlobUrls) => {
+                const { frontUrl, backUrl } = cardBlobUrls;
                 setFrontImageUrl(frontUrl);
                 if (backUrl) {
                     setBackImageUrl(backUrl);
