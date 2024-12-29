@@ -13,8 +13,14 @@ let promiseChain: Promise<CardBlobUrls> = Promise.resolve({ frontUrl: '', backUr
 
 const getPromisedTimeout = () => new Promise((r) => setTimeout(r, QUERY_THROTTLE_MS));
 
-const getQueryUrl = (card: CardInfo): string => {
-    const { set, cn } = card;
+const getQueryUrl = (card: CardInfo, byName: boolean = false): string => {
+    const { set, cn, name } = card;
+
+    if (byName) {
+        const encodedName = encodeURIComponent(name);
+        return `https://api.scryfall.com/cards/named?exact=${encodedName}`;
+    }
+
     const encodedSet = encodeURIComponent(set);
     const encodedCN = encodeURIComponent(cn);
     return `https://api.scryfall.com/cards/${encodedSet}/${encodedCN}`;
@@ -27,7 +33,7 @@ const generateCardBlobUrls = (card: CardInfo): CardBlobUrls => {
     const cardBlobUrls: CardBlobUrls = { frontUrl, backUrl };
     memoryCache[DatabaseService.GetCardInfoKey(card)] = cardBlobUrls;
     return cardBlobUrls;
-}
+};
 
 const saveToBlobAndSetExternalCardInfo = async (
     frontUrlRemote: string,
@@ -48,10 +54,18 @@ const saveToBlobAndSetExternalCardInfo = async (
 
 // Populates the externalInfo property of the card object and stores it in the IndexedDB.
 const fetchCardInfo = async (card: CardInfo): Promise<CardBlobUrls> => {
-    const result = await fetch(getQueryUrl(card));
+    let result = await fetch(getQueryUrl(card));
 
+    // If lookup by set and collector number fails, try by name.
+    if (result.status === 404) {
+        console.log('Card lookup by set and collector number failed for: ' + JSON.stringify(card));
+        console.log('Fallback to looking up card by name...');
+        result = await fetch(getQueryUrl(card, true));
+    }
+
+    // If lookup by name fails, return empty URLs.
     if (result.status !== 200) {
-        console.log('Card lookup failed for: ' + JSON.stringify(card));
+        console.log('Fallback card lookup by name failed for: ' + JSON.stringify(card));
         return { frontUrl: '', backUrl: '' };
     }
 
