@@ -29,9 +29,9 @@ const SingleShortcut = (props: { shortcutKey: string; description: string }) => 
 );
 
 export const Shortcuts = () => (
-    <Card sx={{ pb: '16px' }}>
+    <Card sx={{ pb: '20px' }}>
         <LefterCardHeader title='Keyboard shortcuts' />
-        <Box sx={{ display: 'flex', px: '16px', py: '8px' }}>
+        <Box sx={{ display: 'flex', px: '16px', py: '4px' }}>
             <Box sx={colProps}>
                 <SingleShortcut shortcutKey='R' description='restart game' />
                 <SingleShortcut shortcutKey='L' description='search library' />
