@@ -1,5 +1,5 @@
 import { Add, Close, Edit, Public, SvgIconComponent } from '@mui/icons-material';
-import { List, ListItem, ListItemButton, ListItemText } from '@mui/material';
+import { List, ListItemButton, ListItemText, ListSubheader, Typography } from '@mui/material';
 import { DatabaseService, DeckInfo } from '../../services/dbSvc';
 import { InputButton } from '../controls/inputButton';
 import { CardHeaderTypographyProps } from '../../global/constants';
@@ -44,16 +44,23 @@ export const DeckSelect = ({
     };
 
     const DeckImport = (
-        <ListItem sx={{ p: '4px', pl: '16px' }}>
-            <ListItemText primaryTypographyProps={CardHeaderTypographyProps} primary='My Decks' />
+        <ListSubheader
+            sx={{
+                pr: '4px',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+            }}
+        >
+            <Typography {...CardHeaderTypographyProps}>My Decks</Typography>
             <InputButton
                 tooltip='Import deck'
                 onClick={() => handleDeckEditModalStateChange(true)}
-                sx={{ color: 'var(--nord14)' }}
+                sx={{ color: 'var(--nord14)', mt: '-4px' }}
             >
                 <Add />
             </InputButton>
-        </ListItem>
+        </ListSubheader>
     );
 
     const DeckButton = (
@@ -79,10 +86,7 @@ export const DeckSelect = ({
 
     return (
         <>
-            <List
-                sx={{ p: 0, maxHeight: 'calc(36px * 8)', overflowY: 'auto' }}
-                subheader={DeckImport}
-            >
+            <List sx={{ p: 0, maxHeight: '400px', overflowY: 'auto' }} subheader={DeckImport}>
                 {decks.map((deck, index) => {
                     const isSelected = selectedIndex === index;
                     const url = decks[index].url;
