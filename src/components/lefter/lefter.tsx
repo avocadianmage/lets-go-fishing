@@ -146,28 +146,34 @@ export const Lefter = ({
                     />
                 </Card>
 
-                <Card sx={{ marginBottom: '16px' }}>
-                    <LefterCardHeader title='Life and floating mana' />
-                    <Box sx={{ display: 'flex' }}>
-                        <NumberWheel
-                            label='life'
-                            icon={<Favorite sx={{ color: 'var(--nord15)' }} />}
-                            count={gameDetailsState.life}
-                            updateCount={(life) =>
-                                onUpdateGameDetailsState({ ...gameDetailsState, life })
-                            }
-                            defaultCount={STARTING_LIFE}
-                        />
+                {decks.length > 0 && (
+                    <>
+                        <Card sx={{ marginBottom: '16px' }}>
+                            <LefterCardHeader title='Life and floating mana' />
+                            <Box sx={{ display: 'flex' }}>
+                                <NumberWheel
+                                    label='life'
+                                    icon={<Favorite sx={{ color: 'var(--nord15)' }} />}
+                                    count={gameDetailsState.life}
+                                    updateCount={(life) =>
+                                        onUpdateGameDetailsState({ ...gameDetailsState, life })
+                                    }
+                                    defaultCount={STARTING_LIFE}
+                                />
 
-                        <Divider orientation='vertical' variant='middle' flexItem />
+                                <Divider orientation='vertical' variant='middle' flexItem />
 
-                        {(Object.keys(ManaColor) as Array<keyof typeof ManaColor>).map((color) => (
-                            <ManaNumberWheel key={color} color={ManaColor[color]} />
-                        ))}
-                    </Box>
-                </Card>
+                                {(Object.keys(ManaColor) as Array<keyof typeof ManaColor>).map(
+                                    (color) => (
+                                        <ManaNumberWheel key={color} color={ManaColor[color]} />
+                                    )
+                                )}
+                            </Box>
+                        </Card>
 
-                <Shortcuts />
+                        <Shortcuts />
+                    </>
+                )}
             </Box>
         </Pane>
     );
