@@ -60,7 +60,8 @@ class DbSvc {
     }
 
     public async PutCardExternalInfo(card: CardInfo): Promise<void> {
-        (await dbPromise).put(StoreNames.Card, card.externalInfo!, this.GetCardInfoKey(card));
+        const db = await dbPromise;
+        await db.put(StoreNames.Card, card.externalInfo!, this.GetCardInfoKey(card));
     }
 
     public async GetDecks(): Promise<DeckInfo[]> {

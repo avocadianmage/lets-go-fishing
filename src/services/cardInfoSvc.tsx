@@ -93,7 +93,7 @@ const fetchCardInfo = async (card: CardInfo): Promise<CardBlobUrls> => {
 export const PopulateCardExternalInfo = async (card: CardInfo): Promise<CardBlobUrls> => {
     // Check if the URL is already stored in the local cache.
     const cardBlobUrls = memoryCache[DatabaseService.GetCardInfoKey(card)];
-    if (cardBlobUrls) return cardBlobUrls;
+    if (card.externalInfo && cardBlobUrls) return cardBlobUrls;
 
     // Check if the card is already stored in the IndexedDB.
     card.externalInfo = await DatabaseService.GetCardExternalInfo(card);
