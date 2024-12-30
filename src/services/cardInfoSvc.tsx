@@ -5,7 +5,8 @@ export interface CardBlobUrls {
     backUrl: string;
 }
 
-const QUERY_THROTTLE_MS = 100;
+// Use a higher throttle time when not in production.
+const QUERY_THROTTLE_MS = window.location.hostname === 'localhost' ? 500 : 100;
 
 const memoryCache: { [key: string]: CardBlobUrls } = {};
 

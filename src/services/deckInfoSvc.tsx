@@ -5,6 +5,8 @@ import { CardInfo, DeckFormData, DeckInfo } from './dbSvc';
 //ckgtest clean up to remove this enum and just check for SIDEBOARD
 enum Header {
     Sideboard = 'SIDEBOARD',
+    Maybeboard = 'MAYBEBOARD',
+    Commander = 'COMMANDER',
     Other = 'OTHER',
 }
 
@@ -20,18 +22,45 @@ const checkForHeader = (line: string): Header | undefined => {
     return Header.Other;
 };
 
-const hasMetadata = (line: string): boolean => {
-    line = line.trim().toUpperCase();
-    const MetadataIndicator1 = '*';
-    const MetadataIndicator2 = '^';
-    return line.endsWith(MetadataIndicator1) || line.endsWith(MetadataIndicator2);
+const removeAndGetMetadata = (line: string): { metadata: string; lineWithoutMetadata: string } => {
+    line = line.trim();
+    const CategoryIndicator = '[';
+    const FoilIndicator = '*';
+
+    let metadata = '';
+    let metadataStartIndex = line.indexOf(CategoryIndicator);
+    if (metadataStartIndex > -1) {
+        // Remove leading bracket from metadata.
+        metadata = line.slice(metadataStartIndex + 1).trim();
+        line = line.slice(0, metadataStartIndex).trim();
+    }
+
+    // Parse for foil indicator after parsing and removing other metadata.
+    metadataStartIndex = line.indexOf(FoilIndicator);
+    if (metadataStartIndex > -1) {
+        line = line.slice(0, metadataStartIndex).trim();
+    }
+
+    return { metadata, lineWithoutMetadata: line };
 };
 
+// 'commander' param: True/False if definitely a commander/not, undefined if not sure.
 const parseContentsLine = (
     line: string
-): { quantity: number; name: string; set: string; cn: string } => {
-    let pieces: string[] = line.split(' ').filter((piece) => piece !== '');
-    pieces = hasMetadata(line) ? pieces.slice(0, -1) : pieces;
+): { quantity: number; name: string; set: string; cn: string; commander?: boolean } => {
+    const { metadata, lineWithoutMetadata } = removeAndGetMetadata(line);
+    let pieces: string[] = lineWithoutMetadata.split(' ').filter((piece) => piece !== '');
+
+    // Process and remove card category in brackets at the end of the line if it exists.
+    let commander: boolean | undefined;
+    if (metadata) {
+        const header = checkForHeader(metadata)!;
+        // Ignore sideboard and maybeboard cards.
+        if (header === Header.Sideboard || header === Header.Maybeboard) {
+            return { quantity: 0, name: '', set: '', cn: '', commander: false };
+        }
+        commander = header === Header.Commander;
+    }
 
     // Trim the 'x' at the end if it exists.
     const quantity: number = parseInt(pieces[0].replace(/x$/, ''));
@@ -44,7 +73,7 @@ const parseContentsLine = (
     // Collector number is case sensitive.
     const cn = pieces.slice(-1)[0];
 
-    return { quantity, name, set, cn };
+    return { quantity, name, set, cn, commander };
 };
 
 const parseContentsToDeck = async (
@@ -67,14 +96,24 @@ const parseContentsToDeck = async (
         if (!line) continue;
 
         const header = checkForHeader(line);
-        if (header === Header.Other) continue;
         if (header === Header.Sideboard) break;
+        if (header !== undefined) continue;
 
-        const { quantity, name, set, cn } = parseContentsLine(line);
+        const { quantity, name, set, cn, commander } = parseContentsLine(line);
         for (let i = 0; i < quantity; i++) {
-            const card: CardInfo = { id: getNextId(), name, set, cn, commander: false };
+            const card: CardInfo = {
+                id: getNextId(),
+                name,
+                set,
+                cn,
+                commander: commander ?? false,
+            };
+            if (commander === true) {
+                commanders.push(card);
+                continue;
+            }
 
-            if (checkForCommander) {
+            if (checkForCommander && commander === undefined) {
                 await PopulateCardExternalInfo(card);
                 const partner = card.externalInfo!.partner;
                 if (commanders.length === 0 || partner) {
