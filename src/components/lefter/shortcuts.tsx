@@ -1,4 +1,13 @@
-import { Box, BoxProps, Paper, SxProps, Typography, TypographyProps } from '@mui/material';
+import {
+    Box,
+    BoxProps,
+    Card,
+    CardHeader,
+    Paper,
+    SxProps,
+    Typography,
+    TypographyProps,
+} from '@mui/material';
 import { CSSProperties } from 'react';
 import { CardHeaderTypographyProps, LightestBgStyle } from '../../global/constants';
 
@@ -14,17 +23,17 @@ const keyCharStyle: CSSProperties = {
     borderRadius: '2px',
 };
 const cardSx: SxProps = {
-    p: '0px 16px 22px 16px',
+    pb: '16px',
     position: 'absolute',
     bottom: '16px',
     left: '16px',
-    width: 'calc(100% - 64px)',
+    width: 'calc(100% - 32px)',
 };
 const colProps: BoxProps = {
-    flexGrow: 1,
     display: 'flex',
     flexDirection: 'column',
     gap: '8px',
+    width: '50%',
 };
 
 const SingleShortcut = (props: { shortcutKey: string; description: string }) => (
@@ -35,12 +44,13 @@ const SingleShortcut = (props: { shortcutKey: string; description: string }) => 
 );
 
 export const Shortcuts = () => (
-    <Paper sx={cardSx}>
-        <Typography {...CardHeaderTypographyProps} sx={{ pt: '12px', pb: '8px' }}>
-            Keyboard shortcuts
-        </Typography>
-
-        <Box sx={{ display: 'flex' }}>
+    <Card sx={cardSx}>
+        <CardHeader
+            titleTypographyProps={CardHeaderTypographyProps}
+            title='Keyboard shortcuts'
+            sx={{ backgroundColor: 'rgb(18,18,18)' }}
+        />
+        <Box sx={{ display: 'flex', px: '16px', py: '8px' }}>
             <Box sx={colProps}>
                 <SingleShortcut shortcutKey='R' description='restart game' />
                 <SingleShortcut shortcutKey='L' description='search library' />
@@ -60,5 +70,5 @@ export const Shortcuts = () => (
                 <SingleShortcut shortcutKey='0' description='remove counters' />
             </Box>
         </Box>
-    </Paper>
+    </Card>
 );
