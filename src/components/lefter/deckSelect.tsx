@@ -47,16 +47,18 @@ export const DeckSelect = ({
         <ListSubheader
             sx={{
                 pr: '4px',
+                py: '4px',
+                lineHeight: '1',
                 display: 'flex',
                 justifyContent: 'space-between',
                 alignItems: 'center',
             }}
         >
-            <Typography {...LefterCardHeaderTypographyProps}>My Decks</Typography>
+            <Typography {...LefterCardHeaderTypographyProps}>My decks</Typography>
             <InputButton
                 tooltip='Import deck'
                 onClick={() => handleDeckEditModalStateChange(true)}
-                sx={{ color: 'var(--nord14)', mt: '-4px' }}
+                sx={{ color: 'var(--nord14)' }}
             >
                 <Add />
             </InputButton>

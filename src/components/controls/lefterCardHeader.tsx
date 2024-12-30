@@ -11,7 +11,7 @@ export const LefterCardHeader = ({ title }: { title: string }) => {
         <CardHeader
             titleTypographyProps={LefterCardHeaderTypographyProps}
             title={title}
-            sx={{ backgroundColor: 'rgb(18,18,18)' }}
+            sx={{ backgroundColor: 'rgb(18,18,18)', py: '14px' }}
         />
     );
 };
