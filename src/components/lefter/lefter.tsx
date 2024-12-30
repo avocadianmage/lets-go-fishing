@@ -18,6 +18,7 @@ import { InputButton } from '../controls/inputButton';
 
 import { repository, funding } from '../../../package.json';
 import { Pane } from '../controls/pane';
+import { LefterCardHeader } from '../controls/lefterCardHeader';
 
 interface LefterProps {
     isDeckEditModalOpen: boolean;
@@ -146,6 +147,7 @@ export const Lefter = ({
                 </Card>
 
                 <Card sx={{ marginBottom: '16px' }}>
+                    <LefterCardHeader title='Life and floating mana' />
                     <Box sx={{ display: 'flex' }}>
                         <NumberWheel
                             label='life'

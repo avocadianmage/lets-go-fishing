@@ -1,4 +1,4 @@
-import { SxProps, Theme, TypographyProps } from '@mui/material';
+import { SxProps, Theme } from '@mui/material';
 import { CSSProperties } from 'react';
 
 // Layout
@@ -12,11 +12,6 @@ export const LightestBgStyle: CSSProperties = {
 };
 export const PaneBgStyle: CSSProperties = {
     backgroundImage: 'linear-gradient(rgba(255, 255, 255, 0.11), rgba(255, 255, 255, 0.11))',
-};
-export const CardHeaderTypographyProps: TypographyProps = {
-    fontSize: '0.75rem',
-    color: (theme: Theme) => theme.palette.grey[500],
-    textTransform: 'uppercase',
 };
 export const ModalStyle: SxProps<Theme> = {
     position: 'absolute',

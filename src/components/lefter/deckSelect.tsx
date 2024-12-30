@@ -2,9 +2,9 @@ import { Add, Close, Edit, Public, SvgIconComponent } from '@mui/icons-material'
 import { List, ListItemButton, ListItemText, ListSubheader, Typography } from '@mui/material';
 import { DatabaseService, DeckInfo } from '../../services/dbSvc';
 import { InputButton } from '../controls/inputButton';
-import { CardHeaderTypographyProps } from '../../global/constants';
 import { DeckEditModal } from './deckEditModal';
 import { useState } from 'react';
+import { LefterCardHeaderTypographyProps } from '../controls/lefterCardHeader';
 
 interface DeckSelectProps {
     isDeckEditModalOpen: boolean;
@@ -52,7 +52,7 @@ export const DeckSelect = ({
                 alignItems: 'center',
             }}
         >
-            <Typography {...CardHeaderTypographyProps}>My Decks</Typography>
+            <Typography {...LefterCardHeaderTypographyProps}>My Decks</Typography>
             <InputButton
                 tooltip='Import deck'
                 onClick={() => handleDeckEditModalStateChange(true)}

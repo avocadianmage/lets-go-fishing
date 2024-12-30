@@ -1,15 +1,7 @@
-import {
-    Box,
-    BoxProps,
-    Card,
-    CardHeader,
-    Paper,
-    SxProps,
-    Typography,
-    TypographyProps,
-} from '@mui/material';
+import { Box, BoxProps, Card, Typography, TypographyProps } from '@mui/material';
 import { CSSProperties } from 'react';
-import { CardHeaderTypographyProps, LightestBgStyle } from '../../global/constants';
+import { LightestBgStyle } from '../../global/constants';
+import { LefterCardHeader } from '../controls/lefterCardHeader';
 
 const textProps: TypographyProps = {
     variant: 'overline',
@@ -21,13 +13,6 @@ const keyCharStyle: CSSProperties = {
     padding: '2px 5px',
     marginRight: '8px',
     borderRadius: '2px',
-};
-const cardSx: SxProps = {
-    pb: '16px',
-    position: 'absolute',
-    bottom: '16px',
-    left: '16px',
-    width: 'calc(100% - 32px)',
 };
 const colProps: BoxProps = {
     display: 'flex',
@@ -44,12 +29,8 @@ const SingleShortcut = (props: { shortcutKey: string; description: string }) => 
 );
 
 export const Shortcuts = () => (
-    <Card sx={cardSx}>
-        <CardHeader
-            titleTypographyProps={CardHeaderTypographyProps}
-            title='Keyboard shortcuts'
-            sx={{ backgroundColor: 'rgb(18,18,18)' }}
-        />
+    <Card sx={{ pb: '16px' }}>
+        <LefterCardHeader title='Keyboard shortcuts' />
         <Box sx={{ display: 'flex', px: '16px', py: '8px' }}>
             <Box sx={colProps}>
                 <SingleShortcut shortcutKey='R' description='restart game' />
